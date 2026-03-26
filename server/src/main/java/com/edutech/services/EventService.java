@@ -10,9 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 public class EventService{
+    //Hi this is my first code
 
-
-    // write the code here
 }
