@@ -1,0 +1,39 @@
+/* Optional custom styles */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.card-header {
+  background-color: #007bff;
+  color: white;
+  border-bottom: 1px solid #ddd;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+.card-footer p {
+  margin-bottom: 0;
+}
+
+.card-footer a {
+  color: #007bff;
+}
+
+.card-footer a:hover {
+  color: #0056b3;
+}

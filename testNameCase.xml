@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <property name="testAssignTaskToStaff" value="testAssignTaskToStaff"/>
+    <property name="testClientShouldGetAllEvents" value="testClientShouldGetAllEvents"/>
+    <property name="testCreateEvent" value="testCreateEvent"/>
+    <property name="testCreateTask" value="testCreateTask"/>
+    <property name="testGetAllTasks" value="testGetAllTasks"/>
+    <property name="testGetEventsByPlanner" value="testGetEventsByPlanner"/>
+    <property name="testLoginUser" value="testLoginUser"/>
+    <property name="testLoginWithWrongUsernameOrPassword" value="testLoginWithWrongUsernameOrPassword"/>
+    <property name="testRegisterUser" value="testRegisterUser"/>
+    <property name="testStaffGetAssignedTasks" value="testStaffGetAssignedTasks"/>
+    <property name="testUpdateEvent" value="testUpdateEvent"/>
+    <property name="testUpdateFeedback" value="testUpdateFeedback"/>
+    <property name="testUpdateTaskStatus" value="testUpdateTaskStatus"/>
+    <property name="Components and Services Tests ClientDashboardComponent should create" value="Components and Services Tests ClientDashboardComponent should create"/>
+    <property name="Components and Services Tests ClientDashboardComponent should fetch events on init" value="Components and Services Tests ClientDashboardComponent should fetch events on init"/>
+    <property name="Components and Services Tests ClientDashboardComponent should provide feedback" value="Components and Services Tests ClientDashboardComponent should provide feedback"/>
+    <property name="Components and Services Tests PlannerDashboardComponent should create" value="Components and Services Tests PlannerDashboardComponent should create"/>
+    <property name="Components and Services Tests PlannerDashboardComponent should fetch events and tasks on init" value="Components and Services Tests PlannerDashboardComponent should fetch events and tasks on init"/>
+    <property name="Components and Services Tests PlannerDashboardComponent should create an event" value="Components and Services Tests PlannerDashboardComponent should create an event"/>
+    <property name="Components and Services Tests PlannerDashboardComponent should update an event" value="Components and Services Tests PlannerDashboardComponent should update an event"/>
+    <property name="Components and Services Tests PlannerDashboardComponent should create a task" value="Components and Services Tests PlannerDashboardComponent should create a task"/>
+    <property name="Components and Services Tests RegisterComponent should create" value="Components and Services Tests RegisterComponent should create"/>
+    <property name="Components and Services Tests RegisterComponent should register a new user" value="Components and Services Tests RegisterComponent should register a new user"/>
+    <property name="Components and Services Tests StaffDashboardComponent should create" value="Components and Services Tests StaffDashboardComponent should create"/>
+    <property name="Components and Services Tests StaffDashboardComponent should fetch tasks on init" value="Components and Services Tests StaffDashboardComponent should fetch tasks on init"/>
+    <property name="Components and Services Tests StaffDashboardComponent should update task status" value="Components and Services Tests StaffDashboardComponent should update task status"/>
+    <property name="Components and Services Tests AuthService should register a new user" value="Components and Services Tests AuthService should register a new user"/>
+    <property name="Components and Services Tests AuthService should login and return a token" value="Components and Services Tests AuthService should login and return a token"/>
+    <property name="Components and Services Tests AuthService should check if token is expired" value="Components and Services Tests AuthService should check if token is expired"/>
+    <property name="Components and Services Tests AuthGuard should allow activation if token is not expired" value="Components and Services Tests AuthGuard should allow activation if token is not expired"/>
+    <property name="Components and Services Tests AuthGuard should deny activation and redirect to login if token is expired" value="Components and Services Tests AuthGuard should deny activation and redirect to login if token is expired"/>
+</properties>
