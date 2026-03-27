@@ -53,7 +53,7 @@ public class RegisterAndLoginController {
         }
 
         User user = userService.findByUsername(loginRequest.getUsername());
-        String token = jwtUtil.generateToken(user.getUsername(),user.getRole());
+        String token = jwtUtil.generateToken(user.getUsername());
         return ResponseEntity.ok(new LoginResponse(token, user.getRole(), user.getId()));
     }
 }

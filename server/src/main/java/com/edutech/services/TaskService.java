@@ -1,7 +1,5 @@
 package com.edutech.services;
 
-
-
 import com.edutech.entities.Staff;
 import com.edutech.entities.Task;
 import com.edutech.repositories.StaffRepository;
@@ -12,15 +10,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 public class TaskService {
 
-     @Autowired
-
+    @Autowired
     private TaskRepository taskRepository;
 
     @Autowired
-
     private StaffRepository staffRepository;
 
     public Task createTask(Task task) {
@@ -74,4 +70,3 @@ public class TaskService {
     }
 
 }
-
