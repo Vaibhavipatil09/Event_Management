@@ -34,9 +34,9 @@ public class SecurityConfig {
             .and()
             .authorizeRequests()
                 .antMatchers("/api/user/register", "/api/user/login").permitAll()
-                .antMatchers("/api/planner/**").hasAuthority("PLANNER")
-                .antMatchers("/api/staff/**").hasAuthority("STAFF")
-                .antMatchers("/api/client/**").hasAuthority("CLIENT")
+                .antMatchers("/api/planner/**").hasRole("PLANNER")
+                .antMatchers("/api/staff/**").hasRole("STAFF")
+                .antMatchers("/api/client/**").hasRole("CLIENT")
                 .anyRequest().authenticated()
             .and()
             .addFilterBefore(

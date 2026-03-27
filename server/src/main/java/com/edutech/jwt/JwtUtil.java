@@ -20,14 +20,17 @@ public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long EXPIRATION = 1000 * 60 * 60 * 10; // 10 hours
 
-    public String generateToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(key)
-                .compact();
-    }
+    
+public String generateToken(String username, String role) {
+    return Jwts.builder()
+            .setSubject(username)
+            .claim("role", role)   // ✅ Add role to token
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+            .signWith(key)
+            .compact();
+}
+
 
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
