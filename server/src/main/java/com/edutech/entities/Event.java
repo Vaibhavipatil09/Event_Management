@@ -12,7 +12,7 @@ public class Event  {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String title;
-  private String date;
+  private LocalDateTime date;
   private String location;
   private String description;
   private String status;
@@ -36,14 +36,6 @@ public class Event  {
 
   public void setTitle(String title) {
    this.title = title;
-  }
-
-  public String getDate() {
-   return date;
-  }
-
-  public void setDate(String date) {
-   this.date = date;
   }
 
   public String getLocation() {
@@ -84,6 +76,14 @@ public class Event  {
 
   public void setPlanner(EventPlanner planner) {
    this.planner = planner;
+  }
+
+  public LocalDateTime getDate() {
+    return date;
+  }
+
+  public void setDate(LocalDateTime date) {
+    this.date = date;
   }
 
 
