@@ -1,10 +1,11 @@
 package com.edutech.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import com.edutech.entities.EventPlanner;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public interface EventPlannerRepository extends JpaRepository<EventPlanner,Long>  {
+import java.util.Optional;
+
+public interface EventPlannerRepository extends JpaRepository<EventPlanner, Long> {
+
+    Optional<EventPlanner> findByUsername(String username);
 }

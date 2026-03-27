@@ -17,8 +17,8 @@
 /home/coder/app/server/src/main/java/com/edutech/config/Configurations.java
 /home/coder/app/server/src/main/java/com/edutech/repositories/UserRepository.java
 /home/coder/app/server/src/main/java/com/edutech/controllers/StaffController.java
-/home/coder/app/server/src/main/java/com/edutech/jwt/JwtRequestFilter.java
 /home/coder/app/server/src/main/java/com/edutech/jwt/JwtUtil.java
+/home/coder/app/server/src/main/java/com/edutech/config/JwtAuthenticationFilter.java
 /home/coder/app/server/src/main/java/com/edutech/repositories/EventRepository.java
 /home/coder/app/server/src/main/java/com/edutech/repositories/TaskRepository.java
 /home/coder/app/server/src/main/java/com/edutech/controllers/RegisterAndLoginController.java
