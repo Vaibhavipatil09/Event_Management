@@ -8,6 +8,6 @@ import com.edutech.entities.Event;
 import java.util.List;
 
 @Repository
-public interface EventRepository {
+public interface EventRepository{
    // write the code here
 }

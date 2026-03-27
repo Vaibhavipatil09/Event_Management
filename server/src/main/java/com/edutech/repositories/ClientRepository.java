@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.edutech.entities.Client;
 
 @Repository
-public interface ClientRepository  {
+public interface ClientRepository{
 }
 
