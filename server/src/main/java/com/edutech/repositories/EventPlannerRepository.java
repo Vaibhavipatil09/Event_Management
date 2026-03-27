@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.edutech.entities.EventPlanner;
 
 @Repository
-public interface EventPlannerRepository  {
+public interface EventPlannerRepository extends JpaRepository<EventPlanner,Long>  {
 }

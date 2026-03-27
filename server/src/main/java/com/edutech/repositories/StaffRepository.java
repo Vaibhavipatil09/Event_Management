@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.edutech.entities.Staff;
 
 @Repository
-public interface StaffRepository {
+public interface StaffRepository extends JpaRepository <Staff,Long> {
 
     // write the code here
 }

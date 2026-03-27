@@ -2,8 +2,7 @@ package com.edutech.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-
-@Entity
+@Table(name="users")
 public class User implements Serializable {
 
    // write the code here

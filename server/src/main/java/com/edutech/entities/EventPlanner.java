@@ -5,7 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 
-public class EventPlanner 
+
+@Entity
+@Table(name = "event_planners")
+public class EventPlanner extends User
 {
 
 
