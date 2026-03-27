@@ -28,24 +28,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .csrf().disable()
-            .sessionManagement()
+                .csrf().disable()
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests()
+                .and()
+                .authorizeRequests()
                 .antMatchers("/api/user/register", "/api/user/login").permitAll()
                 .antMatchers("/api/planner/**").hasRole("PLANNER")
                 .antMatchers("/api/staff/**").hasRole("STAFF")
                 .antMatchers("/api/client/**").hasRole("CLIENT")
                 .anyRequest().authenticated()
-            .and()
-            .addFilterBefore(
-                jwtAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class
-            );
+                .and()
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 
 }

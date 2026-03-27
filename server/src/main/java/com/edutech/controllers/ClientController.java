@@ -10,9 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@RestController
+@RequestMapping("/api/client")
 public class ClientController {
 
-    // write the code here
-}
+    @Autowired
+    private EventService eventService;
 
+    @GetMapping("/events")
+    public ResponseEntity<List<Event>> getAllEvents() {
+        return ResponseEntity.ok(eventService.getAllEvents());
+    }
+
+    @PutMapping("/event/{eventId}")
+    public ResponseEntity<Event> provideFeedback(@PathVariable Long eventId,
+            @RequestParam String feedback) {
+        return ResponseEntity.ok(eventService.updateFeedback(eventId, feedback));
+    }
+}

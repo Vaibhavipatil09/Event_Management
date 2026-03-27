@@ -23,4 +23,3 @@ public class Configurations {
         return config.getAuthenticationManager();
     }
 }
-
