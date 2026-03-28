@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.edutech.entities.Staff;
 
 @Repository
-public interface StaffRepository extends JpaRepository <Staff,Long> {
+public interface StaffRepository extends JpaRepository<Staff, Long> {
 
     Optional<Staff> findByUsername(String username);
 }

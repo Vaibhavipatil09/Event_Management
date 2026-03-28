@@ -9,6 +9,6 @@ import com.edutech.entities.EventPlanner;
 import java.util.List;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event,Long>{
+public interface EventRepository extends JpaRepository<Event, Long> {
    List<Event> findByPlanner(EventPlanner planner);
 }

@@ -1,6 +1,5 @@
 package com.edutech.controllers;
 
-
 import com.edutech.dto.LoginRequest;
 import com.edutech.dto.LoginResponse;
 import com.edutech.entities.User;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
 
 @RestController
 public class RegisterAndLoginController {
@@ -45,15 +43,13 @@ public class RegisterAndLoginController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getUsername(),
-                            loginRequest.getPassword()
-                    )
-            );
+                            loginRequest.getPassword()));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
 
         User user = userService.findByUsername(loginRequest.getUsername());
-        String token = jwtUtil.generateToken(user.getUsername(),user.getRole());
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
         return ResponseEntity.ok(new LoginResponse(token, user.getRole(), user.getId()));
     }
 }

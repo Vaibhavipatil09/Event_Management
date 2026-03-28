@@ -3,7 +3,7 @@ package com.edutech.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name="tasks")
+@Table(name = "tasks")
 public class Task {
 
     @Id
@@ -12,7 +12,7 @@ public class Task {
     private String description;
     private String status;
     @ManyToOne
-    @JoinColumn(name="staff_id")
+    @JoinColumn(name = "staff_id")
     private Staff assignedStaff;
 
     public Long getId() {

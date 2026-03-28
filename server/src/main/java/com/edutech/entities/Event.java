@@ -3,10 +3,9 @@ package com.edutech.entities;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-
 @Entity
 @Table(name = "events")
-public class Event  {
+public class Event {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,59 +22,59 @@ public class Event  {
   private EventPlanner planner;
 
   public Long getId() {
-   return id;
+    return id;
   }
 
   public void setId(Long id) {
-   this.id = id;
+    this.id = id;
   }
 
   public String getTitle() {
-   return title;
+    return title;
   }
 
   public void setTitle(String title) {
-   this.title = title;
+    this.title = title;
   }
 
   public String getLocation() {
-   return location;
+    return location;
   }
 
   public void setLocation(String location) {
-   this.location = location;
+    this.location = location;
   }
 
   public String getDescription() {
-   return description;
+    return description;
   }
 
   public void setDescription(String description) {
-   this.description = description;
+    this.description = description;
   }
 
   public String getStatus() {
-   return status;
+    return status;
   }
 
   public void setStatus(String status) {
-   this.status = status;
+    this.status = status;
   }
 
   public String getFeedback() {
-   return feedback;
+    return feedback;
   }
 
   public void setFeedback(String feedback) {
-   this.feedback = feedback;
+    this.feedback = feedback;
   }
 
   public EventPlanner getPlanner() {
-   return planner;
+    return planner;
   }
 
   public void setPlanner(EventPlanner planner) {
-   this.planner = planner;
+    this.planner = planner;
   }
 
   public LocalDateTime getDate() {
@@ -86,7 +85,4 @@ public class Event  {
     this.date = date;
   }
 
-
 }
-
-

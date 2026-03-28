@@ -9,7 +9,7 @@ import com.edutech.entities.Task;
 import java.util.List;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task,Long>{
-List<Task> findByAssignedStaff(Staff staff);
+public interface TaskRepository extends JpaRepository<Task, Long> {
+    List<Task> findByAssignedStaff(Staff staff);
     // write the code here
 }

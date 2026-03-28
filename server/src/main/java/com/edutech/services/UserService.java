@@ -29,10 +29,10 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
-                       ClientRepository clientRepository,
-                       EventPlannerRepository eventPlannerRepository,
-                       StaffRepository staffRepository,
-                       PasswordEncoder passwordEncoder) {
+            ClientRepository clientRepository,
+            EventPlannerRepository eventPlannerRepository,
+            StaffRepository staffRepository,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
         this.eventPlannerRepository = eventPlannerRepository;
@@ -40,9 +40,11 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /* =================================================
-       REGISTRATION LOGIC
-       ================================================= */
+    /*
+     * =================================================
+     * REGISTRATION LOGIC
+     * =================================================
+     */
 
     public User registerUser(User user) {
 
@@ -78,9 +80,11 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    /* =================================================
-       SPRING SECURITY (MANDATORY)
-       ================================================= */
+    /*
+     * =================================================
+     * SPRING SECURITY (MANDATORY)
+     * =================================================
+     */
 
     @Override
     public UserDetails loadUserByUsername(String username)
@@ -92,39 +96,39 @@ public class UserService implements UserDetailsService {
                 user.getUsername(),
                 user.getPassword(),
                 Collections.singleton(
-                        new SimpleGrantedAuthority(user.getRole())
-                )
-        );
+                        new SimpleGrantedAuthority(user.getRole())));
     }
 
-    /* =================================================
-       HELPER METHOD
-       ================================================= */
+    /*
+     * =================================================
+     * HELPER METHOD
+     * =================================================
+     */
 
     private User findUserFromAnyRepo(String username) {
 
-        Optional<? extends User> planner =
-                eventPlannerRepository.findByUsername(username);
-        if (planner.isPresent()) return planner.get();
+        Optional<? extends User> planner = eventPlannerRepository.findByUsername(username);
+        if (planner.isPresent())
+            return planner.get();
 
-        Optional<? extends User> client =
-                clientRepository.findByUsername(username);
-        if (client.isPresent()) return client.get();
+        Optional<? extends User> client = clientRepository.findByUsername(username);
+        if (client.isPresent())
+            return client.get();
 
-        Optional<? extends User> staff =
-                staffRepository.findByUsername(username);
-        if (staff.isPresent()) return staff.get();
+        Optional<? extends User> staff = staffRepository.findByUsername(username);
+        if (staff.isPresent())
+            return staff.get();
 
         return userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                "User not found: " + username
-                        ));
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User not found: " + username));
     }
 
-    /* =================================================
-       OPTIONAL — USED IN LOGIN CONTROLLER
-       ================================================= */
+    /*
+     * =================================================
+     * OPTIONAL — USED IN LOGIN CONTROLLER
+     * =================================================
+     */
 
     public User findByUsername(String username) {
         return findUserFromAnyRepo(username);

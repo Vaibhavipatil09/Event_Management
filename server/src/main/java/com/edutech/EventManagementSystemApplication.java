@@ -13,11 +13,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EventManagementSystemApplication {
 
 	public static void main(String[] args) {
-	//	SpringApplication.run(EventManagementSystemApplication.class, args);
+		// SpringApplication.run(EventManagementSystemApplication.class, args);
 		SpringApplication.run(EventManagementSystemApplication.class, args);
-		//TaskService service=ctx.getBean(TaskService.class);
-		
+		// TaskService service=ctx.getBean(TaskService.class);
+
 	}
 
 }
-

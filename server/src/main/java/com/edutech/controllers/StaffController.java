@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/staff")
 public class StaffController {
@@ -27,7 +26,7 @@ public class StaffController {
 
     @PutMapping("/tasks/{taskId}")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable Long taskId,
-                                                  @RequestParam String status) {
+            @RequestParam String status) {
         return ResponseEntity.ok(taskService.updateTaskStatus(taskId, status));
     }
 }
