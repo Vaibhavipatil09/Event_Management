@@ -5,6 +5,6 @@
   <h3>My Tasks</h3>
   <div *ngFor="let task of tasks">
     <p>{{ task.description }} - {{ task.status }}</p>
-    <button (click)="updateStatus(task, 'COMPLETED')">Mark Complete</button>
+    <button (click)="updateTaskStatus(task, 'COMPLETED')">Mark Complete</button>
   </div>
 </div>
