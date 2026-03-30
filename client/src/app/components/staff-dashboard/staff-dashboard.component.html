@@ -1,1 +1,10 @@
-// write the code here
+<div>
+  <h2>Staff Dashboard</h2>
+  <button (click)="logout()">Logout</button>
+
+  <h3>My Tasks</h3>
+  <div *ngFor="let task of tasks">
+    <p>{{ task.description }} - {{ task.status }}</p>
+    <button (click)="updateStatus(task, 'COMPLETED')">Mark Complete</button>
+  </div>
+</div>

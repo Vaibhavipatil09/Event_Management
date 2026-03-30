@@ -1,1 +1,12 @@
-// write the code here
+<div>
+  <h2>Client Dashboard</h2>
+  <button (click)="logout()">Logout</button>
+
+  <h3>All Events</h3>
+  <div *ngFor="let event of events">
+    <p>{{ event.title }} - {{ event.status }}</p>
+    <p>Feedback: {{ event.feedback }}</p>
+    <input [(ngModel)]="feedbackMap[event.id!]" placeholder="Enter feedback" />
+    <button (click)="provideFeedback(event.id!)">Submit Feedback</button>
+  </div>
+</div>

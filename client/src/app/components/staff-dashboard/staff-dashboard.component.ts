@@ -3,6 +3,8 @@ import { StaffService } from '../../services/staff.service';
 import { Task } from '../../models/task.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-staff-dashboard',
@@ -11,9 +13,40 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
-export class StaffDashboardComponent 
- {
+export class StaffDashboardComponent {
 
-  // write the code here
- 
+  tasks: Task[] = [];
+  staffId: number = Number(this.authService.getUserId());
+
+  constructor(
+    private staffService: StaffService,
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    this.loadTasks();
+  }
+
+  loadTasks(): void {
+    this.staffService.getAssignedTasks(this.staffId).subscribe({
+      next: (data) => this.tasks = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  updateStatus(task: Task, status: string): void {
+    this.staffService.updateTaskStatus(task.id!, status).subscribe({
+      next: (updated) => {
+        const index = this.tasks.findIndex(t => t.id === updated.id);
+        if (index !== -1) this.tasks[index] = updated;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }

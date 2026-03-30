@@ -11,5 +11,17 @@ import { User } from '../models/user.model';
 export class StaffService {
   private baseUrl = `${environment.apiUrl}/api/staff`;
 
-  // write the code here
+    constructor(private http: HttpClient) {}
+
+  getAssignedTasks(staffId: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.baseUrl}/tasks/${staffId}`);
+  }
+
+  updateTaskStatus(taskId: number, status: string): Observable<Task> {
+    return this.http.put<Task>(
+      `${this.baseUrl}/tasks/${taskId}?status=${status}`,
+      {}
+    );
+  }
 }
+

@@ -7,8 +7,19 @@ import { map, catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard 
- {
-// write the code here
- 
+export class AuthGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) { }
+
+  canActivate(): Observable<boolean> {
+    const token = this.authService.getToken() || '';
+    return this.authService.isTokenExpired(token).pipe(
+      map(isExpired => {
+        if (isExpired) {
+          this.router.navigate(['/login']);
+          return false;
+        }
+        return true;
+      })
+    );
+  }
 }

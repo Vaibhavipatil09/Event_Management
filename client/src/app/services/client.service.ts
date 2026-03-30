@@ -1,5 +1,3 @@
-
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -12,7 +10,16 @@ import { Task } from '../models/task.model';
 export class ClientService {
   private baseUrl = `${environment.apiUrl}/api/client`;
  
-  // write the code here
+  constructor(private http: HttpClient) {}
+
+  getAllEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.baseUrl}/events`);
+  }
+
+  provideFeedback(eventId: number, feedback: string): Observable<Event> {
+    return this.http.put<Event>(
+      `${this.baseUrl}/event/${eventId}?feedback=${feedback}`,
+      {}
+    );
+  }
 }
-
-

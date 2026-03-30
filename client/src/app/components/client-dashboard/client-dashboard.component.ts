@@ -4,6 +4,7 @@ import { Event } from '../../models/event.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -12,8 +13,41 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
-export class ClientDashboardComponent  {
+export class ClientDashboardComponent implements OnInit {
 
-// write the code here
+  events: Event[] = [];
+  feedbackMap: { [key: number]: string } = {};
 
+  constructor(
+    private clientService: ClientService,
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    this.loadEvents();
+  }
+
+  loadEvents(): void {
+    this.clientService.getAllEvents().subscribe({
+      next: (data) => this.events = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  provideFeedback(eventId: number): void {
+    const feedback = this.feedbackMap[eventId];
+    this.clientService.provideFeedback(eventId, feedback).subscribe({
+      next: (updated) => {
+        const index = this.events.findIndex(e => e.id === updated.id);
+        if (index !== -1) this.events[index] = updated;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }

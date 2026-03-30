@@ -1,4 +1,6 @@
 export interface Task {
-  
-  // write the code here
+  id?: number;
+  description: string;
+  status: string;
+  assignedStaff?: any;
 }

@@ -1,1 +1,12 @@
-// write the code here
+<div>
+    <h2>Register</h2>
+    <input [(ngModel)]="user.username" placeholder="Username" />
+    <input [(ngModel)]="user.email" placeholder="Email" />
+    <input [(ngModel)]="user.password" type="password" placeholder="Password" />
+    <select [(ngModel)]="user.role">
+        <option value="PLANNER">Planner</option>
+        <option value="CLIENT">Client</option>
+        <option value="STAFF">Staff</option>
+    </select>
+    <button (click)="register()">Register</button>
+</div>

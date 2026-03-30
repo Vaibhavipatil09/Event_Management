@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { PlannerService } from '../../services/planner.service';
 import { Event } from '../../models/event.model';
@@ -9,6 +8,7 @@ import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { StaffService } from '../../services/staff.service';
 import { User } from '../../models/user.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-planner-dashboard',
@@ -18,6 +18,113 @@ import { User } from '../../models/user.model';
   imports: [CommonModule, FormsModule, HttpClientModule]
 })
 export class PlannerDashboardComponent implements OnInit {
- 
-// write the code here
+
+
+  events: Event[] = [];
+  tasks: Task[] = [];
+  staffs: any[] = [];
+  plannerId: number = Number(this.authService.getUserId());
+
+  showEvents: boolean = true;
+  showTasks: boolean = false;
+
+  newEvent: Event = {
+    title: '',
+    date: '',
+    location: '',
+    description: '',
+    status: ''
+  };
+
+  newTask: Task = {
+    description: '',
+    status: '',
+    assignedStaff: null
+  };
+
+  constructor(
+    private plannerService: PlannerService,
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    this.loadEvents();
+    this.loadTasks();
+  }
+
+  navigateTo(section: string): void {
+    if (section === 'events') {
+      this.showEvents = true;
+      this.showTasks = false;
+    } else if (section === 'tasks') {
+      this.showEvents = false;
+      this.showTasks = true;
+    }
+  }
+
+  loadEvents(): void {
+    this.plannerService.getEventsByPlanner(this.plannerId).subscribe({
+      next: (data) => this.events = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  loadTasks(): void {
+    this.plannerService.getAllTasks().subscribe({
+      next: (data) => this.tasks = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  createEvent(): void {
+    this.plannerService.createEvent(this.newEvent, this.plannerId).subscribe({
+      next: (event) => {
+        this.events.push(event);
+        this.newEvent = {
+          title: '',
+          date: '',
+          location: '',
+          description: '',
+          status: ''
+        };
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  editEvent(event: Event): void {
+    this.plannerService.updateEvent(event.id!, event).subscribe({
+      next: (updated) => {
+        const index = this.events.findIndex(e => e.id === updated.id);
+        if (index !== -1) this.events[index] = updated;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  createTask(): void {
+    this.plannerService.createTask(this.newTask).subscribe({
+      next: (task) => {
+        if (this.newTask.assignedStaff) {
+          this.plannerService.assignTask(task.id!, this.newTask.assignedStaff).subscribe({
+            next: (assigned) => {
+              this.tasks.push(assigned);
+            },
+            error: (err) => console.error(err)
+          });
+        } else {
+          this.tasks.push(task);
+        }
+        this.newTask = { description: '', status: '', assignedStaff: null };
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
 }
