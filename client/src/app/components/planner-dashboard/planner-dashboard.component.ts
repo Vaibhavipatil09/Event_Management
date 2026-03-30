@@ -194,7 +194,7 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
   createEvent(): void {
-    this.plannerService.createEvent(this.newEvent, this.plannerId).subscribe({
+    this.plannerService.createEvent(this.newEvent).subscribe({
       next: (event) => {
         this.events.push(event);
         this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
