@@ -22,22 +22,22 @@ export class ClientDashboardComponent implements OnInit {
     private clientService: ClientService,
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.loadEvents();
+    this.getEvents();
   }
 
-  loadEvents(): void {
-    this.clientService.getAllEvents().subscribe({
+  getEvents(): void {
+    this.clientService.getEvents().subscribe({
       next: (data) => this.events = data,
       error: (err) => console.error(err)
     });
   }
 
-  provideFeedback(eventId: number): void {
-    const feedback = this.feedbackMap[eventId];
-    this.clientService.provideFeedback(eventId, feedback).subscribe({
+  provideFeedback(eventId: any, feedback?: string): void {
+    const fb = feedback || this.feedbackMap[eventId];
+    this.clientService.provideFeedback(eventId, fb).subscribe({
       next: (updated) => {
         const index = this.events.findIndex(e => e.id === updated.id);
         if (index !== -1) this.events[index] = updated;

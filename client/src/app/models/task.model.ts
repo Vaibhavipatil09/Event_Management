@@ -1,6 +1,7 @@
 export interface Task {
-  id?: number;
-  description: string;
-  status: string;
+  id?: any;
+  description?: string;
+  status?: string;
   assignedStaff?: any;
+  success?:any;
 }

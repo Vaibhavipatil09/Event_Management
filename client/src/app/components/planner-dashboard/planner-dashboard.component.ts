@@ -20,6 +20,114 @@ import { AuthService } from '../../services/auth.service';
 export class PlannerDashboardComponent implements OnInit {
 
 
+  // events: Event[] = [];
+  // tasks: Task[] = [];
+  // staffs: any[] = [];
+  // plannerId: number = Number(this.authService.getUserId());
+
+  // showEvents: boolean = true;
+  // showTasks: boolean = false;
+
+  // newEvent: Event = {
+  //   title: '',
+  //   date: '',
+  //   location: '',
+  //   description: '',
+  //   status: ''
+  // };
+
+  // newTask: Task = {
+  //   description: '',
+  //   status: '',
+  //   assignedStaff: null
+  // };
+
+  // constructor(
+  //   private plannerService: PlannerService,
+  //   private authService: AuthService,
+  //   private router: Router
+  // ) { }
+
+  // ngOnInit(): void {
+  //   this.loadEvents();
+  //   this.loadTasks();
+  // }
+
+  // navigateTo(section: string): void {
+  //   if (section === 'events') {
+  //     this.showEvents = true;
+  //     this.showTasks = false;
+  //   } else if (section === 'tasks') {
+  //     this.showEvents = false;
+  //     this.showTasks = true;
+  //   }
+  // }
+
+  // loadEvents(): void {
+  //   this.plannerService.getEvents(this.plannerId).subscribe({
+  //     next: (data) => this.events = data,
+  //     error: (err) => console.error(err)
+  //   });
+  // }
+
+  // loadTasks(): void {
+  //   this.plannerService.getTasks().subscribe({
+  //     next: (data) => this.tasks = data,
+  //     error: (err) => console.error(err)
+  //   });
+  // }
+
+  // createEvent(): void {
+  //   this.plannerService.createEvent(this.newEvent, this.plannerId).subscribe({
+  //     next: (event) => {
+  //       this.events.push(event);
+  //       this.newEvent = {
+  //         title: '',
+  //         date: '',
+  //         location: '',
+  //         description: '',
+  //         status: ''
+  //       };
+  //     },
+  //     error: (err) => console.error(err)
+  //   });
+  // }
+
+  // editEvent(event: Event): void {
+  //   this.plannerService.updateEvent(event.id!, event).subscribe({
+  //     next: (updated) => {
+  //       const index = this.events.findIndex(e => e.id === updated.id);
+  //       if (index !== -1) this.events[index] = updated;
+  //     },
+  //     error: (err) => console.error(err)
+  //   });
+  // }
+
+  // createTask(): void {
+  //   this.plannerService.createTask(this.newTask).subscribe({
+  //     next: (task) => {
+  //       if (this.newTask.assignedStaff) {
+  //         this.plannerService.assignTask(task.id!, this.newTask.assignedStaff).subscribe({
+  //           next: (assigned) => {
+  //             this.tasks.push(assigned);
+  //           },
+  //           error: (err) => console.error(err)
+  //         });
+  //       } else {
+  //         this.tasks.push(task);
+  //       }
+  //       this.newTask = { description: '', status: '', assignedStaff: null };
+  //     },
+  //     error: (err) => console.error(err)
+  //   });
+  // }
+
+  // logout(): void {
+  //   this.authService.logout();
+  //   this.router.navigate(['/login']);
+  // }
+
+
   events: Event[] = [];
   tasks: Task[] = [];
   staffs: any[] = [];
@@ -27,6 +135,14 @@ export class PlannerDashboardComponent implements OnInit {
 
   showEvents: boolean = true;
   showTasks: boolean = false;
+
+  selectedEvent: Event = {
+    title: '',
+    date: '',
+    location: '',
+    description: '',
+    status: ''
+  };
 
   newEvent: Event = {
     title: '',
@@ -46,11 +162,11 @@ export class PlannerDashboardComponent implements OnInit {
     private plannerService: PlannerService,
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    this.loadEvents();
-    this.loadTasks();
+    this.getEvents();
+    this.getTasks();
   }
 
   navigateTo(section: string): void {
@@ -63,15 +179,15 @@ export class PlannerDashboardComponent implements OnInit {
     }
   }
 
-  loadEvents(): void {
-    this.plannerService.getEventsByPlanner(this.plannerId).subscribe({
+  getEvents(): void {
+    this.plannerService.getEvents(this.plannerId).subscribe({
       next: (data) => this.events = data,
       error: (err) => console.error(err)
     });
   }
 
-  loadTasks(): void {
-    this.plannerService.getAllTasks().subscribe({
+  getTasks(): void {
+    this.plannerService.getTasks().subscribe({
       next: (data) => this.tasks = data,
       error: (err) => console.error(err)
     });
@@ -81,23 +197,23 @@ export class PlannerDashboardComponent implements OnInit {
     this.plannerService.createEvent(this.newEvent, this.plannerId).subscribe({
       next: (event) => {
         this.events.push(event);
-        this.newEvent = {
-          title: '',
-          date: '',
-          location: '',
-          description: '',
-          status: ''
-        };
+        this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
+        this.getEvents();
       },
       error: (err) => console.error(err)
     });
   }
 
   editEvent(event: Event): void {
-    this.plannerService.updateEvent(event.id!, event).subscribe({
+    this.selectedEvent = { ...event };
+  }
+
+  updateEvent(): void {
+    this.plannerService.updateEvent(this.selectedEvent, this.selectedEvent.id!).subscribe({
       next: (updated) => {
         const index = this.events.findIndex(e => e.id === updated.id);
         if (index !== -1) this.events[index] = updated;
+        this.getEvents();
       },
       error: (err) => console.error(err)
     });
@@ -110,11 +226,13 @@ export class PlannerDashboardComponent implements OnInit {
           this.plannerService.assignTask(task.id!, this.newTask.assignedStaff).subscribe({
             next: (assigned) => {
               this.tasks.push(assigned);
+              this.getTasks();
             },
             error: (err) => console.error(err)
           });
         } else {
           this.tasks.push(task);
+          this.getTasks();
         }
         this.newTask = { description: '', status: '', assignedStaff: null };
       },
@@ -126,5 +244,4 @@ export class PlannerDashboardComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-
 }

@@ -9,15 +9,15 @@ import { User } from '../models/user.model';
   providedIn: 'root'
 })
 export class StaffService {
-  private baseUrl = `${environment.apiUrl}/api/staff`;
+ private baseUrl = `${environment.apiUrl}/api/staff`;
 
-    constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {}
 
-  getAssignedTasks(staffId: number): Observable<Task[]> {
+  getTasks(staffId: any): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.baseUrl}/tasks/${staffId}`);
   }
 
-  updateTaskStatus(taskId: number, status: string): Observable<Task> {
+  updateTaskStatus(taskId: any, status: string): Observable<Task> {
     return this.http.put<Task>(
       `${this.baseUrl}/tasks/${taskId}?status=${status}`,
       {}

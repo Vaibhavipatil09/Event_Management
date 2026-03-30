@@ -8,15 +8,15 @@ import { Task } from '../models/task.model';
   providedIn: 'root'
 })
 export class ClientService {
-  private baseUrl = `${environment.apiUrl}/api/client`;
- 
+ private baseUrl = `${environment.apiUrl}/api/client`;
+
   constructor(private http: HttpClient) {}
 
-  getAllEvents(): Observable<Event[]> {
+  getEvents(): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.baseUrl}/events`);
   }
 
-  provideFeedback(eventId: number, feedback: string): Observable<Event> {
+  provideFeedback(eventId: any, feedback: string): Observable<Event> {
     return this.http.put<Event>(
       `${this.baseUrl}/event/${eventId}?feedback=${feedback}`,
       {}

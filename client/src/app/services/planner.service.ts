@@ -9,45 +9,43 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class PlannerService {
-  private baseUrl = `${environment.apiUrl}/api/planner`;
+ private baseUrl = `${environment.apiUrl}/api/planner`;
 
   constructor(private http: HttpClient) {}
 
-  createEvent(event: Event, plannerId: number): Observable<Event> {
+  createEvent(event: Event, plannerId?: number): Observable<Event> {
     return this.http.post<Event>(
       `${this.baseUrl}/event?plannerId=${plannerId}`,
       event
     );
   }
 
-  updateEvent(id: number, event: Event): Observable<Event> {
+  updateEvent(event: Event, id?: any): Observable<Event> {
     return this.http.put<Event>(
       `${this.baseUrl}/event/${id}`,
       event
     );
   }
 
-  getEventsByPlanner(plannerId: number): Observable<Event[]> {
+  getEvents(plannerId?: number): Observable<Event[]> {
     return this.http.get<Event[]>(
       `${this.baseUrl}/events?plannerId=${plannerId}`
     );
   }
 
   createTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(
-      `${this.baseUrl}/task`,
-      task
-    );
+    return this.http.post<Task>(`${this.baseUrl}/task`,task);
   }
 
-  getAllTasks(): Observable<Task[]> {
+  getTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.baseUrl}/tasks`);
   }
 
-  assignTask(taskId: number, staffId: number): Observable<Task> {
+  assignTask(taskId: any, staffId: any): Observable<Task> {
     return this.http.post<Task>(
       `${this.baseUrl}/tasks/${taskId}/assign/${staffId}`,
       {}
     );
   }
+
 }
