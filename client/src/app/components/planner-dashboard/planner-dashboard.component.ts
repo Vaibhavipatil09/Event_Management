@@ -131,7 +131,6 @@ export class PlannerDashboardComponent implements OnInit {
   events: Event[] = [];
   tasks: Task[] = [];
   staffs: any[] = [];
-  plannerId: number = Number(this.authService.getUserId());
 
   showEvents: boolean = true;
   showTasks: boolean = false;
@@ -157,6 +156,10 @@ export class PlannerDashboardComponent implements OnInit {
     status: '',
     assignedStaff: null
   };
+
+  get plannerId(): number {
+    return Number(this.authService.getUserId());
+  }
 
   constructor(
     private plannerService: PlannerService,
@@ -194,7 +197,7 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
   createEvent(): void {
-    this.plannerService.createEvent(this.newEvent).subscribe({
+    this.plannerService.createEvent(this.newEvent, this.plannerId).subscribe({
       next: (event) => {
         this.events.push(event);
         this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
