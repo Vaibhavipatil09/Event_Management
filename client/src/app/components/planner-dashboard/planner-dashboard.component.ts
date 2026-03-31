@@ -170,6 +170,7 @@ export class PlannerDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.getEvents();
     this.getTasks();
+    this.getStaffs();
   }
 
   navigateTo(section: string): void {
@@ -180,6 +181,13 @@ export class PlannerDashboardComponent implements OnInit {
       this.showEvents = false;
       this.showTasks = true;
     }
+  }
+
+  getStaffs(): void {
+    this.plannerService.getStaffs().subscribe({
+      next: (data) => this.staffs = data,
+      error: (err) => console.error(err)
+    });
   }
 
   getEvents(): void {
@@ -223,10 +231,15 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
   createTask(): void {
-    this.plannerService.createTask(this.newTask).subscribe({
+    const staffId = this.newTask.assignedStaff;
+    const taskToSend: Task = {
+      description: this.newTask.description,
+      status: this.newTask.status
+    };
+    this.plannerService.createTask(taskToSend).subscribe({
       next: (task) => {
-        if (this.newTask.assignedStaff) {
-          this.plannerService.assignTask(task.id!, this.newTask.assignedStaff).subscribe({
+        if (staffId) {
+          this.plannerService.assignTask(task.id!, staffId).subscribe({
             next: (assigned) => {
               this.tasks.push(assigned);
               this.getTasks();

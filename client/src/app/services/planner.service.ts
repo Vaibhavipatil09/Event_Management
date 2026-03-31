@@ -13,6 +13,10 @@ export class PlannerService {
 
   constructor(private http: HttpClient) {}
 
+  getStaffs(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/staff`);
+  }
+
   createEvent(event: Event, plannerId?: number): Observable<Event> {
     return this.http.post<Event>(
       `${this.baseUrl}/event?plannerId=${plannerId}`,
