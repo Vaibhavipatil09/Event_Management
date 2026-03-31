@@ -13,7 +13,8 @@ export class PlannerService {
 
   constructor(private http: HttpClient) {}
 
-  createEvent(event: Event, plannerId?: number): Observable<Event> {
+  createEvent(event: Event): Observable<Event> {
+    const plannerId = localStorage.getItem('plannerId');
     return this.http.post<Event>(
       `${this.baseUrl}/event?plannerId=${plannerId}`,
       event

@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements Serializable {
 
    // write the code here

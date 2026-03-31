@@ -96,7 +96,7 @@ public class UserService implements UserDetailsService {
                 user.getUsername(),
                 user.getPassword(),
                 Collections.singleton(
-                        new SimpleGrantedAuthority(user.getRole())));
+                        new SimpleGrantedAuthority("ROLE_" + user.getRole())));
     }
 
     /*
