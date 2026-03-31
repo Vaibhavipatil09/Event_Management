@@ -9,9 +9,11 @@
     <button (click)="navigateTo('tasks')">Manage Tasks</button>
   </nav>
 
+  <!-- EVENTS SECTION -->
   <div *ngIf="showEvents">
     <h2>Events</h2>
 
+    <!-- Create Event Form -->
     <form (ngSubmit)="createEvent()">
       <h3>Create New Event</h3>
       <label>
@@ -20,7 +22,7 @@
       </label>
       <label>
         Date:
-        <input [(ngModel)]="newEvent.date" name="date" required type="datetime-local">
+        <input type="datetime-local" [(ngModel)]="newEvent.date" name="date" required>
       </label>
       <label>
         Location:
@@ -39,77 +41,114 @@
       </label>
       <button type="submit">Create Event</button>
     </form>
-    
- <h2>Event List</h2>   
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Date</th>
-      <th>Location</th>
-      <th>Description</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let event of events">
-      <td>{{ event.title }}</td>
-      <td>{{ event.date }}</td>
-      <td>{{ event.location }}</td>
-      <td>{{ event.description }}</td>
-      <td>{{ event.status }}</td>
-      <td>
-        <button (click)="editEvent(event)">Edit</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
 
-</div>
+    <!-- Event List -->
+    <h2>Event List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of events">
+          <td>{{ event.title }}</td>
+          <td>{{ event.date }}</td>
+          <td>{{ event.location }}</td>
+          <td>{{ event.description }}</td>
+          <td>{{ event.status }}</td>
+          <td>
+            <button (click)="editEvent(event)">Edit</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
+    <!-- Edit Event Form — shown only when an event is selected -->
+    <div *ngIf="selectedEvent.id">
+      <h3>Edit Event</h3>
+      <form (ngSubmit)="updateEvent()">
+        <label>
+          Title:
+          <input [(ngModel)]="selectedEvent.title" name="editTitle" required>
+        </label>
+        <label>
+          Date:
+          <input type="datetime-local" [(ngModel)]="selectedEvent.date" name="editDate" required>
+        </label>
+        <label>
+          Location:
+          <input [(ngModel)]="selectedEvent.location" name="editLocation" required>
+        </label>
+        <label>
+          Description:
+          <textarea [(ngModel)]="selectedEvent.description" name="editDescription" required></textarea>
+        </label>
+        <label>
+          Status:
+          <select [(ngModel)]="selectedEvent.status" name="editStatus" required>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </label>
+        <button type="submit">Update Event</button>
+        <button type="button" (click)="cancelEdit()">Cancel</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- TASKS SECTION -->
   <div *ngIf="showTasks">
     <h2>Tasks</h2>
 
-<form (ngSubmit)="createTask()">
-<h3>Create New Task</h3>
-<label>
-Description:
-<input [(ngModel)]="newTask.description" name="description" required>
-</label>
-<label>
-Status:
-<select [(ngModel)]="newTask.status" name="status" required>
-<option value="Pending">Pending</option>
-<option value="Completed">Completed</option>
-</select>
-</label>
-<label>
-Assigned Staff:
-<select [(ngModel)]="newTask.assignedStaff" name="assignedStaff" required>
-<option *ngFor="let staff of staffs" [value]="staff.id">{{ staff.username }}</option>
-</select>
-</label>
-<p>length : {{staffs.length}}</p>
-<button type="submit">Create Task</button>
-</form>
+    <!-- Create Task Form -->
+    <form (ngSubmit)="createTask()">
+      <h3>Create New Task</h3>
+      <label>
+        Description:
+        <input [(ngModel)]="newTask.description" name="description" required>
+      </label>
+      <label>
+        Status:
+        <select [(ngModel)]="newTask.status" name="status" required>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </label>
+      <label>
+        Assigned Staff:
+        <select [(ngModel)]="newTask.assignedStaff" name="assignedStaff">
+          <option [ngValue]="null">-- None --</option>
+          <option *ngFor="let staff of staffs" [value]="staff.id">{{ staff.username }}</option>
+        </select>
+      </label>
+      <button type="submit">Create Task</button>
+    </form>
 
-<h2>Task List</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Description</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let task of tasks">
-      <td>{{ task.description }}</td>
-      <td>{{ task.status }}</td>
-    </tr>
-  </tbody>
-</table>
+    <!-- Task List -->
+    <h2>Task List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Assigned Staff</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks">
+          <td>{{ task.description }}</td>
+          <td>{{ task.status }}</td>
+          <td>{{ task.assignedStaff?.username || 'Unassigned' }}</td>
+        </tr>
+      </tbody>
+    </table>
 
-
-</div>
+  </div>
 </div>

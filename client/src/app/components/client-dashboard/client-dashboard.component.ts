@@ -41,6 +41,7 @@ export class ClientDashboardComponent implements OnInit {
       next: (updated) => {
         const index = this.events.findIndex(e => e.id === updated.id);
         if (index !== -1) this.events[index] = updated;
+        this.feedbackMap={}
       },
       error: (err) => console.error(err)
     });
