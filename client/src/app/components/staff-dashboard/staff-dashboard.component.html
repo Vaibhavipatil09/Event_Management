@@ -1,10 +1,74 @@
-<div>
-  <h2>Staff Dashboard</h2>
-  <button (click)="logout()">Logout</button>
 
-  <h3>My Tasks</h3>
-  <div *ngFor="let task of tasks">
-    <p>{{ task.description }} - {{ task.status }}</p>
-    <button (click)="updateTaskStatus(task.id, 'COMPLETED')">Mark Complete</button>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+
+<div class="container py-4">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-success mb-0">Staff Dashboard</h2>
+      <small class="text-muted">Welcome, manage your assigned tasks</small>
+    </div>
+    <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
   </div>
+
+  <!-- TASKS SECTION -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h5 class="card-title mb-3 text-primary">My Tasks</h5>
+
+      <!-- TASK LIST -->
+      <div *ngIf="tasks.length > 0; else noTasks">
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-success">
+            <tr>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let task of tasks">
+              <td>{{ task.description }}</td>
+
+              <td>
+                <span
+                  class="badge"
+                  [ngClass]="task.status === 'COMPLETED'
+                    ? 'bg-success'
+                    : 'bg-warning text-dark'"
+                >
+                  {{ task.status }}
+                </span>
+              </td>
+
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-success"
+                  (click)="updateTaskStatus(task.id, 'COMPLETED')"
+                  [disabled]="task.status === 'COMPLETED'"
+                >
+                  ✓ Mark Complete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- NO TASKS MESSAGE -->
+      <ng-template #noTasks>
+        <div class="alert alert-info text-center">
+          You have no tasks assigned at the moment.
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+
 </div>

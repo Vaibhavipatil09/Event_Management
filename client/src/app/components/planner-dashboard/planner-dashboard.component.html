@@ -1,154 +1,245 @@
-<div class="container">
-  <div class="header">
-    <h1>Planner Dashboard</h1>
-    <button (click)="logout()">Logout</button>
+<!-- Bootstrap CSS -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+
+<div class="container py-4">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">Planner Dashboard</h2>
+    <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
   </div>
 
-  <nav>
-    <button (click)="navigateTo('events')">Manage Events</button>
-    <button (click)="navigateTo('tasks')">Manage Tasks</button>
-  </nav>
+  <!-- NAV BUTTONS -->
+  <div class="mb-4">
+    <button
+      class="btn btn-primary me-2"
+      (click)="navigateTo('events')"
+    >
+      Manage Events
+    </button>
+    <button
+      class="btn btn-secondary"
+      (click)="navigateTo('tasks')"
+    >
+      Manage Tasks
+    </button>
+  </div>
 
-  <!-- EVENTS SECTION -->
+  <!-- ================= EVENTS SECTION ================= -->
   <div *ngIf="showEvents">
-    <h2>Events</h2>
 
-    <!-- Create Event Form -->
-    <form (ngSubmit)="createEvent()">
-      <h3>Create New Event</h3>
-      <label>
-        Title:
-        <input [(ngModel)]="newEvent.title" name="title" required>
-      </label>
-      <label>
-        Date:
-        <input type="datetime-local" [(ngModel)]="newEvent.date" name="date" required>
-      </label>
-      <label>
-        Location:
-        <input [(ngModel)]="newEvent.location" name="location" required>
-      </label>
-      <label>
-        Description:
-        <textarea [(ngModel)]="newEvent.description" name="description" required></textarea>
-      </label>
-      <label>
-        Status:
-        <select [(ngModel)]="newEvent.status" name="status" required>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-        </select>
-      </label>
-      <button type="submit">Create Event</button>
-    </form>
+    <!-- CREATE EVENT -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Create New Event</h5>
 
-    <!-- Event List -->
-    <h2>Event List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Date</th>
-          <th>Location</th>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let event of events">
-          <td>{{ event.title }}</td>
-          <td>{{ event.date }}</td>
-          <td>{{ event.location }}</td>
-          <td>{{ event.description }}</td>
-          <td>{{ event.status }}</td>
-          <td>
-            <button (click)="editEvent(event)">Edit</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <form (ngSubmit)="createEvent()" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Title</label>
+            <input class="form-control" [(ngModel)]="newEvent.title" name="title" required />
+          </div>
 
-    <!-- Edit Event Form — shown only when an event is selected -->
-    <div *ngIf="selectedEvent.id">
-      <h3>Edit Event</h3>
-      <form (ngSubmit)="updateEvent()">
-        <label>
-          Title:
-          <input [(ngModel)]="selectedEvent.title" name="editTitle" required>
-        </label>
-        <label>
-          Date:
-          <input type="datetime-local" [(ngModel)]="selectedEvent.date" name="editDate" required>
-        </label>
-        <label>
-          Location:
-          <input [(ngModel)]="selectedEvent.location" name="editLocation" required>
-        </label>
-        <label>
-          Description:
-          <textarea [(ngModel)]="selectedEvent.description" name="editDescription" required></textarea>
-        </label>
-        <label>
-          Status:
-          <select [(ngModel)]="selectedEvent.status" name="editStatus" required>
-            <option value="Pending">Pending</option>
-            <option value="Completed">Completed</option>
-          </select>
-        </label>
-        <button type="submit">Update Event</button>
-        <button type="button" (click)="cancelEdit()">Cancel</button>
-      </form>
+          <div class="col-md-6">
+            <label class="form-label">Date</label>
+            <input type="datetime-local" class="form-control" [(ngModel)]="newEvent.date" name="date" required />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input class="form-control" [(ngModel)]="newEvent.location" name="location" required />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select class="form-select" [(ngModel)]="newEvent.status" name="status" required>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="3"
+              [(ngModel)]="newEvent.description"
+              name="description"
+              required></textarea>
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success" type="submit">Create Event</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- EVENT LIST -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Event List</h5>
+
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of events">
+              <td>{{ event.title }}</td>
+              <td>{{ event.date }}</td>
+              <td>{{ event.location }}</td>
+              <td>{{ event.description }}</td>
+              <td>
+                <span class="badge"
+                  [ngClass]="event.status === 'Completed' ? 'bg-success' : 'bg-warning text-dark'">
+                  {{ event.status }}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary"
+                  (click)="editEvent(event)">Edit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EDIT EVENT -->
+    <div *ngIf="selectedEvent.id" class="card shadow-sm mt-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Edit Event</h5>
+
+        <form (ngSubmit)="updateEvent()" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Title</label>
+            <input class="form-control" [(ngModel)]="selectedEvent.title" name="editTitle" required />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Date</label>
+            <input type="datetime-local" class="form-control"
+              [(ngModel)]="selectedEvent.date" name="editDate" required />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input class="form-control" [(ngModel)]="selectedEvent.location" name="editLocation" required />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select class="form-select" [(ngModel)]="selectedEvent.status" name="editStatus" required>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="3"
+              [(ngModel)]="selectedEvent.description"
+              name="editDescription"
+              required></textarea>
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success me-2" type="submit">Update</button>
+            <button class="btn btn-secondary" type="button"
+              (click)="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
 
   </div>
 
-  <!-- TASKS SECTION -->
+  <!-- ================= TASKS SECTION ================= -->
   <div *ngIf="showTasks">
-    <h2>Tasks</h2>
 
-    <!-- Create Task Form -->
-    <form (ngSubmit)="createTask()">
-      <h3>Create New Task</h3>
-      <label>
-        Description:
-        <input [(ngModel)]="newTask.description" name="description" required>
-      </label>
-      <label>
-        Status:
-        <select [(ngModel)]="newTask.status" name="status" required>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-        </select>
-      </label>
-      <label>
-        Assigned Staff:
-        <select [(ngModel)]="newTask.assignedStaff" name="assignedStaff">
-          <option [ngValue]="null">-- None --</option>
-          <option *ngFor="let staff of staffs" [value]="staff.id">{{ staff.username }}</option>
-        </select>
-      </label>
-      <button type="submit">Create Task</button>
-    </form>
+    <!-- CREATE TASK -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Create New Task</h5>
 
-    <!-- Task List -->
-    <h2>Task List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Assigned Staff</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let task of tasks">
-          <td>{{ task.description }}</td>
-          <td>{{ task.status }}</td>
-          <td>{{ task.assignedStaff?.username || 'Unassigned' }}</td>
-        </tr>
-      </tbody>
-    </table>
+        <form (ngSubmit)="createTask()" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Description</label>
+            <input class="form-control"
+              [(ngModel)]="newTask.description"
+              name="description"
+              required />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Status</label>
+            <select class="form-select"
+              [(ngModel)]="newTask.status"
+              name="status"
+              required>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Assigned Staff</label>
+            <select class="form-select"
+              [(ngModel)]="newTask.assignedStaff"
+              name="assignedStaff">
+              <option [ngValue]="null">-- None --</option>
+              <option *ngFor="let staff of staffs" [value]="staff.id">
+                {{ staff.username }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success" type="submit">Create Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TASK LIST -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Task List</h5>
+
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-secondary">
+            <tr>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Assigned Staff</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of tasks">
+              <td>{{ task.description }}</td>
+              <td>
+                <span class="badge"
+                  [ngClass]="task.status === 'Completed'
+                    ? 'bg-success'
+                    : 'bg-warning text-dark'">
+                  {{ task.status }}
+                </span>
+              </td>
+              <td>{{ task.assignedStaff?.username || 'Unassigned' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
   </div>
+
 </div>
