@@ -4,7 +4,7 @@ import { FormsModule, FormGroup, FormBuilder, ReactiveFormsModule, Validators } 
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-
+import { RouterModule } from '@angular/router';
 import { User, Credentials, AuthResponse } from '../../models/user.model';
 
 @Component({
@@ -12,7 +12,7 @@ import { User, Credentials, AuthResponse } from '../../models/user.model';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, RouterModule]
 })
 export class LoginComponent {
   credentials = { username: '', password: '' };
