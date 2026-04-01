@@ -21,6 +21,10 @@ public class Event {
   @JoinColumn(name = "planner_id")
   private EventPlanner planner;
 
+  @ManyToOne
+  @JoinColumn(name = "client_id")
+  private Client client;
+
   public Long getId() {
     return id;
   }
@@ -83,6 +87,14 @@ public class Event {
 
   public void setDate(LocalDateTime date) {
     this.date = date;
+  }
+
+  public Client getClient() {
+    return client;
+  }
+
+  public void setClient(Client client) {
+    this.client = client;
   }
 
 }

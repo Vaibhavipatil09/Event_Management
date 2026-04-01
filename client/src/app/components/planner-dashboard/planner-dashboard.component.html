@@ -14,18 +14,8 @@
 
   <!-- NAV BUTTONS -->
   <div class="mb-4">
-    <button
-      class="btn btn-primary me-2"
-      (click)="navigateTo('events')"
-    >
-      Manage Events
-    </button>
-    <button
-      class="btn btn-secondary"
-      (click)="navigateTo('tasks')"
-    >
-      Manage Tasks
-    </button>
+    <button class="btn btn-primary me-2" (click)="navigateTo('events')">Manage Events</button>
+    <button class="btn btn-secondary" (click)="navigateTo('tasks')">Manage Tasks</button>
   </div>
 
   <!-- ================= EVENTS SECTION ================= -->
@@ -37,6 +27,7 @@
         <h5 class="card-title mb-3">Create New Event</h5>
 
         <form (ngSubmit)="createEvent()" class="row g-3">
+
           <div class="col-md-6">
             <label class="form-label">Title</label>
             <input class="form-control" [(ngModel)]="newEvent.title" name="title" required />
@@ -60,6 +51,21 @@
             </select>
           </div>
 
+          <!-- CLIENT DROPDOWN -->
+          <div class="col-md-6">
+            <label class="form-label">Assign Client</label>
+            <select class="form-select" [(ngModel)]="selectedClientId" name="clientId">
+              <option [ngValue]="null">-- Select Client --</option>
+              <option *ngFor="let client of clients" [value]="client.id">
+                {{ client.username }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <!-- spacer to keep grid aligned -->
+          </div>
+
           <div class="col-12">
             <label class="form-label">Description</label>
             <textarea class="form-control" rows="3"
@@ -71,6 +77,7 @@
           <div class="col-12">
             <button class="btn btn-success" type="submit">Create Event</button>
           </div>
+
         </form>
       </div>
     </div>
@@ -87,6 +94,7 @@
               <th>Date</th>
               <th>Location</th>
               <th>Description</th>
+              <th>Assigned Client</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -97,6 +105,7 @@
               <td>{{ event.date }}</td>
               <td>{{ event.location }}</td>
               <td>{{ event.description }}</td>
+              <td>{{ event.client?.username || '—' }}</td>
               <td>
                 <span class="badge"
                   [ngClass]="event.status === 'Completed' ? 'bg-success' : 'bg-warning text-dark'">
@@ -104,8 +113,7 @@
                 </span>
               </td>
               <td>
-                <button class="btn btn-sm btn-outline-primary"
-                  (click)="editEvent(event)">Edit</button>
+                <button class="btn btn-sm btn-outline-primary" (click)="editEvent(event)">Edit</button>
               </td>
             </tr>
           </tbody>
@@ -153,8 +161,7 @@
 
           <div class="col-12">
             <button class="btn btn-success me-2" type="submit">Update</button>
-            <button class="btn btn-secondary" type="button"
-              (click)="cancelEdit()">Cancel</button>
+            <button class="btn btn-secondary" type="button" (click)="cancelEdit()">Cancel</button>
           </div>
         </form>
       </div>
@@ -227,9 +234,7 @@
               <td>{{ task.description }}</td>
               <td>
                 <span class="badge"
-                  [ngClass]="task.status === 'Completed'
-                    ? 'bg-success'
-                    : 'bg-warning text-dark'">
+                  [ngClass]="task.status === 'Completed' ? 'bg-success' : 'bg-warning text-dark'">
                   {{ task.status }}
                 </span>
               </td>

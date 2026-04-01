@@ -29,10 +29,20 @@ export class ClientDashboardComponent implements OnInit {
   }
 
   getEvents(): void {
-    this.clientService.getEvents().subscribe({
-      next: (data) => this.events = data,
-      error: (err) => console.error(err)
-    });
+    const clientId = this.authService.getUserId();
+    if (clientId) {
+      // Fetch ONLY the events assigned to this client
+      this.clientService.getEventsByClient(clientId).subscribe({
+        next: (data) => this.events = data,
+        error: (err) => console.error(err)
+      });
+    } else {
+      // Fallback — should not happen in normal flow
+      this.clientService.getEvents().subscribe({
+        next: (data) => this.events = data,
+        error: (err) => console.error(err)
+      });
+    }
   }
 
   provideFeedback(eventId: any, feedback?: string): void {
@@ -41,7 +51,7 @@ export class ClientDashboardComponent implements OnInit {
       next: (updated) => {
         const index = this.events.findIndex(e => e.id === updated.id);
         if (index !== -1) this.events[index] = updated;
-        this.feedbackMap={}
+        this.feedbackMap = {};
       },
       error: (err) => console.error(err)
     });

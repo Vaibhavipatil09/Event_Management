@@ -6,4 +6,5 @@ export interface Event {
   description?: string;
   status?: string;
   feedback?: string;
+  client?: { id?: any; username?: string };
 }

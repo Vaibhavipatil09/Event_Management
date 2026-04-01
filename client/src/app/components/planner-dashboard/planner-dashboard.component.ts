@@ -20,6 +20,7 @@ export class PlannerDashboardComponent implements OnInit {
   events: Event[] = [];
   tasks: Task[] = [];
   staffs: any[] = [];
+  clients: any[] = [];
 
   showEvents: boolean = true;
   showTasks: boolean = false;
@@ -39,6 +40,8 @@ export class PlannerDashboardComponent implements OnInit {
     description: '',
     status: ''
   };
+
+  selectedClientId: number | null = null;
 
   newTask: Task = {
     description: '',
@@ -60,6 +63,7 @@ export class PlannerDashboardComponent implements OnInit {
     this.getEvents();
     this.getTasks();
     this.getStaffs();
+    this.getClients();
   }
 
   navigateTo(section: string): void {
@@ -79,6 +83,13 @@ export class PlannerDashboardComponent implements OnInit {
     });
   }
 
+  getClients(): void {
+    this.plannerService.getClients().subscribe({
+      next: (data) => this.clients = data,
+      error: (err) => console.error(err)
+    });
+  }
+
   getEvents(): void {
     this.plannerService.getEvents(this.plannerId).subscribe({
       next: (data) => this.events = data,
@@ -94,10 +105,12 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
   createEvent(): void {
-    this.plannerService.createEvent(this.newEvent, this.plannerId).subscribe({
+    const clientId = this.selectedClientId ?? undefined;
+    this.plannerService.createEvent(this.newEvent, this.plannerId, clientId).subscribe({
       next: (event) => {
         this.events.push(event);
         this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
+        this.selectedClientId = null;
         this.getEvents();
       },
       error: (err) => console.error(err)

@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class PlannerService {
- private baseUrl = `${environment.apiUrl}/api/planner`;
+  private baseUrl = `${environment.apiUrl}/api/planner`;
 
   constructor(private http: HttpClient) {}
 
@@ -17,28 +17,29 @@ export class PlannerService {
     return this.http.get<any[]>(`${this.baseUrl}/staff`);
   }
 
-  createEvent(event: Event, plannerId?: number): Observable<Event> {
-    return this.http.post<Event>(
-      `${this.baseUrl}/event?plannerId=${plannerId}`,
-      event
-    );
+  /** Fetch all registered clients for the dropdown */
+  getClients(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/clients`);
+  }
+
+  createEvent(event: Event, plannerId?: number, clientId?: number): Observable<Event> {
+    let url = `${this.baseUrl}/event?plannerId=${plannerId ?? ''}`;
+    if (clientId != null) {
+      url += `&clientId=${clientId}`;
+    }
+    return this.http.post<Event>(url, event);
   }
 
   updateEvent(event: Event, id?: any): Observable<Event> {
-    return this.http.put<Event>(
-      `${this.baseUrl}/event/${id}`,
-      event
-    );
+    return this.http.put<Event>(`${this.baseUrl}/event/${id}`, event);
   }
 
   getEvents(plannerId?: number): Observable<Event[]> {
-    return this.http.get<Event[]>(
-      `${this.baseUrl}/events?plannerId=${plannerId}`
-    );
+    return this.http.get<Event[]>(`${this.baseUrl}/events?plannerId=${plannerId}`);
   }
 
   createTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(`${this.baseUrl}/task`,task);
+    return this.http.post<Task>(`${this.baseUrl}/task`, task);
   }
 
   getTasks(): Observable<Task[]> {
@@ -51,5 +52,4 @@ export class PlannerService {
       {}
     );
   }
-
 }
