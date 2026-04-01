@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
 import { environment } from '../../environments/environment';
-import { Task } from '../models/task.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +12,10 @@ export class ClientService {
 
   constructor(private http: HttpClient) {}
 
-  /** Kept for backward compatibility / tests */
   getEvents(): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.baseUrl}/events`);
   }
 
-  /** Returns only events assigned to the logged-in client */
   getEventsByClient(clientId: any): Observable<Event[]> {
     return this.http.get<Event[]>(`${this.baseUrl}/events/${clientId}`);
   }
@@ -26,6 +23,16 @@ export class ClientService {
   provideFeedback(eventId: any, feedback: string): Observable<Event> {
     return this.http.put<Event>(
       `${this.baseUrl}/event/${eventId}?feedback=${feedback}`,
+      {}
+    );
+  }
+
+  /**
+   * NEW — Process payment for a completed event.
+   */
+  payForEvent(eventId: any, amount: number): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/event/${eventId}/pay?amount=${amount}`,
       {}
     );
   }

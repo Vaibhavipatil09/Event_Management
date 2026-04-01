@@ -9,11 +9,18 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String description;
     private String status;
+
     @ManyToOne
     @JoinColumn(name = "staff_id")
     private Staff assignedStaff;
+
+    /** NEW — links a task to the event it belongs to */
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 
     public Long getId() {
         return id;
@@ -47,4 +54,11 @@ public class Task {
         this.assignedStaff = assignedStaff;
     }
 
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 }

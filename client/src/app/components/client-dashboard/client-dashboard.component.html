@@ -14,6 +14,18 @@
     <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
   </div>
 
+  <!-- SUCCESS TOAST for payment -->
+  <div *ngIf="paymentSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Payment Successful!</strong> {{ paymentMessage }}
+    <button type="button" class="btn-close" (click)="paymentSuccess = false"></button>
+  </div>
+
+  <!-- ERROR TOAST for payment -->
+  <div *ngIf="paymentError" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Payment Failed:</strong> {{ paymentError }}
+    <button type="button" class="btn-close" (click)="paymentError = ''"></button>
+  </div>
+
   <!-- EVENTS SECTION -->
   <div class="card shadow-sm">
     <div class="card-body">
@@ -31,16 +43,16 @@
               <th>Status</th>
               <th>Existing Feedback</th>
               <th>Your Feedback</th>
-              <th>Action</th>
+              <th>Feedback Action</th>
+              <!-- NEW column -->
+              <th>Payment</th>
             </tr>
           </thead>
 
           <tbody>
             <tr *ngFor="let event of events">
               <td>{{ event.title }}</td>
-
               <td>{{ event.date }}</td>
-
               <td>{{ event.location }}</td>
 
               <td>
@@ -79,6 +91,41 @@
                   Submit
                 </button>
               </td>
+
+              <!-- NEW: Payment Gateway Column -->
+              <!-- Only active when event status is Completed -->
+              <td>
+                <ng-container *ngIf="event.status === 'Completed'; else paymentDisabled">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="input-group input-group-sm" style="width: 140px;">
+                      <span class="input-group-text">₹</span>
+                      <input
+                        type="number"
+                        class="form-control"
+                        [(ngModel)]="paymentAmountMap[event.id!]"
+                        [name]="'amount_' + event.id"
+                        placeholder="Amount"
+                        min="1"
+                      />
+                    </div>
+                    <button
+                      class="btn btn-sm btn-success"
+                      (click)="payForEvent(event.id!)"
+                      [disabled]="processingPayment[event.id!]"
+                    >
+                      <span *ngIf="processingPayment[event.id!]" class="spinner-border spinner-border-sm me-1"></span>
+                      💳 Pay
+                    </button>
+                  </div>
+                </ng-container>
+
+                <ng-template #paymentDisabled>
+                  <span class="text-muted fst-italic small">
+                    Available after completion
+                  </span>
+                </ng-template>
+              </td>
+
             </tr>
           </tbody>
         </table>

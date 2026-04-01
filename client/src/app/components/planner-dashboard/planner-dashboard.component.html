@@ -63,7 +63,7 @@
           </div>
 
           <div class="col-md-6">
-            <!-- spacer to keep grid aligned -->
+            <!-- spacer -->
           </div>
 
           <div class="col-12">
@@ -178,6 +178,7 @@
         <h5 class="card-title mb-3">Create New Task</h5>
 
         <form (ngSubmit)="createTask()" class="row g-3">
+
           <div class="col-md-6">
             <label class="form-label">Description</label>
             <input class="form-control"
@@ -197,16 +198,34 @@
             </select>
           </div>
 
+          <!-- NEW: Link task to an event -->
+          <div class="col-md-3">
+            <label class="form-label">Belongs to Event</label>
+            <select class="form-select"
+              [(ngModel)]="newTaskEventId"
+              name="taskEventId">
+              <option [ngValue]="null">-- Select Event --</option>
+              <option *ngFor="let event of events" [value]="event.id">
+                {{ event.title }}
+              </option>
+            </select>
+          </div>
+
+          <!-- ASSIGN STAFF — disabled when status is Completed -->
           <div class="col-md-3">
             <label class="form-label">Assigned Staff</label>
             <select class="form-select"
               [(ngModel)]="newTask.assignedStaff"
-              name="assignedStaff">
+              name="assignedStaff"
+              [disabled]="newTask.status === 'Completed'">
               <option [ngValue]="null">-- None --</option>
               <option *ngFor="let staff of staffs" [value]="staff.id">
                 {{ staff.username }}
               </option>
             </select>
+            <small *ngIf="newTask.status === 'Completed'" class="text-danger mt-1 d-block">
+              Staff assignment is disabled for completed tasks.
+            </small>
           </div>
 
           <div class="col-12">
@@ -225,13 +244,26 @@
           <thead class="table-secondary">
             <tr>
               <th>Description</th>
+              <th>Event</th>
               <th>Status</th>
               <th>Assigned Staff</th>
+              <th>Assign / Re-assign Staff</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let task of tasks">
               <td>{{ task.description }}</td>
+
+              <!-- NEW: Event column -->
+              <td>
+                <span *ngIf="task.event?.title; else noEvent" class="badge bg-info text-dark">
+                  {{ task.event!.title }}
+                </span>
+                <ng-template #noEvent>
+                  <span class="text-muted fst-italic">—</span>
+                </ng-template>
+              </td>
+
               <td>
                 <span class="badge"
                   [ngClass]="task.status === 'Completed' ? 'bg-success' : 'bg-warning text-dark'">
@@ -239,6 +271,29 @@
                 </span>
               </td>
               <td>{{ task.assignedStaff?.username || 'Unassigned' }}</td>
+
+              <!-- NEW: Inline re-assign dropdown — disabled when task is Completed -->
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <select class="form-select form-select-sm"
+                    [(ngModel)]="reassignMap[task.id]"
+                    [name]="'reassign_' + task.id"
+                    [disabled]="task.status === 'Completed'">
+                    <option [ngValue]="null">-- None --</option>
+                    <option *ngFor="let staff of staffs" [value]="staff.id">
+                      {{ staff.username }}
+                    </option>
+                  </select>
+                  <button class="btn btn-sm btn-outline-primary"
+                    (click)="reassignStaff(task.id)"
+                    [disabled]="task.status === 'Completed' || !reassignMap[task.id]">
+                    Assign
+                  </button>
+                </div>
+                <small *ngIf="task.status === 'Completed'" class="text-danger">
+                  Completed — no reassignment allowed.
+                </small>
+              </td>
             </tr>
           </tbody>
         </table>

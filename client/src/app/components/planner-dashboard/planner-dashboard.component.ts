@@ -49,6 +49,15 @@ export class PlannerDashboardComponent implements OnInit {
     assignedStaff: null
   };
 
+  /** NEW — event selected while creating a task */
+  newTaskEventId: number | null = null;
+
+  /**
+   * NEW — map of taskId → staffId for inline reassignment in the task list.
+   * Keyed by task.id so each row has its own dropdown value.
+   */
+  reassignMap: { [taskId: number]: number | null } = {};
+
   get plannerId(): number {
     return Number(this.authService.getUserId());
   }
@@ -99,7 +108,16 @@ export class PlannerDashboardComponent implements OnInit {
 
   getTasks(): void {
     this.plannerService.getTasks().subscribe({
-      next: (data) => this.tasks = data,
+      next: (data) => {
+        this.tasks = data;
+        // Initialise the reassign dropdown map for each task
+        this.reassignMap = {};
+        data.forEach(t => {
+          if (t.id != null) {
+            this.reassignMap[t.id] = null;
+          }
+        });
+      },
       error: (err) => console.error(err)
     });
   }
@@ -138,28 +156,58 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
   createTask(): void {
-    const staffId = this.newTask.assignedStaff;
+    // If status is Completed, ignore any selected staff
+    const staffId = this.newTask.status === 'Completed' ? null : this.newTask.assignedStaff;
+
     const taskToSend: Task = {
       description: this.newTask.description,
       status: this.newTask.status
     };
-    this.plannerService.createTask(taskToSend).subscribe({
+
+    const eventId = this.newTaskEventId ?? undefined;
+
+    this.plannerService.createTask(taskToSend, eventId).subscribe({
       next: (task) => {
         if (staffId) {
           this.plannerService.assignTask(task.id!, staffId).subscribe({
-            next: (assigned) => {
-              this.tasks.push(assigned);
-              this.getTasks();
-            },
+            next: () => this.getTasks(),
             error: (err) => console.error(err)
           });
         } else {
-          this.tasks.push(task);
           this.getTasks();
         }
         this.newTask = { description: '', status: '', assignedStaff: null };
+        this.newTaskEventId = null;
       },
       error: (err) => console.error(err)
+    });
+  }
+
+  /**
+   * NEW — Re-assign a staff member to an existing task from the task list.
+   * The button is disabled in the template when task.status === 'Completed',
+   * but we also guard here for safety.
+   */
+  reassignStaff(taskId: any): void {
+    const staffId = this.reassignMap[taskId];
+    if (!staffId) return;
+
+    const task = this.tasks.find(t => t.id === taskId);
+    if (!task) return;
+    if (task.status === 'Completed') {
+      alert('Cannot assign staff to a completed task.');
+      return;
+    }
+
+    this.plannerService.assignTask(taskId, staffId).subscribe({
+      next: () => {
+        this.reassignMap[taskId] = null;
+        this.getTasks();
+      },
+      error: (err) => {
+        console.error(err);
+        alert(err?.error?.message || 'Failed to assign staff.');
+      }
     });
   }
 

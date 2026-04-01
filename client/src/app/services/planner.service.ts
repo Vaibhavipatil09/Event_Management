@@ -17,7 +17,6 @@ export class PlannerService {
     return this.http.get<any[]>(`${this.baseUrl}/staff`);
   }
 
-  /** Fetch all registered clients for the dropdown */
   getClients(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/clients`);
   }
@@ -38,8 +37,15 @@ export class PlannerService {
     return this.http.get<Event[]>(`${this.baseUrl}/events?plannerId=${plannerId}`);
   }
 
-  createTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(`${this.baseUrl}/task`, task);
+  /**
+   * Create a task. If eventId is provided, the task is linked to that event.
+   */
+  createTask(task: Task, eventId?: number): Observable<Task> {
+    let url = `${this.baseUrl}/task`;
+    if (eventId != null) {
+      url += `?eventId=${eventId}`;
+    }
+    return this.http.post<Task>(url, task);
   }
 
   getTasks(): Observable<Task[]> {

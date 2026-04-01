@@ -3,5 +3,7 @@ export interface Task {
   description?: string;
   status?: string;
   assignedStaff?: any;
-  success?:any;
+  success?: any;
+  /** NEW — the event this task belongs to */
+  event?: { id?: any; title?: string };
 }

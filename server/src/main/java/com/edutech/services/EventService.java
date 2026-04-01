@@ -47,6 +47,12 @@ public class EventService {
         return eventRepository.findAll();
     }
 
+    /** NEW — fetch a single event by ID (used by payment endpoint) */
+    public Event getEventById(Long eventId) {
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+    }
+
     public Event updateEvent(Long eventId, Event updatedEvent) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
@@ -64,7 +70,6 @@ public class EventService {
         return eventRepository.findByPlanner(planner);
     }
 
-    /** New — returns only events assigned to the given client */
     public List<Event> getEventsByClient(Long clientId) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client not found"));

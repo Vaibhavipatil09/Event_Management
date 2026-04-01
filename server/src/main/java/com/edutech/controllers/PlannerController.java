@@ -36,16 +36,11 @@ public class PlannerController {
         return ResponseEntity.ok(staffRepository.findAll());
     }
 
-    /** New endpoint — returns all registered clients for the dropdown */
     @GetMapping("/clients")
     public ResponseEntity<List<Client>> getAllClients() {
         return ResponseEntity.ok(clientRepository.findAll());
     }
 
-    /**
-     * Create event. If clientId is provided the event is assigned to that client,
-     * otherwise it is created without a client (existing test behaviour preserved).
-     */
     @PostMapping("/event")
     public ResponseEntity<Event> createEvent(
             @RequestParam Long plannerId,
@@ -70,8 +65,17 @@ public class PlannerController {
         return ResponseEntity.ok(eventService.getEventsByPlanner(plannerId));
     }
 
+    /**
+     * Create a task, optionally linked to an event.
+     * NEW: accepts optional ?eventId= query parameter to associate the task with an event.
+     */
     @PostMapping("/task")
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(
+            @RequestBody Task task,
+            @RequestParam(required = false) Long eventId) {
+        if (eventId != null) {
+            return ResponseEntity.status(201).body(taskService.createTask(task, eventId));
+        }
         return ResponseEntity.status(201).body(taskService.createTask(task));
     }
 
@@ -80,6 +84,10 @@ public class PlannerController {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
+    /**
+     * Assign staff to a task.
+     * The service layer blocks this if the task is already Completed.
+     */
     @PostMapping("/tasks/{taskId}/assign/{staffId}")
     public ResponseEntity<Task> assignTask(@PathVariable Long taskId,
             @PathVariable Long staffId) {
