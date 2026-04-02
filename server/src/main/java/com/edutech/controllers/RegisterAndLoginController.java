@@ -32,9 +32,13 @@ public class RegisterAndLoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/api/user/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User registered = userService.registerUser(user);
-        return ResponseEntity.status(201).body(registered);
+    public ResponseEntity<?> registerUser(@RequestBody User user) { // Change User to <?>
+        try {
+            User registered = userService.registerUser(user);
+            return ResponseEntity.status(201).body(registered);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(409).body(e.getMessage()); // 409 = Conflict
+        }
     }
 
     @PostMapping("/api/user/login")

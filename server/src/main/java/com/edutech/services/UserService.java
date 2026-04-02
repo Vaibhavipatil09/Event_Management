@@ -47,7 +47,9 @@ public class UserService implements UserDetailsService {
      */
 
     public User registerUser(User user) {
-
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException("Username already taken. Please choose a different username.");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         if ("PLANNER".equals(user.getRole())) {

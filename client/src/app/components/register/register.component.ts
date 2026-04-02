@@ -25,18 +25,45 @@ export class RegisterComponent {
 
   showToast = false;
   toastMessage = '';
+  isError = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
+
+  // register(): void {
+
+  //   this.authService.register(this.user).subscribe({
+  //     next: () => {
+
+  //       this.toastMessage = "🎉 Account created successfully!";
+  //       this.showToast = true;
+
+
+  //       setTimeout(() => {
+  //         this.showToast = false;
+  //         this.router.navigate(['/login']);
+  //       }, 2500);
+  //     },
+
+  //     error: (err) => {
+  //       console.error(err);
+
+
+  //       this.toastMessage = "❌ Registration failed. Try again!";
+  //       this.showToast = true;
+
+  //       setTimeout(() => {
+  //         this.showToast = false;
+  //       }, 2500);
+  //     }
+  //   });
+  // }
 
   register(): void {
-
     this.authService.register(this.user).subscribe({
       next: () => {
-        
+        this.isError = false;
         this.toastMessage = "🎉 Account created successfully!";
         this.showToast = true;
-
-        
         setTimeout(() => {
           this.showToast = false;
           this.router.navigate(['/login']);
@@ -44,12 +71,17 @@ export class RegisterComponent {
       },
 
       error: (err) => {
+        this.isError = true; 
         console.error(err);
 
-      
-        this.toastMessage = "❌ Registration failed. Try again!";
-        this.showToast = true;
+        // ADD THIS: show specific message for duplicate username
+        if (err.status === 409) {
+          this.toastMessage = "❌ Username already taken. Please choose another!";
+        } else {
+          this.toastMessage = "❌ Registration failed. Try again!";
+        }
 
+        this.showToast = true;
         setTimeout(() => {
           this.showToast = false;
         }, 2500);

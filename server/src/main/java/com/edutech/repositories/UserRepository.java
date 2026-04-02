@@ -12,4 +12,5 @@ import com.edutech.entities.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     List<User[]> findByRole(String role);
+    boolean existsByUsername(String username);
 }

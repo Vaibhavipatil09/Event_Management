@@ -1,7 +1,4 @@
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
 <div class="register-wrapper">
 
@@ -10,21 +7,34 @@
 
   <!-- TOAST -->
   <div class="toast-container position-fixed top-0 end-0 p-3">
-    <div
-      class="toast align-items-center text-bg-success border-0 show"
-      *ngIf="showToast"
-    >
+    <div class="toast align-items-center text-bg-success border-0 show" *ngIf="showToast">
       <div class="d-flex">
         <div class="toast-body">
           🎉 Account created successfully! Welcome aboard :)
         </div>
-        <button
-          type="button"
-          class="btn-close btn-close-white me-2 m-auto"
-          (click)="showToast = false"
-        ></button>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
       </div>
     </div>
+  </div>
+
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+
+    <!-- Success Toast -->
+    <div class="toast align-items-center text-bg-success border-0 show" *ngIf="showToast && !isError">
+      <div class="d-flex">
+        <div class="toast-body">{{ toastMessage }}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
+      </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast align-items-center text-bg-danger border-0 show" *ngIf="showToast && isError">
+      <div class="d-flex">
+        <div class="toast-body">{{ toastMessage }}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
+      </div>
+    </div>
+
   </div>
 
   <!-- CARD -->
@@ -38,15 +48,8 @@
       <!-- USERNAME -->
       <div class="mb-3">
         <label class="form-label text-white">Username</label>
-        <input
-          name="username"
-          class="form-control"
-          [(ngModel)]="user.username"
-          #username="ngModel"
-          required
-          minlength="3"
-          placeholder="Enter username"
-        />
+        <input name="username" class="form-control" [(ngModel)]="user.username" #username="ngModel" required
+          minlength="3" placeholder="Enter username" />
 
         <div class="text-danger small mt-1" *ngIf="username.touched && username.invalid">
           <div *ngIf="username.errors?.['required']">Username is required</div>
@@ -57,16 +60,8 @@
       <!-- EMAIL -->
       <div class="mb-3">
         <label class="form-label text-white">Email</label>
-        <input
-          type="email"
-          name="email"
-          class="form-control"
-          [(ngModel)]="user.email"
-          #email="ngModel"
-          required
-          email
-          placeholder="Enter email"
-        />
+        <input type="email" name="email" class="form-control" [(ngModel)]="user.email" #email="ngModel" required email
+          placeholder="Enter email" />
 
         <div class="text-danger small mt-1" *ngIf="email.touched && email.invalid">
           <div *ngIf="email.errors?.['required']">Email is required</div>
@@ -77,16 +72,8 @@
       <!-- PASSWORD -->
       <div class="mb-3">
         <label class="form-label text-white">Password</label>
-        <input
-          type="password"
-          name="password"
-          class="form-control"
-          [(ngModel)]="user.password"
-          #password="ngModel"
-          required
-          pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-          placeholder="Enter password"
-        />
+        <input type="password" name="password" class="form-control" [(ngModel)]="user.password" #password="ngModel"
+          required pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" placeholder="Enter password" />
 
         <div class="text-danger small mt-1" *ngIf="password.touched && password.invalid">
           <div *ngIf="password.errors?.['required']">Password is required</div>
@@ -105,13 +92,7 @@
       <!-- ROLE -->
       <div class="mb-3">
         <label class="form-label text-white">Role</label>
-        <select
-          name="role"
-          class="form-select"
-          [(ngModel)]="user.role"
-          #role="ngModel"
-          required
-        >
+        <select name="role" class="form-select" [(ngModel)]="user.role" #role="ngModel" required>
           <option value="" disabled selected>Select role</option>
           <option value="PLANNER">Planner</option>
           <option value="CLIENT">Client</option>
@@ -125,11 +106,7 @@
 
       <!-- BUTTON -->
       <div class="d-grid mb-3">
-        <button
-          class="btn register-btn"
-          (click)="register()"
-          [disabled]="registerForm.invalid"
-        >
+        <button class="btn register-btn" (click)="register()" [disabled]="registerForm.invalid">
           Register
         </button>
       </div>
@@ -155,146 +132,169 @@
 </div>
 
 <style>
-
-/* BACKGROUND */
-.register-wrapper {
-  height: 100vh;
-  background: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d') no-repeat center center/cover;
-  position: relative;
-  display: flex;
-  justify-content: center;   /* ✅ horizontal center */
-  align-items: center;       /* ✅ vertical center */
-  padding: 20px;
-}
-
-/* OVERLAY */
-/* OVERLAY */
-.overlay {
-  position: absolute;
-  inset: 0;
-
-  /* Dark premium gradient */
-  background: 
-    linear-gradient(
-      135deg,
-      rgba(15, 23, 42, 0.88),
-      rgba(15, 23, 42, 0.65)
-    );
-
-  /* IMPORTANT: allow hover + clicks */
-  pointer-events: none;
-}
-
-/* CARD */
-.register-card {
-  position: relative;
-  z-index: 2;
-  width: 520px;
-  max-width: 95%;
-  padding: 28px 34px;
-  border-radius: 16px;
-  backdrop-filter: blur(14px);
-  background: rgba(15, 23, 42, 0.85);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.55),
-              inset 0 1px 0 rgba(255,255,255,0.05);
-  color: white;
-
-  /* 🔥 IMPORTANT */
-  opacity: 0;                     /* start invisible */
-  animation: fadeIn 0.8s ease forwards;
-  animation-delay: 0.15s;         /* slight delay for smoothness */
-
-
-  transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease;
-}
-.register-card:hover {
-  transform: translateY(-10px);  /* 🔥 floating effect */
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-/* TEXT */
-.title {
-  font-weight: 700;
-  text-align: center;
-}
-/* FIX DROPDOWN OPTIONS VISIBILITY */
-.form-select option {
-  color: black;        /* text visible */
-  background: white;   /* proper dropdown background */
-}
-.subtitle {
-  text-align: center;
-  font-size: 0.9rem;
-  margin-bottom: 20px;
-  opacity: 0.8;
-}
-
-/* INPUT */
-.form-control, .form-select {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
-}
-
-.form-control::placeholder {
-  color: rgba(255,255,255,0.7);
-}
-
-/* BUTTON */
-.register-btn {
-  background: linear-gradient(135deg, #00c853, #64dd17);
-  border: none;
-  color: white;
-}
-
-.register-btn:hover {
-  transform: scale(1.02);
-}
-
-/* LINKS */
-.login-link {
-  color: #ffd166;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-/* TOAST */
-.toast {
-  animation: slideIn 0.4s ease;
-}
-
-/* ANIMATIONS */
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px);}
-  to { opacity: 1; transform: translateY(0);}
-}
-
-/* MOBILE */
-@media(max-width: 768px) {
+  /* BACKGROUND */
   .register-wrapper {
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d') no-repeat center center/cover;
+    position: relative;
+    display: flex;
     justify-content: center;
+    /* ✅ horizontal center */
+    align-items: center;
+    /* ✅ vertical center */
+    padding: 20px;
   }
-  .register-card {
-    width: 100%;
-  }
-}
 
-/* ======================
+  /* OVERLAY */
+  /* OVERLAY */
+  .overlay {
+    position: absolute;
+    inset: 0;
+
+    /* Dark premium gradient */
+    background:
+      linear-gradient(135deg,
+        rgba(15, 23, 42, 0.88),
+        rgba(15, 23, 42, 0.65));
+
+    /* IMPORTANT: allow hover + clicks */
+    pointer-events: none;
+  }
+
+  /* CARD */
+  .register-card {
+    position: relative;
+    z-index: 2;
+    width: 520px;
+    max-width: 95%;
+    padding: 28px 34px;
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    background: rgba(15, 23, 42, 0.85);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    color: white;
+
+    /* 🔥 IMPORTANT */
+    opacity: 0;
+    /* start invisible */
+    animation: fadeIn 0.8s ease forwards;
+    animation-delay: 0.15s;
+    /* slight delay for smoothness */
+
+
+    transition:
+      transform 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  .register-card:hover {
+    transform: translateY(-10px);
+    /* 🔥 floating effect */
+    box-shadow:
+      0 40px 80px rgba(0, 0, 0, 0.65),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  /* TEXT */
+  .title {
+    font-weight: 700;
+    text-align: center;
+  }
+
+  /* FIX DROPDOWN OPTIONS VISIBILITY */
+  .form-select option {
+    color: black;
+    /* text visible */
+    background: white;
+    /* proper dropdown background */
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  /* INPUT */
+  .form-control,
+  .form-select {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+  }
+
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* BUTTON */
+  .register-btn {
+    background: linear-gradient(135deg, #00c853, #64dd17);
+    border: none;
+    color: white;
+  }
+
+  .register-btn:hover {
+    transform: scale(1.02);
+  }
+
+  /* LINKS */
+  .login-link {
+    color: #ffd166;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* TOAST */
+  .toast {
+    animation: slideIn 0.4s ease;
+  }
+
+  /* ANIMATIONS */
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* MOBILE */
+  @media(max-width: 768px) {
+    .register-wrapper {
+      justify-content: center;
+    }
+
+    .register-card {
+      width: 100%;
+    }
+  }
+
+  /* ======================
    VALIDATION VISIBILITY
 ====================== */
 
-.text-danger {
-  color: #ff6b6b !important;     /* brighter coral red */
-  font-weight: 500;
-}
-
+  .text-danger {
+    color: #ff6b6b !important;
+    /* brighter coral red */
+    font-weight: 500;
+  }
 </style>
