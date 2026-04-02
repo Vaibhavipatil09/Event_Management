@@ -1,4 +1,4 @@
-
+<!-- ================= TOAST ================= -->
 <div class="toast-container position-fixed top-0 end-0 p-3">
   <div class="toast text-bg-success show" *ngIf="showToast">
     <div class="d-flex">
@@ -6,7 +6,7 @@
         {{ toastMessage }}
       </div>
       <button class="btn-close btn-close-white"
-              (click)="showToast=false"></button>
+              (click)="showToast = false"></button>
     </div>
   </div>
 </div>
@@ -72,6 +72,7 @@
     <!-- ================= EVENTS ================= -->
     <section *ngIf="showEvents">
 
+      <!-- CREATE EVENT -->
       <div class="card dashboard-card mb-4">
         <div class="card-body">
           <h5 class="mb-3">➕ Create Event</h5>
@@ -79,29 +80,29 @@
           <form (ngSubmit)="createEvent()" class="row g-3">
             <div class="col-md-6">
               <input class="form-control"
-                     placeholder="Event Title"
-                     [(ngModel)]="newEvent.title"
-                     name="title" required />
+                placeholder="Event Title"
+                [(ngModel)]="newEvent.title"
+                name="title" required />
             </div>
 
             <div class="col-md-6">
               <input type="datetime-local"
-                     class="form-control"
-                     [(ngModel)]="newEvent.date"
-                     name="date" required />
+                class="form-control"
+                [(ngModel)]="newEvent.date"
+                name="date" required />
             </div>
 
             <div class="col-md-6">
               <input class="form-control"
-                     placeholder="Location"
-                     [(ngModel)]="newEvent.location"
-                     name="location" required />
+                placeholder="Location"
+                [(ngModel)]="newEvent.location"
+                name="location" required />
             </div>
 
             <div class="col-md-6">
               <select class="form-select"
-                      [(ngModel)]="newEvent.status"
-                      name="status" required>
+                [(ngModel)]="newEvent.status"
+                name="status" required>
                 <option value="">Status</option>
                 <option>Pending</option>
                 <option>Completed</option>
@@ -110,11 +111,10 @@
 
             <div class="col-md-6">
               <select class="form-select"
-                      [(ngModel)]="selectedClientId"
-                      name="clientId">
+                [(ngModel)]="selectedClientId"
+                name="clientId">
                 <option [ngValue]="null">Assign Client</option>
-                <option *ngFor="let c of clients"
-                        [value]="c.id">
+                <option *ngFor="let c of clients" [value]="c.id">
                   {{ c.username }}
                 </option>
               </select>
@@ -122,10 +122,10 @@
 
             <div class="col-12">
               <textarea class="form-control"
-                        rows="2"
-                        placeholder="Description"
-                        [(ngModel)]="newEvent.description"
-                        name="description"></textarea>
+                rows="2"
+                placeholder="Description"
+                [(ngModel)]="newEvent.description"
+                name="description"></textarea>
             </div>
 
             <div class="col-12 text-end">
@@ -137,7 +137,7 @@
         </div>
       </div>
 
-      <!-- EVENT TABLE -->
+      <!-- EVENT TABLE (✅ EDIT BUTTON ADDED) -->
       <div class="card dashboard-card">
         <div class="card-body">
           <h5>📅 Events</h5>
@@ -150,79 +150,253 @@
                 <th>Location</th>
                 <th>Status</th>
                 <th>Client</th>
+                <th>Action</th>
               </tr>
             </thead>
+
             <tbody>
               <tr *ngFor="let e of events">
                 <td>{{ e.title }}</td>
                 <td>{{ e.date }}</td>
                 <td>{{ e.location }}</td>
+
                 <td>
                   <span class="badge"
-                        [ngClass]="e.status==='Completed'
-                          ? 'bg-success'
-                          : 'bg-warning text-dark'">
+                    [ngClass]="e.status === 'Completed'
+                      ? 'bg-success'
+                      : 'bg-warning text-dark'">
                     {{ e.status }}
                   </span>
                 </td>
+
                 <td>{{ e.client?.username || '-' }}</td>
+
+                <!-- ✅ EDIT BUTTON -->
+                <td>
+                  <button class="btn btn-sm btn-outline-primary"
+                          (click)="editEvent(e)">
+                    ✏️ Edit
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-    </section>
-
-    <!-- ================= TASKS ================= -->
-    <section *ngIf="showTasks">
-
-      <div class="card dashboard-card">
+      <!-- ================= EDIT EVENT SECTION ================= -->
+      <div *ngIf="selectedEvent.id" class="card dashboard-card mt-4">
         <div class="card-body">
-          <h5>📋 Tasks</h5>
+          <h5 class="mb-3 text-warning">✏️ Edit Event</h5>
 
-          <table class="table table-hover align-middle mt-3">
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th>Event</th>
-                <th>Status</th>
-                <th>Staff</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let t of tasks">
-                <td>{{ t.description }}</td>
-                <td>{{ t.event?.title || '-' }}</td>
-                <td>{{ t.status }}</td>
-                <td>{{ t.assignedStaff?.username || 'Unassigned' }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <form (ngSubmit)="updateEvent()" class="row g-3">
+
+            <div class="col-md-6">
+              <input class="form-control"
+                [(ngModel)]="selectedEvent.title"
+                name="editTitle"
+                required />
+            </div>
+
+            <div class="col-md-6">
+              <input type="datetime-local"
+                class="form-control"
+                [(ngModel)]="selectedEvent.date"
+                name="editDate"
+                required />
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control"
+                [(ngModel)]="selectedEvent.location"
+                name="editLocation"
+                required />
+            </div>
+
+            <div class="col-md-6">
+              <select class="form-select"
+                [(ngModel)]="selectedEvent.status"
+                name="editStatus"
+                required>
+                <option>Pending</option>
+                <option>Completed</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <textarea class="form-control"
+                rows="2"
+                [(ngModel)]="selectedEvent.description"
+                name="editDescription"
+                required></textarea>
+            </div>
+
+            <div class="col-12 text-end">
+              <button class="btn btn-success me-2">Update</button>
+              <button type="button"
+                      class="btn btn-secondary"
+                      (click)="cancelEdit()">Cancel</button>
+            </div>
+
+          </form>
         </div>
       </div>
 
     </section>
+<!-- ================= TASKS ================= -->
+<section *ngIf="showTasks">
 
-  </main>
+  <!-- ✅ CREATE TASK -->
+  <div class="card dashboard-card mb-4">
+    <div class="card-body">
+      <h5 class="mb-3">➕ Create Task</h5>
+
+      <form (ngSubmit)="createTask()" class="row g-3">
+
+        <!-- Description -->
+        <div class="col-md-6">
+          <input class="form-control"
+                 placeholder="Task Description"
+                 [(ngModel)]="newTask.description"
+                 name="taskDescription"
+                 required />
+        </div>
+
+        <!-- Status -->
+        <div class="col-md-3">
+          <select class="form-select"
+                  [(ngModel)]="newTask.status"
+                  name="taskStatus"
+                  required>
+            <option value="">Status</option>
+            <option>Pending</option>
+            <option>Completed</option>
+          </select>
+        </div>
+
+        <!-- Event -->
+        <div class="col-md-3">
+          <select class="form-select"
+                  [(ngModel)]="newTaskEventId"
+                  name="taskEventId">
+            <option [ngValue]="null">Select Event</option>
+            <option *ngFor="let e of events" [value]="e.id">
+              {{ e.title }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Assign Staff -->
+        <div class="col-md-4">
+          <select class="form-select"
+                  [(ngModel)]="newTask.assignedStaff"
+                  name="assignedStaff"
+                  [disabled]="newTask.status === 'Completed'">
+            <option [ngValue]="null">Assign Staff</option>
+            <option *ngFor="let s of staffs" [value]="s.id">
+              {{ s.username }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Button -->
+        <div class="col-12 text-end">
+          <button class="btn btn-success px-4">
+            Create Task
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+<!-- ================= TASK LIST ================= -->
+<div class="card dashboard-card">
+  <div class="card-body">
+    <h5>📋 Task List</h5>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mt-3">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Event</th>
+            <th>Status</th>
+            <th>Assigned Staff</th>
+            <th>Reassign</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let t of tasks">
+
+            <!-- Description -->
+            <td>{{ t.description }}</td>
+
+            <!-- Event -->
+            <td>{{ t.event?.title || '-' }}</td>
+
+            <!-- Status -->
+            <td>
+              <span class="badge"
+                    [ngClass]="t.status === 'Completed'
+                      ? 'bg-success'
+                      : 'bg-warning text-dark'">
+                {{ t.status }}
+              </span>
+            </td>
+
+            <!-- Current staff -->
+            <td>{{ t.assignedStaff?.username || 'Unassigned' }}</td>
+
+            <!-- ✅ REASSIGN STAFF -->
+            <td>
+              <div class="d-flex gap-2">
+
+                <!-- Staff dropdown -->
+                <select class="form-select form-select-sm"
+                        [(ngModel)]="reassignMap[t.id]"
+                        [name]="'reassign_' + t.id"
+                        [disabled]="t.status === 'Completed'">
+
+                  <option [ngValue]="null">Select</option>
+
+                  <option *ngFor="let s of staffs"
+                          [value]="s.id">
+                    {{ s.username }}
+                  </option>
+                </select>
+
+                <!-- Assign button -->
+                <button class="btn btn-sm btn-outline-primary"
+                        (click)="reassignStaff(t.id)"
+                        [disabled]="!reassignMap[t.id] || t.status === 'Completed'">
+                  Assign
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
 </div>
 
+
 <style>
-/* ================= LAYOUT ================= */
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
   background: #f4f6f9;
 }
 
-/* ================= SIDEBAR ================= */
 .sidebar {
   width: 240px;
   background: linear-gradient(180deg, #1a0533, #0f3460);
   color: #fff;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
 }
 
 .brand {
@@ -241,16 +415,14 @@
 
 .menu-item:hover,
 .menu-item.active {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,0.15);
 }
 
-/* ================= CONTENT ================= */
 .content {
   flex: 1;
   padding: 24px;
 }
 
-/* ================= STATS ================= */
 .stat-card {
   background: #fff;
   padding: 16px;
@@ -259,9 +431,97 @@
   box-shadow: 0 10px 18px rgba(0,0,0,0.1);
 }
 
-/* ================= CARDS ================= */
 .dashboard-card {
   border-radius: 14px;
   box-shadow: 0 15px 30px rgba(0,0,0,0.12);
 }
+/* =====================================
+   RESPONSIVE DASHBOARD (FIXED)
+===================================== */
+
+/* Tablets and below */
+@media (max-width: 992px) {
+
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  /* Sidebar becomes top bar */
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .menu {
+    display: flex;
+    gap: 12px;
+  }
+
+  .menu-item {
+    margin-bottom: 0;
+    padding: 8px 14px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}
+
+/* Phones */
+@media (max-width: 768px) {
+
+  /* Sidebar stacks */
+  .sidebar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .menu {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .menu-item {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Stats stack */
+  .stat-card {
+    margin-bottom: 12px;
+  }
+
+  /* Cards spacing */
+  .dashboard-card {
+    margin-bottom: 16px;
+  }
+
+  /* Buttons become touch-friendly */
+  .btn {
+    width: 100%;
+  }
+
+  .text-end {
+    text-align: center !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 576px) {
+
+  .content {
+    padding: 12px;
+  }
+
+  h5 {
+    font-size: 1rem;
+  }
+
+  .stat-card h3 {
+    font-size: 1.2rem;
+  }
+}
+
 </style>

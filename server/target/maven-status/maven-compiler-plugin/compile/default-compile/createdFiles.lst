@@ -18,6 +18,7 @@ com/edutech/jwt/JwtRequestFilter.class
 com/edutech/controllers/RegisterAndLoginController.class
 com/edutech/config/SecurityConfig.class
 com/edutech/entities/EventPlanner.class
+com/edutech/controllers/PaymentController.class
 com/edutech/dto/LoginResponse.class
 com/edutech/entities/Client.class
 com/edutech/services/UserService.class
