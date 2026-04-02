@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { User, Credentials } from '../../models/user.model';
+import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -23,12 +23,37 @@ export class RegisterComponent {
     role: 'PLANNER'
   };
 
-  constructor(private authService: AuthService, private router: Router) { }
+  showToast = false;
+  toastMessage = '';
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   register(): void {
+
     this.authService.register(this.user).subscribe({
-      next: () => this.router.navigate(['/login']),
-      error: (err) => console.error(err)
+      next: () => {
+        
+        this.toastMessage = "🎉 Account created successfully!";
+        this.showToast = true;
+
+        
+        setTimeout(() => {
+          this.showToast = false;
+          this.router.navigate(['/login']);
+        }, 2500);
+      },
+
+      error: (err) => {
+        console.error(err);
+
+      
+        this.toastMessage = "❌ Registration failed. Try again!";
+        this.showToast = true;
+
+        setTimeout(() => {
+          this.showToast = false;
+        }, 2500);
+      }
     });
   }
 }

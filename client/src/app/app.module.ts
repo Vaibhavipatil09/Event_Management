@@ -15,6 +15,8 @@ import { StaffDashboardComponent } from './components/staff-dashboard/staff-dash
 
 // Interceptor
 import { AuthInterceptor } from './services/auth.interceptor';
+import { NavbarComponent } from './navbar/navbar.component';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
     HttpClientModule,
 
     // ✅ Standalone components go here
+    NavbarComponent,
+    HomeComponent,
     RegisterComponent,
     LoginComponent,
     PlannerDashboardComponent,

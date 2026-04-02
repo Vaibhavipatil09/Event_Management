@@ -6,15 +6,17 @@ import { PlannerDashboardComponent } from './components/planner-dashboard/planne
 import { StaffDashboardComponent } from './components/staff-dashboard/staff-dashboard.component';
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { AuthGuard } from './guards/auth.guard';
+import { HomeComponent } from './components/home/home.component';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: '', component: LoginComponent },
+  {path: 'home', component: HomeComponent},
+  { path: '', component: HomeComponent },
   { path: 'planner-dashboard', component: PlannerDashboardComponent, canActivate: [AuthGuard] },
   { path: 'staff-dashboard', component: StaffDashboardComponent, canActivate: [AuthGuard] },
   { path: 'client-dashboard', component: ClientDashboardComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' }
 ];
 
 @NgModule({

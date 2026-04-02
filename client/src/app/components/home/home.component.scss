@@ -1,0 +1,30 @@
+/* OFFER POPUP */
+.offer-popup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  animation: slideDown 0.5s ease;
+}
+
+.offer-content {
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
+  color: white;
+  padding: 20px 25px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 280px;
+}
+
+/* ANIMATION */
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}

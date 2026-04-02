@@ -16,25 +16,46 @@ import { User, Credentials, AuthResponse } from '../../models/user.model';
 })
 export class LoginComponent {
   credentials = { username: '', password: '' };
+  showToast = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
-  login(): void {
-    this.authService.login(this.credentials).subscribe({
-      next: (response) => {
-        this.authService.saveToken(response.token);
-        this.authService.saveRole(response.role);
-        this.authService.saveUserId(response.userId);
+ login(): void {
+
+  this.authService.login(this.credentials).subscribe({
+
+    next: (response) => {
+
+      // ✅ SAVE DATA
+      this.authService.saveToken(response.token);
+      this.authService.saveRole(response.role);
+      this.authService.saveUserId(response.userId);
+
+      // ✅ SHOW TOAST ONLY AFTER SUCCESS
+      this.showToast = true;
+
+      // ⏳ Delay navigation so toast is visible
+      setTimeout(() => {
 
         if (response.role === 'PLANNER') {
           this.router.navigate(['/planner-dashboard']);
-        } else if (response.role === 'STAFF') {
+        } 
+        else if (response.role === 'STAFF') {
           this.router.navigate(['/staff-dashboard']);
-        } else if (response.role === 'CLIENT') {
+        } 
+        else if (response.role === 'CLIENT') {
           this.router.navigate(['/client-dashboard']);
         }
-      },
-      error: (err) => console.error(err)
-    });
-  }
+
+      }, 1500);
+
+    },
+
+    error: (err) => {
+      console.error("Login failed:", err);
+      alert("Invalid username or password ❌"); // simple handling
+    }
+
+  });
+}
 }

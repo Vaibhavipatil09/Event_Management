@@ -25,6 +25,11 @@ export class PlannerDashboardComponent implements OnInit {
   showEvents: boolean = true;
   showTasks: boolean = false;
 
+  // ✅ NEW UI Enhancements
+  showToast: boolean = false;
+  toastMessage: string = '';
+  username: string = '';
+
   selectedEvent: Event = {
     title: '',
     date: '',
@@ -49,13 +54,8 @@ export class PlannerDashboardComponent implements OnInit {
     assignedStaff: null
   };
 
-  /** NEW — event selected while creating a task */
   newTaskEventId: number | null = null;
 
-  /**
-   * NEW — map of taskId → staffId for inline reassignment in the task list.
-   * Keyed by task.id so each row has its own dropdown value.
-   */
   reassignMap: { [taskId: number]: number | null } = {};
 
   get plannerId(): number {
@@ -69,11 +69,22 @@ export class PlannerDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.username = localStorage.getItem('username') || 'Planner';
+
     this.getEvents();
     this.getTasks();
     this.getStaffs();
     this.getClients();
   }
+showSuccess(message: string) {
+  this.toastMessage = message;
+  this.showToast = true;
+
+  setTimeout(() => {
+    this.showToast = false;
+    this.toastMessage = '';
+  }, 3000);
+}
 
   navigateTo(section: string): void {
     if (section === 'events') {
@@ -110,7 +121,6 @@ export class PlannerDashboardComponent implements OnInit {
     this.plannerService.getTasks().subscribe({
       next: (data) => {
         this.tasks = data;
-        // Initialise the reassign dropdown map for each task
         this.reassignMap = {};
         data.forEach(t => {
           if (t.id != null) {
@@ -124,12 +134,16 @@ export class PlannerDashboardComponent implements OnInit {
 
   createEvent(): void {
     const clientId = this.selectedClientId ?? undefined;
+
     this.plannerService.createEvent(this.newEvent, this.plannerId, clientId).subscribe({
       next: (event) => {
         this.events.push(event);
         this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
         this.selectedClientId = null;
         this.getEvents();
+
+        // ✅ Toast
+        this.showSuccess('🎉 Event created successfully!');
       },
       error: (err) => console.error(err)
     });
@@ -150,13 +164,15 @@ export class PlannerDashboardComponent implements OnInit {
         if (index !== -1) this.events[index] = updated;
         this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
         this.getEvents();
+
+        // ✅ Toast
+        this.showSuccess('✅ Event updated successfully!');
       },
       error: (err) => console.error(err)
     });
   }
 
   createTask(): void {
-    // If status is Completed, ignore any selected staff
     const staffId = this.newTask.status === 'Completed' ? null : this.newTask.assignedStaff;
 
     const taskToSend: Task = {
@@ -176,24 +192,24 @@ export class PlannerDashboardComponent implements OnInit {
         } else {
           this.getTasks();
         }
+
         this.newTask = { description: '', status: '', assignedStaff: null };
         this.newTaskEventId = null;
+
+        // ✅ Toast
+        this.showSuccess('📋 Task created successfully!');
       },
       error: (err) => console.error(err)
     });
   }
 
-  /**
-   * NEW — Re-assign a staff member to an existing task from the task list.
-   * The button is disabled in the template when task.status === 'Completed',
-   * but we also guard here for safety.
-   */
   reassignStaff(taskId: any): void {
     const staffId = this.reassignMap[taskId];
     if (!staffId) return;
 
     const task = this.tasks.find(t => t.id === taskId);
     if (!task) return;
+
     if (task.status === 'Completed') {
       alert('Cannot assign staff to a completed task.');
       return;
@@ -203,6 +219,9 @@ export class PlannerDashboardComponent implements OnInit {
       next: () => {
         this.reassignMap[taskId] = null;
         this.getTasks();
+
+        // ✅ Toast
+        this.showSuccess('👨‍💼 Staff assigned successfully!');
       },
       error: (err) => {
         console.error(err);
