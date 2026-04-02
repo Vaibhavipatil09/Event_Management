@@ -14,13 +14,13 @@
     <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
   </div>
 
-  <!-- SUCCESS TOAST for payment -->
+  <!-- PAYMENT SUCCESS TOAST -->
   <div *ngIf="paymentSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
     <strong>Payment Successful!</strong> {{ paymentMessage }}
     <button type="button" class="btn-close" (click)="paymentSuccess = false"></button>
   </div>
 
-  <!-- ERROR TOAST for payment -->
+  <!-- PAYMENT ERROR TOAST -->
   <div *ngIf="paymentError" class="alert alert-danger alert-dismissible fade show" role="alert">
     <strong>Payment Failed:</strong> {{ paymentError }}
     <button type="button" class="btn-close" (click)="paymentError = ''"></button>
@@ -32,7 +32,6 @@
 
       <h5 class="card-title mb-3 text-primary">My Events</h5>
 
-      <!-- EVENT LIST -->
       <div *ngIf="events.length > 0; else noEvents">
         <table class="table table-striped table-bordered align-middle">
           <thead class="table-info">
@@ -44,7 +43,6 @@
               <th>Existing Feedback</th>
               <th>Your Feedback</th>
               <th>Feedback Action</th>
-              <!-- NEW column -->
               <th>Payment</th>
             </tr>
           </thead>
@@ -56,73 +54,59 @@
               <td>{{ event.location }}</td>
 
               <td>
-                <span
-                  class="badge"
-                  [ngClass]="event.status === 'Completed'
-                    ? 'bg-success'
-                    : 'bg-warning text-dark'"
-                >
+                <span class="badge"
+                  [ngClass]="event.status === 'Completed' ? 'bg-success' : 'bg-warning text-dark'">
                   {{ event.status }}
                 </span>
               </td>
 
               <td>
-                <span *ngIf="event.feedback; else noFeedback">
-                  {{ event.feedback }}
-                </span>
+                <span *ngIf="event.feedback; else noFeedback">{{ event.feedback }}</span>
                 <ng-template #noFeedback>
                   <span class="text-muted fst-italic">No feedback yet</span>
                 </ng-template>
               </td>
 
               <td>
-                <input
-                  class="form-control form-control-sm"
+                <input class="form-control form-control-sm"
                   [(ngModel)]="feedbackMap[event.id!]"
-                  placeholder="Enter feedback"
-                />
+                  placeholder="Enter feedback" />
               </td>
 
               <td>
-                <button
-                  class="btn btn-sm btn-outline-primary"
-                  (click)="provideFeedback(event.id!)"
-                >
+                <button class="btn btn-sm btn-outline-primary"
+                  (click)="provideFeedback(event.id!)">
                   Submit
                 </button>
               </td>
 
-              <!-- NEW: Payment Gateway Column -->
-              <!-- Only active when event status is Completed -->
               <td>
                 <ng-container *ngIf="event.status === 'Completed'; else paymentDisabled">
-                  <div class="d-flex align-items-center gap-2">
-                    <div class="input-group input-group-sm" style="width: 140px;">
-                      <span class="input-group-text">₹</span>
-                      <input
-                        type="number"
-                        class="form-control"
-                        [(ngModel)]="paymentAmountMap[event.id!]"
-                        [name]="'amount_' + event.id"
-                        placeholder="Amount"
-                        min="1"
-                      />
+                  <ng-container *ngIf="paidEvents.has(event.id!); else showPayButton">
+                    <span class="badge bg-success fs-6 px-3 py-2">✔ Paid</span>
+                  </ng-container>
+                  <ng-template #showPayButton>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="input-group input-group-sm" style="width: 140px;">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" class="form-control"
+                          [(ngModel)]="paymentAmountMap[event.id!]"
+                          [name]="'amount_' + event.id"
+                          placeholder="Amount" min="1" />
+                      </div>
+                      <button class="btn btn-sm btn-success"
+                        (click)="payNow(event.id!)"
+                        [disabled]="processingPayment[event.id!]">
+                        <span *ngIf="processingPayment[event.id!]"
+                          class="spinner-border spinner-border-sm me-1"></span>
+                        💳 Pay
+                      </button>
                     </div>
-                    <button
-                      class="btn btn-sm btn-success"
-                      (click)="payForEvent(event.id!)"
-                      [disabled]="processingPayment[event.id!]"
-                    >
-                      <span *ngIf="processingPayment[event.id!]" class="spinner-border spinner-border-sm me-1"></span>
-                      💳 Pay
-                    </button>
-                  </div>
+                  </ng-template>
                 </ng-container>
 
                 <ng-template #paymentDisabled>
-                  <span class="text-muted fst-italic small">
-                    Available after completion
-                  </span>
+                  <span class="text-muted fst-italic small">Available after completion</span>
                 </ng-template>
               </td>
 
@@ -131,7 +115,6 @@
         </table>
       </div>
 
-      <!-- NO EVENTS -->
       <ng-template #noEvents>
         <div class="alert alert-info text-center">
           No events have been assigned to you yet.

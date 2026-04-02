@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { ClientService } from '../../services/client.service';
 import { Event } from '../../models/event.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -17,14 +18,9 @@ export class ClientDashboardComponent implements OnInit {
 
   events: Event[] = [];
   feedbackMap: { [key: number]: string } = {};
-
-  /** NEW — payment amount per event (keyed by event.id) */
   paymentAmountMap: { [key: number]: number } = {};
-
-  /** NEW — spinner/loading state per event during payment processing */
   processingPayment: { [key: number]: boolean } = {};
-
-  /** NEW — global payment success/error state for toast messages */
+  paidEvents: Set<any> = new Set();
   paymentSuccess: boolean = false;
   paymentMessage: string = '';
   paymentError: string = '';
@@ -32,7 +28,8 @@ export class ClientDashboardComponent implements OnInit {
   constructor(
     private clientService: ClientService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -54,8 +51,8 @@ export class ClientDashboardComponent implements OnInit {
     }
   }
 
-  provideFeedback(eventId: any, feedback?: string): void {
-    const fb = feedback || this.feedbackMap[eventId];
+  provideFeedback(eventId: any): void {
+    const fb = this.feedbackMap[eventId];
     this.clientService.provideFeedback(eventId, fb).subscribe({
       next: (updated) => {
         const index = this.events.findIndex(e => e.id === updated.id);
@@ -66,44 +63,108 @@ export class ClientDashboardComponent implements OnInit {
     });
   }
 
-  /**
-   * NEW — Pay for a completed event.
-   * Only called when the event status is 'Completed' (button is shown only then in the template).
-   * Guards are also applied here for safety.
-   */
-  payForEvent(eventId: any): void {
-    const event = this.events.find(e => e.id === eventId);
-    if (!event || event.status !== 'Completed') {
-      this.paymentError = 'Payment is only allowed for completed events.';
-      return;
-    }
-
+  payNow(eventId: any): void {
     const amount = this.paymentAmountMap[eventId];
-    if (!amount || amount <= 0) {
-      this.paymentError = 'Please enter a valid payment amount.';
-      return;
-    }
 
-    // Reset previous messages
     this.paymentSuccess = false;
     this.paymentMessage = '';
     this.paymentError = '';
 
+    if (!amount || amount <= 0) {
+      this.paymentError = 'Please enter a valid amount.';
+      return;
+    }
+
+    if (!(window as any).Razorpay) {
+      this.paymentError = 'Payment SDK not loaded. Please refresh the page.';
+      return;
+    }
+
     this.processingPayment[eventId] = true;
 
-    this.clientService.payForEvent(eventId, amount).subscribe({
-      next: (response) => {
-        this.processingPayment[eventId] = false;
-        this.paymentSuccess = true;
-        this.paymentMessage = `Transaction ID: ${response.transactionId} | ₹${response.amountPaid} paid for "${response.eventTitle}"`;
-        // Clear amount input after successful payment
-        this.paymentAmountMap[eventId] = 0;
-      },
-      error: (err) => {
-        this.processingPayment[eventId] = false;
-        this.paymentError = err?.error?.message || 'Payment failed. Please try again.';
-      }
-    });
+    fetch(`${environment.apiUrl}/payment/create-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: amount })
+    })
+      .then(res => {
+        return res.json().then(data => {
+          if (!res.ok) {
+            const errMsg = data?.error?.description
+              || data?.error?.code
+              || 'Payment could not be initiated. Please try again.';
+            throw new Error(errMsg);
+          }
+          return data;
+        });
+      })
+      .then(order => {
+        const options: any = {
+          key: 'rzp_test_SYW156XbFnfQSK',
+          amount: order.amount,
+          currency: 'INR',
+          name: 'Event Management',
+          description: 'Event Payment',
+          order_id: order.id,
+
+          handler: (response: any) => {
+            // NgZone.run() forces Angular to detect changes from this external callback
+            this.ngZone.run(() => {
+              this.processingPayment[eventId] = false;
+              this.paidEvents.add(eventId);
+              this.paymentSuccess = true;
+              this.paymentMessage = 'Payment successful!';
+              this.paymentAmountMap[eventId] = 0;
+            });
+
+            // Verify in background
+            fetch(`${environment.apiUrl}/payment/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(response)
+            })
+              .then(res => res.json())
+              .then(result => {
+                this.ngZone.run(() => {
+                  if (result.message) this.paymentMessage = result.message;
+                });
+              })
+              .catch(() => {});
+          },
+
+          modal: {
+            ondismiss: () => {
+              this.ngZone.run(() => {
+                this.processingPayment[eventId] = false;
+              });
+            },
+            handleback: true,
+            escape: true
+          },
+
+          theme: { color: '#3399cc' }
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+
+        rzp.on('payment.failed', (response: any) => {
+          rzp.close();
+          this.ngZone.run(() => {
+            this.processingPayment[eventId] = false;
+            this.paymentError = response?.error?.description
+              || response?.error?.reason
+              || 'Payment failed. Please try again.';
+          });
+        });
+
+        rzp.open();
+      })
+      .catch(err => {
+        this.ngZone.run(() => {
+          this.processingPayment[eventId] = false;
+          this.paymentError = err.message;
+        });
+      });
   }
 
   logout(): void {

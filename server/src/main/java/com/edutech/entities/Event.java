@@ -16,6 +16,33 @@ public class Event {
   private String description;
   private String status;
   private String feedback;
+  private String paymentStatus; // PENDING / SUCCESS / FAILED
+  private String orderId;
+  private String paymentId;
+
+  public String getPaymentStatus() {
+    return paymentStatus;
+  }
+
+  public void setPaymentStatus(String paymentStatus) {
+    this.paymentStatus = paymentStatus;
+  }
+
+  public String getOrderId() {
+    return orderId;
+  }
+
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
+  }
+
+  public String getPaymentId() {
+    return paymentId;
+  }
+
+  public void setPaymentId(String paymentId) {
+    this.paymentId = paymentId;
+  }
 
   @ManyToOne
   @JoinColumn(name = "planner_id")

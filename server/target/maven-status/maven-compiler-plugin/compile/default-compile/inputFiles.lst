@@ -1,5 +1,6 @@
 /home/coder/app/server/src/main/java/com/edutech/entities/Task.java
 /home/coder/app/server/src/main/java/com/edutech/dto/LoginResponse.java
+/home/coder/app/server/src/main/java/com/edutech/controllers/PaymentController.java
 /home/coder/app/server/src/main/java/com/edutech/entities/User.java
 /home/coder/app/server/src/main/java/com/edutech/services/EventService.java
 /home/coder/app/server/src/main/java/com/edutech/dto/LoginRequest.java

@@ -82,4 +82,10 @@ public class EventService {
         event.setFeedback(feedback);
         return eventRepository.save(event);
     }
+
+    public void updatePaymentStatus(Long eventId, String status) {
+        Event event = eventRepository.findById(eventId).orElseThrow();
+        event.setPaymentStatus(status);
+        eventRepository.save(event);
+    }
 }
