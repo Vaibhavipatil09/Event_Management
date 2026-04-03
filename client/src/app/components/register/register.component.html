@@ -607,9 +607,114 @@
     .auth-side {
       display: none !important;
     }
-
-    .auth-form-panel {
-      padding: 30px 16px;
-    }
   }
+/* ✅ NO SCROLL + FIT EVERYTHING INSIDE VIEWPORT */
+.auth-page{
+  height: 100vh;
+  overflow: hidden; /* no page scroll */
+}
+
+/* ✅ Make form panel always centered and fit */
+.auth-form-panel{
+  height: 100%;
+  padding: 24px 18px !important;  /* less padding */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ✅ Make card a bit wider and shorter */
+.auth-card{
+  width: 100%;
+  max-width: 520px !important;     /* wider than before (was 440) */
+  padding: 26px 28px !important;   /* smaller padding */
+  border-radius: 22px;
+}
+
+/* ✅ Reduce title/sub spacing */
+.auth-title{
+  font-size: 1.55rem !important;
+  margin-bottom: 4px !important;
+}
+.auth-sub{
+  margin-bottom: 14px !important;
+  font-size: 0.82rem !important;
+}
+
+/* ✅ Reduce field spacing */
+.auth-field{
+  margin-bottom: 10px !important;
+}
+.auth-field label{
+  margin-bottom: 4px !important;
+  font-size: 0.70rem !important;
+}
+
+/* ✅ Make inputs more compact */
+.auth-input{
+  padding: 9px 12px 9px 38px !important; /* smaller height */
+  font-size: 0.84rem !important;
+  border-radius: 10px !important;
+}
+.auth-input-icon{
+  left: 12px !important;
+  font-size: 0.95rem !important;
+  color: rgba(255,255,255,0.7) !important;
+}
+
+/* ✅ Errors compact */
+.auth-error{
+  margin-top: 4px !important;
+  font-size: 0.74rem !important;
+  line-height: 1.25 !important;
+}
+
+/* ✅ Role selector more compact (still clean) */
+.role-selector{
+  gap: 6px !important;
+}
+.role-btn{
+  padding: 8px 6px !important;
+  border-radius: 10px !important;
+  font-size: 0.76rem !important;
+  gap: 2px !important;
+}
+
+/* ✅ Button smaller so it doesn't get cut */
+.auth-submit-btn{
+  padding: 11px !important;
+  font-size: 0.88rem !important;
+  margin-top: 6px !important;
+}
+
+/* ✅ Reduce divider space */
+.auth-divider{
+  margin: 10px 0 !important;
+}
+
+/* ✅ Reduce footer spacing */
+.auth-footer-links{
+  font-size: 0.82rem !important;
+}
+.text-center.mt-3{
+  margin-top: 8px !important;
+}
+
+/* ✅ Make sidebar typography a bit smaller on short screens to avoid overflow */
+@media (max-height: 760px){
+  .auth-side{
+    padding: 36px !important;
+  }
+  .side-heading{
+    font-size: 2.0rem !important;
+    line-height: 1.15 !important;
+  }
+  .side-sub{
+    font-size: 0.88rem !important;
+    margin-bottom: 18px !important;
+  }
+  .role-card{
+    padding: 10px 12px !important;
+  }
+}
 </style>
