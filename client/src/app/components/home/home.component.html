@@ -1,400 +1,1151 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+  rel="stylesheet" />
+
 <!-- FLASH OFFER -->
-<div *ngIf="showOffer" class="offer-popup shadow-lg">
-
-  <div class="offer-content">
-    <button class="btn-close float-end" (click)="closeOffer()"></button>
-
-    <h4 class="fw-bold">🔥 Summer Offer!</h4>
-    <p class="mb-2">Get 20% OFF on all event planning services</p>
-
-    <span class="badge bg-warning text-dark">Limited Time</span>
-
-    <div class="mt-3">
-      <a routerLink="/register" class="btn btn-dark btn-sm">
-        Book Now
-      </a>
+<div class="ev-offer" *ngIf="showOffer">
+  <div class="offer-inner">
+    <span class="offer-fire">🔥</span>
+    <div class="offer-text">
+      <strong>Summer Special:</strong> 20% OFF all event packages —
+      <span class="offer-code">EVENTSUMMER</span>
     </div>
+    <a routerLink="/register" class="offer-cta">Claim Now</a>
+    <button class="offer-close" (click)="closeOffer()">
+      <i class="bi bi-x"></i>
+    </button>
   </div>
-
 </div>
-<div class="home-wrapper">
 
-  <!-- HERO SECTION -->
-  <div class="hero text-center text-white d-flex align-items-center justify-content-center">
-    <div>
+<div class="ev-home">
 
-      <h1 class="display-4 fw-bold hero-title typing-text">
-        Welcome to <span>Eventora</span>
-      </h1>
-
-      <p class="lead mt-3">
-        Hello <strong>{{username}}</strong> 👋
-      </p>
-
-      <span *ngIf="role" class="badge bg-warning text-dark fs-6">
-        Logged in as {{role}}
-      </span>
-
-      <div class="mt-4">
-        <a href="#services" class="btn btn-warning me-2">Explore Services</a>
-        <a href="#login" class="btn btn-outline-light">Get Started</a>
-      </div>
+  <!-- ═══ HERO ═══ -->
+  <section class="ev-hero">
+    <div class="hero-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
     </div>
-  </div>
-
-  <!-- CAROUSEL -->
-  <div id="eventCarousel" class="carousel slide mt-5" data-bs-ride="carousel">
-    <div class="carousel-inner">
-
-      <div class="carousel-item active">
-        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865" class="d-block w-100 carousel-img">
-        <div class="carousel-caption">
-          <h3>Weddings & Celebrations</h3>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30" class="d-block w-100 carousel-img">
-        <div class="carousel-caption">
-          <h3>Corporate Events</h3>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <img src="https://images.unsplash.com/photo-1503428593586-e225b39bddfe" class="d-block w-100 carousel-img">
-        <div class="carousel-caption">
-          <h3>Concerts & Parties</h3>
-        </div>
-      </div>
-
-    </div>
-
-    <button class="carousel-control-prev" data-bs-target="#eventCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-
-    <button class="carousel-control-next" data-bs-target="#eventCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </button>
-  </div>
-
-  <!-- SERVICES -->
-  <div id="services" class="container mt-5">
-    <h2 class="text-center mb-4">✨ Our Services</h2>
-
-    <div class="row text-center">
-
-      <div class="col-md-4 mb-3">
-        <div class="card shadow h-100">
-          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d" class="card-img-top service-img">
-          <div class="card-body">
-            <h5>Event Planning</h5>
-            <p>Plan weddings, parties, and corporate events easily</p>
+    <div class="container position-relative" style="z-index:2">
+      <div class="row align-items-center min-vh-80">
+        <div class="col-lg-6 py-5">
+          <div class="hero-pill" *ngIf="role">
+            <i class="bi bi-patch-check-fill me-1"></i>
+            Welcome back — <strong>{{role}}</strong>
           </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 mb-3">
-        <div class="card shadow h-100">
-          <img src="https://images.unsplash.com/photo-1556745757-8d76bdb6984b" class="card-img-top service-img">
-          <div class="card-body">
-            <h5>Team Management</h5>
-            <p>Assign tasks and manage staff efficiently</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 mb-3">
-        <div class="card shadow h-100">
-          <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df" class="card-img-top service-img">
-          <div class="card-body">
-            <h5>Real-Time Tracking</h5>
-            <p>Track event progress and task completion</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- CLIENTS -->
-  <div class="container mt-5">
-    <h2 class="text-center mb-4">💼 Our Clients</h2>
-
-    <div class="row text-center">
-
-      <div class="col-md-3 col-6 mb-3">
-        <div class="client-box">Amazon</div>
-      </div>
-
-      <div class="col-md-3 col-6 mb-3">
-        <div class="client-box">Google</div>
-      </div>
-
-      <div class="col-md-3 col-6 mb-3">
-        <div class="client-box">Infosys</div>
-      </div>
-
-      <div class="col-md-3 col-6 mb-3">
-        <div class="client-box">TCS</div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- CTA -->
-  <div class="cta text-center text-white mt-5">
-    <h2>🚀 Ready to Plan Your Event?</h2>
-    <p>Start managing your events professionally today</p>
-    <a routerLink="/register" class="btn btn-warning">Create Account</a>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container py-5">
-      <div class="row">
-
-        <!-- BRAND -->
-        <div class="col-md-4 mb-4">
-          <h5 class="footer-title">EventPro</h5>
-          <p class="footer-text">
-            EventPro helps you plan, manage and execute events effortlessly —
-            from weddings to corporate conferences.
+          <h1 class="hero-heading">
+            Create Events <br>
+            <span class="typing-line text-gradient" >That Live Forever</span>
+          </h1>
+          <p class="hero-sub">
+            Hello <strong class="hero-name">{{username}}</strong> 👋 — Manage weddings, galas, concerts, and corporate
+            events all in one beautifully designed platform.
           </p>
+          <div class="hero-btns">
+            <a href="#services" class="ev-primary-btn">
+              <i class="bi bi-stars me-2"></i>Explore Services
+            </a>
+            <a routerLink="/register" class="ev-ghost-btn">
+              Get Started Free
+              <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+          </div>
+          <div class="hero-stats">
+            <div class="hstat"><span class="hstat-num">2.4k+</span><span class="hstat-lbl">Events Managed</span></div>
+            <div class="hstat-div"></div>
+            <div class="hstat"><span class="hstat-num">98%</span><span class="hstat-lbl">Client Satisfaction</span>
+            </div>
+            <div class="hstat-div"></div>
+            <div class="hstat"><span class="hstat-num">150+</span><span class="hstat-lbl">Expert Planners</span></div>
+          </div>
         </div>
+        <div class="col-lg-6 d-none d-lg-flex justify-content-center">
+          <div class="hero-card-stack">
+            <div class="hcard hcard-back">
+              <i class="bi bi-music-note-beamed"></i>
+              <span>Music Festival</span>
+            </div>
+            <div class="hcard hcard-mid">
+              <i class="bi bi-building"></i>
+              <span>Corporate Gala</span>
+            </div>
+            <div class="hcard hcard-front">
+              <i class="bi bi-heart-fill"></i>
+              <span>Dream Wedding</span>
+              <span class="hcard-badge">✨ Featured</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- QUICK LINKS -->
-        <div class="col-md-4 mb-4">
-          <h6 class="footer-heading">Quick Links</h6>
-          <ul class="footer-links">
+  <!-- ═══ CAROUSEL ═══ -->
+  <section class="ev-carousel-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip">Gallery</span>
+        <h2 class="section-title">Events We've Crafted</h2>
+      </div>
+      <div id="evCarousel" class="carousel slide ev-carousel" data-bs-ride="carousel">
+        <div class="carousel-indicators ev-indicators">
+          <button type="button" data-bs-target="#evCarousel" data-bs-slide-to="0" class="active"></button>
+          <button type="button" data-bs-target="#evCarousel" data-bs-slide-to="1"></button>
+          <button type="button" data-bs-target="#evCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner rounded-4 overflow-hidden">
+          <div class="carousel-item active">
+            <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&q=80"
+              class="carousel-img d-block w-100" alt="Weddings" />
+            <div class="carousel-caption ev-caption">
+              <span class="caption-chip">Most Popular</span>
+              <h3>Weddings & Celebrations</h3>
+              <p>Crafting love stories into unforgettable memories</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80"
+              class="carousel-img d-block w-100" alt="Corporate" />
+            <div class="carousel-caption ev-caption">
+              <span class="caption-chip">Premium</span>
+              <h3>Corporate Events</h3>
+              <p>Professional excellence at every touchpoint</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1503428593586-e225b39bddfe?w=1200&q=80"
+              class="carousel-img d-block w-100" alt="Concerts" />
+            <div class="carousel-caption ev-caption">
+              <span class="caption-chip">Trending</span>
+              <h3>Concerts & Parties</h3>
+              <p>Electrifying experiences that move crowds</p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" data-bs-target="#evCarousel" data-bs-slide="prev">
+          <div class="carousel-ctrl"><i class="bi bi-chevron-left"></i></div>
+        </button>
+        <button class="carousel-control-next" data-bs-target="#evCarousel" data-bs-slide="next">
+          <div class="carousel-ctrl"><i class="bi bi-chevron-right"></i></div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SERVICES ═══ -->
+  <section id="services" class="ev-services">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip">What We Do</span>
+        <h2 class="section-title">Our Services</h2>
+        <p class="section-sub">End-to-end event management tailored to your vision</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="ev-svc-card">
+            <div class="svc-icon" style="--ic:#6C63FF">
+              <i class="bi bi-calendar-event-fill"></i>
+            </div>
+            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&q=80" class="svc-img"
+              alt="Planning" />
+            <div class="svc-body">
+              <h5>Event Planning</h5>
+              <p>From concept to execution — weddings, parties, and corporate galas delivered flawlessly.</p>
+              <a href="#" class="svc-link">Learn more <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="ev-svc-card svc-featured">
+            <span class="svc-hot-badge">⭐ Most Popular</span>
+            <div class="svc-icon" style="--ic:#F5A623">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <img src="https://images.unsplash.com/photo-1556745757-8d76bdb6984b?w=600&q=80" class="svc-img"
+              alt="Team" />
+            <div class="svc-body">
+              <h5>Team Management</h5>
+              <p>Assign tasks, track progress, and keep your staff aligned — all in one dashboard.</p>
+              <a href="#" class="svc-link">Learn more <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="ev-svc-card">
+            <div class="svc-icon" style="--ic:#10B981">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&q=80" class="svc-img"
+              alt="Tracking" />
+            <div class="svc-body">
+              <h5>Real-Time Tracking</h5>
+              <p>Live dashboards for event status, task completion, and client payments.</p>
+              <a href="#" class="svc-link">Learn more <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CLIENTS ═══ -->
+  <section class="ev-clients">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-chip">Trusted By</span>
+        <h2 class="section-title">Our Clients</h2>
+      </div>
+      <div class="clients-strip">
+        <div class="client-logo">Amazon</div>
+        <div class="client-logo">Google</div>
+        <div class="client-logo">Infosys</div>
+        <div class="client-logo">TCS</div>
+        <div class="client-logo">Wipro</div>
+        <div class="client-logo">Microsoft</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="ev-cta">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-orb"></div>
+        <div class="row align-items-center">
+          <div class="col-lg-7 mb-4 mb-lg-0">
+            <span class="section-chip mb-3 d-inline-block">Get Started Today</span>
+            <h2 class="cta-title">Ready to Plan Your <span class="text-gradient">Dream Event?</span></h2>
+            <p class="cta-sub">Join 2,400+ event professionals using Eventora to create magic.</p>
+          </div>
+          <div class="col-lg-5 text-lg-end">
+            <a routerLink="/register" class="ev-primary-btn me-3">
+              <i class="bi bi-rocket-takeoff me-2"></i>Start Free
+            </a>
+            <a routerLink="/login" class="ev-ghost-btn">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="ev-footer">
+    <div class="container">
+      <div class="row py-5">
+        <div class="col-lg-4 mb-4">
+          <div class="footer-brand">
+            <div class="brand-gem-sm"><i class="bi bi-stars"></i></div>
+            <span class="brand-name-sm">Eventora</span>
+          </div>
+          <p class="footer-text mt-3">
+            The all-in-one platform for event planners, staff, and clients. From intimate gatherings to grand galas.
+          </p>
+          <div class="footer-socials">
+            <a class="fsoc"><i class="bi bi-instagram"></i></a>
+            <a class="fsoc"><i class="bi bi-twitter-x"></i></a>
+            <a class="fsoc"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-6 mb-4">
+          <h6 class="footer-heading">Platform</h6>
+          <ul class="footer-ul">
             <li><a routerLink="/home">Home</a></li>
             <li><a routerLink="/home" fragment="services">Services</a></li>
             <li><a routerLink="/register">Register</a></li>
-            <li><a routerLink="/login">Login</a></li>
           </ul>
         </div>
-
-        <!-- CONTACT -->
-        <div class="col-md-4 mb-4">
-          <h6 class="footer-heading">Get in Touch</h6>
-          <p>Email: support@eventpro.com</p>
-          <p>Phone: +91 98765 43210</p>
+        <div class="col-lg-2 col-6 mb-4">
+          <h6 class="footer-heading">Account</h6>
+          <ul class="footer-ul">
+            <li><a routerLink="/login">Login</a></li>
+            <li><a routerLink="/planner-dashboard">Dashboard</a></li>
+          </ul>
         </div>
-
+        <div class="col-lg-4 mb-4">
+          <h6 class="footer-heading">Get in Touch</h6>
+          <p class="footer-text"><i class="bi bi-envelope-fill me-2 text-accent"></i>support@eventora.com</p>
+          <p class="footer-text"><i class="bi bi-telephone-fill me-2 text-accent"></i>+91 98765 43210</p>
+          <div class="footer-newsletter">
+            <input type="email" placeholder="Your email…" />
+            <button><i class="bi bi-send-fill"></i></button>
+          </div>
+        </div>
       </div>
-
-      <hr class="footer-divider">
-
-      <div class="text-center footer-bottom">
-        © 2026 EventPro. All rights reserved.
+      <div class="footer-bottom">
+        <span>© 2026 Eventora. All rights reserved.</span>
+        <span>Built with ♥ for extraordinary events</span>
       </div>
     </div>
   </footer>
 
-
 </div>
 
 <style>
-  html {
-    scroll-behavior: smooth;
+  /* ──── DESIGN TOKENS ──────────────────────────────── */
+  .ev-home,
+  .ev-home * {
+    font-family: var(--font-body) !important;
   }
 
-  .hero {
-  height: 80vh;
-  background:
-    linear-gradient(
-      rgba(0,0,0,0.55),
-      rgba(0,0,0,0.55)
-    ),
-    url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678')
-    no-repeat center center / cover;
-}
-
-  /* CAROUSEL */
-  .carousel-img {
-    height: 400px;
-    object-fit: cover;
+  :root {
+    --ev-pri: #6C63FF;
+    --ev-pri-light: #A78BFA;
+    --ev-accent: #F5A623;
+    --ev-deep: #1A103C;
+    --ev-green: #10B981;
+    --ev-pink: #F472B6;
+    --bg-light: #FAFAFE;
+    --bg-card: #FFFFFF;
+    --text-main: #1A103C;
+    --text-muted: #6B7280;
+    --border-clr: #E8E4FF;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'Inter', sans-serif;
   }
 
-  /* SERVICES */
-  .service-img {
-    height: 200px;
-    object-fit: cover;
+  body.dark-mode {
+    --bg-light: #0F0A24;
+    --bg-card: #1A1035;
+    --text-main: #F0EEFF;
+    --text-muted: #9CA3AF;
+    --border-clr: rgba(108, 99, 255, 0.2);
   }
 
-  /* CLIENT BOX */
-  .client-box {
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    font-weight: bold;
-    transition: 0.3s;
+  * {
+    box-sizing: border-box;
   }
 
-  .client-box:hover {
-    background: #ffc107;
-    transform: scale(1.05);
+  .ev-home {
+    background: var(--bg-light);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    transition: background 0.3s, color 0.3s;
   }
 
-  /* CTA */
-  .cta {
-    padding: 60px 20px;
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
+  .text-gradient {
+    background: linear-gradient(90deg, #6C63FF, #F5A623, #F472B6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-
-  /* HERO TEXT VISIBILITY */
-.hero-title {
-  color: #ffffff;
-  text-shadow:
-    0 4px 12px rgba(0,0,0,0.85),
-    0 0 25px rgba(255,193,7,0.35);
-  letter-spacing: 1px;
-}
-
-/* Highlight brand */
-.hero-title span {
-  color: #fbbf24; /* gold */
-}
-
-
-/* TYPING EFFECT */
-/* ============================
-   LOOPING TYPEWRITER EFFECT
-============================ */
-
-.typing-text {
+.typing-line {
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
-  border-right: 3px solid #fbbf24;
-  animation: typingLoop 6s steps(30, end) infinite,
-             blink 0.75s step-end infinite;
+  border-right: 3px solid #F5A623;
+  width: 0;
+
+  animation: typing 3s steps(25, end) infinite,
+             blink 0.7s step-end infinite;
 }
 
-/* Main typing + pause + reset */
-@keyframes typingLoop {
-  0% {
-    width: 0;
-  }
-  40% {
-    width: 100%;
-  }
-  60% {
-    width: 100%; /* pause after typing */
-  }
-  100% {
-    width: 0; /* reset */
-  }
+/* typing + delete loop */
+@keyframes typing {
+  0% { width: 0 }
+  40% { width: 100% }
+  60% { width: 100% }
+  100% { width: 0 }
 }
 
-/* Cursor blink */
 @keyframes blink {
-  50% {
-    border-color: transparent;
-  }
+  50% { border-color: transparent }
 }
+  /* ──── FLASH OFFER ──────────────────────────────── */
+  .ev-offer {
+    background: linear-gradient(90deg, #1A103C, #6C63FF, #F5A623, #6C63FF, #1A103C);
+    background-size: 300% 100%;
+    animation: offerGrad 6s ease infinite;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-  /* MOBILE */
-  @media(max-width:768px) {
-    .hero {
-      height: 60vh;
+  @keyframes offerGrad {
+
+    0%,
+    100% {
+      background-position: 0 50%
+    }
+
+    50% {
+      background-position: 100% 50%
     }
   }
 
-  /* =======================
-   DARK MODE (HOME)
-======================= */
-
-  body.dark-mode {
-    background-color: #0f172a;
-    /* slate-900 */
-    color: #e5e7eb;
+  .offer-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 900px;
+    width: 100%;
   }
 
-  /* HERO */
-  body.dark-mode .hero {
-    background-blend-mode: overlay;
-    background-color: rgba(0, 0, 0, 0.7);
+  .offer-fire {
+    font-size: 1.3rem;
+    animation: pulse 1s infinite;
   }
 
-  /* Cards */
-  body.dark-mode .card {
-    background-color: #1e293b;
-    color: #e5e7eb;
+  @keyframes pulse {
+
+    0%,
+    100% {
+      transform: scale(1)
+    }
+
+    50% {
+      transform: scale(1.25)
+    }
   }
 
-  body.dark-mode .card p {
-    color: #cbd5e1;
+  .offer-text {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.88rem;
+    font-family: var(--font-body);
   }
 
-  /* SERVICES */
-  body.dark-mode #services h2 {
-    color: #fbbf24;
-  }
-
-  /* CLIENT BOX */
-  body.dark-mode .client-box {
-    background: #1e293b;
-    color: #e5e7eb;
-  }
-
-  body.dark-mode .client-box:hover {
-    background: #fbbf24;
-    color: #111;
-  }
-
-  /* CTA */
-  body.dark-mode .cta {
-    background: linear-gradient(135deg, #020617, #1e293b);
-  }
-
-  .footer {
-    background: #0f172a;
-    color: #e5e7eb;
-  }
-
-  .footer-title {
+  .offer-code {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
     font-weight: 700;
+    font-family: monospace;
+  }
+
+  .offer-cta {
+    background: #F5A623;
+    color: #1A103C;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .offer-cta:hover {
+    transform: scale(1.05);
+    color: #1A103C;
+  }
+
+  .offer-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 4px;
   }
 
-  .footer-text {
-    font-size: 0.9rem;
-    opacity: 0.8;
+  /* ──── HERO ──────────────────────────────── */
+  .ev-hero {
+    background: linear-gradient(155deg, #0F0A24 0%, #1A103C 40%, #2D1B69 80%, #0F3460 100%);
+    padding: 80px 0 60px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .footer-heading {
+  .min-vh-80 {
+    min-height: 60vh;
+  }
+
+  .hero-orbs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+  }
+
+  .orb-1 {
+    width: 500px;
+    height: 500px;
+    background: #6C63FF;
+    opacity: 0.15;
+    top: -150px;
+    right: -100px;
+  }
+
+  .orb-2 {
+    width: 350px;
+    height: 350px;
+    background: #F5A623;
+    opacity: 0.1;
+    bottom: -80px;
+    left: 5%;
+  }
+
+  .orb-3 {
+    width: 250px;
+    height: 250px;
+    background: #F472B6;
+    opacity: 0.1;
+    top: 40%;
+    right: 25%;
+  }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(108, 99, 255, 0.2);
+    border: 1px solid rgba(108, 99, 255, 0.4);
+    color: #A78BFA;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.82rem;
     font-weight: 600;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease;
+  }
+
+  .hero-heading {
+    font-family: var(--font-head);
+    font-size: clamp(2.6rem, 5.5vw, 4rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.1s both;
+  }
+
+  .hero-sub {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s 0.2s both;
+  }
+
+  .hero-name {
+    color: #F5A623;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s both;
+  }
+
+  .ev-primary-btn {
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    color: white;
+    padding: 13px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.25s;
+    box-shadow: 0 6px 24px rgba(108, 99, 255, 0.4);
+  }
+
+  .ev-primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(108, 99, 255, 0.55);
+    color: white;
+  }
+
+  .ev-ghost-btn {
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 13px 24px;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.25s;
+  }
+
+  .ev-ghost-btn:hover {
+    border-color: #6C63FF;
+    color: #A78BFA;
+  }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+    animation: fadeUp 0.6s 0.4s both;
+  }
+
+  .hstat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hstat-num {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #F5A623;
+  }
+
+  .hstat-lbl {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .hstat-div {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Hero card stack */
+  .hero-card-stack {
+    position: relative;
+    width: 300px;
+    height: 380px;
+  }
+
+  .hcard {
+    position: absolute;
+    width: 220px;
+    padding: 24px;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    transition: all 0.3s;
+  }
+
+  .hcard i {
+    font-size: 2rem;
+  }
+
+  .hcard span {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .hcard-back {
+    background: rgba(108, 99, 255, 0.2);
+    border: 1px solid rgba(108, 99, 255, 0.3);
+    color: #A78BFA;
+    top: 0;
+    left: 60px;
+    transform: rotate(6deg);
+  }
+
+  .hcard-mid {
+    background: rgba(245, 166, 35, 0.15);
+    border: 1px solid rgba(245, 166, 35, 0.3);
+    color: #F5A623;
+    top: 60px;
+    left: 30px;
+    transform: rotate(-3deg);
+  }
+
+  .hcard-front {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    top: 120px;
+    left: 0;
+    transform: rotate(0);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+
+  .hcard-badge {
+    position: absolute;
+    top: -12px;
+    right: 10px;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    color: #1A103C;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  /* ──── SECTION COMMONS ──────────────────────────────── */
+  .ev-carousel-section,
+  .ev-services,
+  .ev-clients,
+  .ev-cta {
+    padding: 80px 0;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .section-chip {
+    display: inline-block;
+    background: rgba(108, 99, 255, 0.1);
+    border: 1px solid rgba(108, 99, 255, 0.25);
+    color: #6C63FF;
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  body.dark-mode .section-chip {
+    background: rgba(108, 99, 255, 0.15);
+    color: #A78BFA;
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 12px;
+  }
+
+  .section-sub {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ──── CAROUSEL ──────────────────────────────── */
+  .carousel-img {
+    height: 480px;
+    object-fit: cover;
+  }
+
+  .ev-caption {
+    background: linear-gradient(transparent, rgba(15, 10, 36, 0.85));
+    border-radius: 0 0 1rem 1rem;
+    text-align: left;
+    padding: 32px;
+  }
+
+  .caption-chip {
+    background: rgba(245, 166, 35, 0.9);
+    color: #1A103C;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .ev-caption h3 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.6rem;
+  }
+
+  .ev-caption p {
+    opacity: 0.85;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .carousel-ctrl {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+  }
+
+  .ev-indicators button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .ev-indicators button.active {
+    background: #F5A623;
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  /* ──── SERVICES ──────────────────────────────── */
+  .ev-services {
+    background: var(--bg-light);
+  }
+
+  .ev-svc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-clr);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s;
+    height: 100%;
+    position: relative;
+  }
+
+  .ev-svc-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(108, 99, 255, 0.15);
+    border-color: rgba(108, 99, 255, 0.3);
+  }
+
+  .svc-featured {
+    border-color: #6C63FF;
+    box-shadow: 0 8px 32px rgba(108, 99, 255, 0.15);
+  }
+
+  .svc-hot-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    background: linear-gradient(135deg, #6C63FF, #F5A623);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .svc-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(var(--ic-r, 108), var(--ic-g, 99), var(--ic-b, 255), 0.1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--ic, #6C63FF);
+    margin: 20px 20px 0;
+  }
+
+  /* Simpler icon color via inline custom property */
+  .ev-svc-card .svc-icon {
+    color: var(--ic);
+    background: color-mix(in srgb, var(--ic) 12%, transparent);
+  }
+
+  .svc-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    margin-top: 16px;
+  }
+
+  .svc-body {
+    padding: 20px;
+  }
+
+  .svc-body h5 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+  }
+
+  .svc-body p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .svc-link {
+    color: #6C63FF;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s;
+  }
+
+  .svc-link:hover {
+    gap: 10px;
+    color: #F5A623;
+  }
+
+  /* ──── CLIENTS ──────────────────────────────── */
+  .ev-clients {
+    background: var(--bg-card);
+  }
+
+  .clients-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .client-logo {
+    background: var(--bg-light);
+    border: 1px solid var(--border-clr);
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: all 0.25s;
+    cursor: default;
+  }
+
+  .client-logo:hover {
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    color: #fff;
+    border-color: transparent;
+    transform: scale(1.06);
+    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
+  }
+
+  /* ──── CTA ──────────────────────────────── */
+  .ev-cta {
+    background: var(--bg-light);
+  }
+
+  .cta-card {
+    background: linear-gradient(135deg, #1A103C, #2D1B69, #0F3460);
+    border-radius: 24px;
+    padding: 60px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-orb {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: #6C63FF;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+    top: -100px;
+    right: -80px;
+  }
+
+  .cta-title {
+    font-family: var(--font-head);
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    color: #fff;
     margin-bottom: 10px;
   }
 
-  .footer-links {
+  .cta-sub {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.95rem;
+  }
+
+  /* ──── FOOTER ──────────────────────────────── */
+  .ev-footer {
+    background: linear-gradient(180deg, #0F0A24, #000);
+    color: rgba(255, 255, 255, 0.7);
+    font-family: var(--font-body);
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-gem-sm {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .brand-name-sm {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #F5A623, #6C63FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .footer-text {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .footer-heading {
+    font-family: var(--font-head);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+  }
+
+  .footer-ul {
     list-style: none;
     padding: 0;
+    margin: 0;
   }
 
-  .footer-links li {
-    margin-bottom: 6px;
+  .footer-ul li {
+    margin-bottom: 8px;
   }
 
-  .footer-links a {
-    color: #cbd5e1;
+  .footer-ul a {
+    color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+  }
+
+  .footer-ul a:hover {
+    color: #F5A623;
+  }
+
+  .footer-socials {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .fsoc {
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6);
     font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
   }
 
-  .footer-links a:hover {
-    color: #fbbf24;
+  .fsoc:hover {
+    background: #6C63FF;
+    border-color: #6C63FF;
+    color: #fff;
   }
 
-  .footer-divider {
-    border-color: rgba(255, 255, 255, 0.08);
-    margin: 20px 0;
+  .footer-newsletter {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .footer-newsletter input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 9px 14px;
+    color: #fff;
+    font-size: 0.84rem;
+    outline: none;
+    font-family: var(--font-body);
+  }
+
+  .footer-newsletter input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .footer-newsletter button {
+    background: #6C63FF;
+    border: none;
+    width: 40px;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .footer-newsletter button:hover {
+    background: #A78BFA;
   }
 
   .footer-bottom {
-    font-size: 0.85rem;
-    opacity: 0.7;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* ──── ANIMATIONS ──────────────────────────────── */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0)
+    }
+  }
+
+  /* ──── RESPONSIVE ──────────────────────────────── */
+  @media(max-width:768px) {
+    .ev-hero {
+      padding: 50px 0 40px;
+    }
+
+    .hero-heading {
+      font-size: 2.2rem;
+    }
+
+    .hero-btns {
+      flex-direction: column;
+    }
+
+    .hero-stats {
+      gap: 12px;
+    }
+
+    .cta-card {
+      padding: 40px 24px;
+    }
+
+    .carousel-img {
+      height: 260px;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
   }
 </style>

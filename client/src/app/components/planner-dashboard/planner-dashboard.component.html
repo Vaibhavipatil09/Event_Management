@@ -1,527 +1,1041 @@
-<!-- ================= TOAST ================= -->
-<div class="toast-container position-fixed top-0 end-0 p-3">
-  <div class="toast text-bg-success show" *ngIf="showToast">
-    <div class="d-flex">
-      <div class="toast-body">
-        {{ toastMessage }}
-      </div>
-      <button class="btn-close btn-close-white"
-              (click)="showToast = false"></button>
-    </div>
+<!-- planner-dashboard.component.html -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap"
+  rel="stylesheet" />
+
+<!-- TOAST -->
+<div class="ev-toast-stack">
+  <div class="ev-toast ev-toast-success" *ngIf="showToast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span>{{ toastMessage }}</span>
+    <button (click)="showToast=false"><i class="bi bi-x"></i></button>
   </div>
 </div>
 
-<!-- ================= DASHBOARD LAYOUT ================= -->
-<div class="dashboard-layout">
+<div class="pd-wrap">
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <h4 class="brand">EventPro</h4>
-
-    <nav class="menu">
-      <div class="menu-item"
-           [class.active]="showEvents"
-           (click)="navigateTo('events')">
-        🎉 Events
+  <!-- ══ SIDEBAR ══════════════════════════════════════ -->
+  <aside class="pd-sidebar">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-gem"><i class="bi bi-stars"></i></div>
+        <span class="sb-name">Eventora</span>
       </div>
-
-      <div class="menu-item"
-           [class.active]="showTasks"
-           (click)="navigateTo('tasks')">
-        📋 Tasks
+      <div class="sb-role">
+        <i class="bi bi-person-workspace"></i>&nbsp; Planner
       </div>
+    </div>
+
+    <nav class="sb-nav">
+      <button class="sb-link" [class.sb-active]="showEvents" (click)="navigateTo('events')">
+        <i class="bi bi-calendar-event-fill"></i>
+        <span>Events</span>
+      </button>
+      <button class="sb-link" [class.sb-active]="showTasks" (click)="navigateTo('tasks')">
+        <i class="bi bi-check2-square"></i>
+        <span>Tasks</span>
+      </button>
     </nav>
+
+    <div class="sb-stats">
+      <div class="sb-stat">
+        <span class="ss-val">{{ events.length }}</span>
+        <span class="ss-lbl">Events</span>
+      </div>
+      <div class="ss-div"></div>
+      <div class="sb-stat">
+        <span class="ss-val">{{ tasks.length }}</span>
+        <span class="ss-lbl">Tasks</span>
+      </div>
+      <div class="ss-div"></div>
+      <div class="sb-stat">
+        <span class="ss-val">{{ staffs.length }}</span>
+        <span class="ss-lbl">Staff</span>
+      </div>
+    </div>
+
+    <button class="sb-logout" (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i> Logout
+    </button>
   </aside>
 
-  <!-- ===== CONTENT ===== -->
-  <main class="content">
+  <!-- ══ MAIN ══════════════════════════════════════ -->
+  <main class="pd-main">
 
-    <!-- ================= STATS ================= -->
-    <div class="row g-3 mb-4">
-
-      <div class="col-md-3">
-        <div class="stat-card">
-          <h6>Total Events</h6>
-          <h3>{{ events.length }}</h3>
+    <!-- Page header -->
+    <div class="pd-header">
+      <div>
+        <h1 class="pd-title">
+          <span *ngIf="showEvents">🎉 Events</span>
+          <span *ngIf="showTasks">📋 Tasks</span>
+        </h1>
+        <p class="pd-sub">Planner Dashboard — manage your events and tasks</p>
+      </div>
+      <!-- Stat pills (desktop) -->
+      <div class="pd-stat-pills d-none d-md-flex">
+        <div class="stat-pill" style="--c:#6C63FF">
+          <i class="bi bi-calendar3"></i>
+          <span>{{ events.length }} Events</span>
+        </div>
+        <div class="stat-pill" style="--c:#F59E0B">
+          <i class="bi bi-check-square"></i>
+          <span>{{ tasks.length }} Tasks</span>
+        </div>
+        <div class="stat-pill" style="--c:#10B981">
+          <i class="bi bi-people-fill"></i>
+          <span>{{ clients.length }} Clients</span>
         </div>
       </div>
-
-      <div class="col-md-3">
-        <div class="stat-card">
-          <h6>Total Tasks</h6>
-          <h3>{{ tasks.length }}</h3>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="stat-card">
-          <h6>Staff Members</h6>
-          <h3>{{ staffs.length }}</h3>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="stat-card">
-          <h6>Clients</h6>
-          <h3>{{ clients.length }}</h3>
-        </div>
-      </div>
-
     </div>
 
-    <!-- ================= EVENTS ================= -->
-    <section *ngIf="showEvents">
+    <!-- ══ EVENTS SECTION ══════════════════════════ -->
+    <div *ngIf="showEvents">
 
-      <!-- CREATE EVENT -->
-      <div class="card dashboard-card mb-4">
-        <div class="card-body">
-          <h5 class="mb-3">➕ Create Event</h5>
+      <!-- Create Event -->
+      <div class="ev-card mb-4">
+        <div class="ev-card-head">
+          <div class="ev-card-dot" style="--d:#6C63FF"></div>
+          <h3>Create New Event</h3>
+        </div>
+        <form (ngSubmit)="createEvent()" class="ev-form-grid">
+          <div class="ev-field">
+            <label>Event Title</label>
+            <input class="ev-input" [(ngModel)]="newEvent.title" name="title" placeholder="e.g. Annual Gala 2025"
+              required />
+          </div>
+          <div class="ev-field">
+            <label>Date & Time</label>
+            <input type="datetime-local" class="ev-input" [(ngModel)]="newEvent.date" name="date" required />
+          </div>
+          <div class="ev-field">
+            <label>Location</label>
+            <input class="ev-input" [(ngModel)]="newEvent.location" name="location" placeholder="Venue / City"
+              required />
+          </div>
+          <div class="ev-field">
+            <label>Status</label>
+            <select class="ev-input" [(ngModel)]="newEvent.status" name="status" required>
+              <option value="">Select status</option>
+              <option value="Pending">⏳ Pending</option>
+              <option value="Completed">✅ Completed</option>
+            </select>
+          </div>
+          <div class="ev-field">
+            <label>Assign Client</label>
+            <select class="ev-input" [(ngModel)]="selectedClientId" name="clientId">
+              <option [ngValue]="null">— Select Client —</option>
+              <option *ngFor="let c of clients" [value]="c.id">{{ c.username }}</option>
+            </select>
+          </div>
+          <div class="ev-field ev-field-full">
+            <label>Description</label>
+            <textarea class="ev-input" rows="3" [(ngModel)]="newEvent.description" name="description"
+              placeholder="Brief description of the event…" required></textarea>
+          </div>
+          <div class="ev-field-full">
+            <button type="submit" class="ev-btn-primary">
+              <i class="bi bi-plus-circle-fill me-2"></i>Create Event
+            </button>
+          </div>
+        </form>
+      </div>
 
-          <form (ngSubmit)="createEvent()" class="row g-3">
-            <div class="col-md-6">
-              <input class="form-control"
-                placeholder="Event Title"
-                [(ngModel)]="newEvent.title"
-                name="title" required />
-            </div>
+      <!-- Event List -->
+      <div class="ev-card">
+        <div class="ev-card-head">
+          <div class="ev-card-dot" style="--d:#10B981"></div>
+          <h3>All Events</h3>
+          <span class="ev-count-badge">{{ events.length }}</span>
+        </div>
 
-            <div class="col-md-6">
-              <input type="datetime-local"
-                class="form-control"
-                [(ngModel)]="newEvent.date"
-                name="date" required />
-            </div>
-
-            <div class="col-md-6">
-              <input class="form-control"
-                placeholder="Location"
-                [(ngModel)]="newEvent.location"
-                name="location" required />
-            </div>
-
-            <div class="col-md-6">
-              <select class="form-select"
-                [(ngModel)]="newEvent.status"
-                name="status" required>
-                <option value="">Status</option>
-                <option>Pending</option>
-                <option>Completed</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <select class="form-select"
-                [(ngModel)]="selectedClientId"
-                name="clientId">
-                <option [ngValue]="null">Assign Client</option>
-                <option *ngFor="let c of clients" [value]="c.id">
-                  {{ c.username }}
-                </option>
-              </select>
-            </div>
-
-            <div class="col-12">
-              <textarea class="form-control"
-                rows="2"
-                placeholder="Description"
-                [(ngModel)]="newEvent.description"
-                name="description"></textarea>
-            </div>
-
-            <div class="col-12 text-end">
-              <button class="btn btn-success px-4">
-                Create Event
+        <div class="ev-event-grid" *ngIf="events.length > 0; else noEventsBlock">
+          <div class="ev-event-card" *ngFor="let event of events">
+            <div class="eec-top">
+              <span class="ev-status-badge" [class.badge-done]="event.status==='Completed'"
+                [class.badge-pending]="event.status!=='Completed'">
+                {{ event.status }}
+              </span>
+              <button class="ev-edit-btn" (click)="editEvent(event)">
+                <i class="bi bi-pencil-fill"></i>
               </button>
             </div>
-          </form>
+            <h4 class="eec-title">{{ event.title }}</h4>
+            <div class="eec-meta">
+              <span><i class="bi bi-calendar3"></i> {{ event.date | date:'mediumDate' }}</span>
+              <span><i class="bi bi-geo-alt-fill"></i> {{ event.location }}</span>
+            </div>
+            <p class="eec-desc">{{ event.description }}</p>
+            <div class="eec-footer" *ngIf="event.client">
+              <i class="bi bi-person-fill"></i>
+              <span>{{ event.client.username }}</span>
+            </div>
+          </div>
         </div>
+
+        <ng-template #noEventsBlock>
+          <div class="ev-empty">
+            <i class="bi bi-calendar-x"></i>
+            <p>No events yet. Create your first event above!</p>
+          </div>
+        </ng-template>
       </div>
 
-      <!-- EVENT TABLE (✅ EDIT BUTTON ADDED) -->
-      <div class="card dashboard-card">
-        <div class="card-body">
-          <h5>📅 Events</h5>
-
-          <table class="table table-hover align-middle mt-3">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Date</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Client</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr *ngFor="let e of events">
-                <td>{{ e.title }}</td>
-                <td>{{ e.date }}</td>
-                <td>{{ e.location }}</td>
-
-                <td>
-                  <span class="badge"
-                    [ngClass]="e.status === 'Completed'
-                      ? 'bg-success'
-                      : 'bg-warning text-dark'">
-                    {{ e.status }}
-                  </span>
-                </td>
-
-                <td>{{ e.client?.username || '-' }}</td>
-
-                <!-- ✅ EDIT BUTTON -->
-                <td>
-                  <button class="btn btn-sm btn-outline-primary"
-                          (click)="editEvent(e)">
-                    ✏️ Edit
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Edit Event -->
+      <div class="ev-card mt-4" *ngIf="selectedEvent.id">
+        <div class="ev-card-head">
+          <div class="ev-card-dot" style="--d:#F59E0B"></div>
+          <h3>Edit Event — {{ selectedEvent.title }}</h3>
         </div>
+        <form (ngSubmit)="updateEvent()" class="ev-form-grid">
+          <div class="ev-field">
+            <label>Title</label>
+            <input class="ev-input" [(ngModel)]="selectedEvent.title" name="editTitle" required />
+          </div>
+          <div class="ev-field">
+            <label>Date</label>
+            <input type="datetime-local" class="ev-input" [(ngModel)]="selectedEvent.date" name="editDate" required />
+          </div>
+          <div class="ev-field">
+            <label>Location</label>
+            <input class="ev-input" [(ngModel)]="selectedEvent.location" name="editLocation" required />
+          </div>
+          <div class="ev-field">
+            <label>Status</label>
+            <select class="ev-input" [(ngModel)]="selectedEvent.status" name="editStatus" required>
+              <option value="Pending">⏳ Pending</option>
+              <option value="Completed">✅ Completed</option>
+            </select>
+          </div>
+          <div class="ev-field ev-field-full">
+            <label>Description</label>
+            <textarea class="ev-input" rows="3" [(ngModel)]="selectedEvent.description" name="editDescription"
+              required></textarea>
+          </div>
+          <div class="ev-field-full ev-btn-row">
+            <button type="submit" class="ev-btn-primary"><i class="bi bi-check2 me-2"></i>Update</button>
+            <button type="button" class="ev-btn-ghost" (click)="cancelEdit()">Cancel</button>
+          </div>
+        </form>
       </div>
 
-      <!-- ================= EDIT EVENT SECTION ================= -->
-      <div *ngIf="selectedEvent.id" class="card dashboard-card mt-4">
-        <div class="card-body">
-          <h5 class="mb-3 text-warning">✏️ Edit Event</h5>
+    </div><!-- /events section -->
 
-          <form (ngSubmit)="updateEvent()" class="row g-3">
+    <!-- ══ TASKS SECTION ══════════════════════════ -->
+    <div *ngIf="showTasks">
 
-            <div class="col-md-6">
-              <input class="form-control"
-                [(ngModel)]="selectedEvent.title"
-                name="editTitle"
-                required />
-            </div>
-
-            <div class="col-md-6">
-              <input type="datetime-local"
-                class="form-control"
-                [(ngModel)]="selectedEvent.date"
-                name="editDate"
-                required />
-            </div>
-
-            <div class="col-md-6">
-              <input class="form-control"
-                [(ngModel)]="selectedEvent.location"
-                name="editLocation"
-                required />
-            </div>
-
-            <div class="col-md-6">
-              <select class="form-select"
-                [(ngModel)]="selectedEvent.status"
-                name="editStatus"
-                required>
-                <option>Pending</option>
-                <option>Completed</option>
-              </select>
-            </div>
-
-            <div class="col-12">
-              <textarea class="form-control"
-                rows="2"
-                [(ngModel)]="selectedEvent.description"
-                name="editDescription"
-                required></textarea>
-            </div>
-
-            <div class="col-12 text-end">
-              <button class="btn btn-success me-2">Update</button>
-              <button type="button"
-                      class="btn btn-secondary"
-                      (click)="cancelEdit()">Cancel</button>
-            </div>
-
-          </form>
+      <!-- Create Task -->
+      <div class="ev-card mb-4">
+        <div class="ev-card-head">
+          <div class="ev-card-dot" style="--d:#F472B6"></div>
+          <h3>Create New Task</h3>
         </div>
+        <form (ngSubmit)="createTask()" class="ev-form-grid">
+          <div class="ev-field ev-field-full">
+            <label>Task Description</label>
+            <input class="ev-input" [(ngModel)]="newTask.description" name="taskDesc" placeholder="Describe the task…"
+              required />
+          </div>
+          <div class="ev-field">
+            <label>Status</label>
+            <select class="ev-input" [(ngModel)]="newTask.status" name="taskStatus" required>
+              <option value="">Select status</option>
+              <option value="Pending">⏳ Pending</option>
+              <option value="Completed">✅ Completed</option>
+            </select>
+          </div>
+          <div class="ev-field">
+            <label>Link to Event</label>
+            <select class="ev-input" [(ngModel)]="newTaskEventId" name="taskEventId">
+              <option [ngValue]="null">— Select Event —</option>
+              <option *ngFor="let e of events" [value]="e.id">{{ e.title }}</option>
+            </select>
+          </div>
+          <div class="ev-field">
+            <label>Assign Staff</label>
+            <select class="ev-input" [(ngModel)]="newTask.assignedStaff" name="assignedStaff"
+              [disabled]="newTask.status==='Completed'">
+              <option [ngValue]="null">— None —</option>
+              <option *ngFor="let s of staffs" [value]="s.id">{{ s.username }}</option>
+            </select>
+            <small class="ev-warn-text" *ngIf="newTask.status==='Completed'">Staff disabled for completed tasks</small>
+          </div>
+          <div class="ev-field-full">
+            <button type="submit" class="ev-btn-primary">
+              <i class="bi bi-plus-circle-fill me-2"></i>Create Task
+            </button>
+          </div>
+        </form>
       </div>
 
-    </section>
-<!-- ================= TASKS ================= -->
-<section *ngIf="showTasks">
-
-  <!-- ✅ CREATE TASK -->
-  <div class="card dashboard-card mb-4">
-    <div class="card-body">
-      <h5 class="mb-3">➕ Create Task</h5>
-
-      <form (ngSubmit)="createTask()" class="row g-3">
-
-        <!-- Description -->
-        <div class="col-md-6">
-          <input class="form-control"
-                 placeholder="Task Description"
-                 [(ngModel)]="newTask.description"
-                 name="taskDescription"
-                 required />
+      <!-- Task List -->
+      <div class="ev-card">
+        <div class="ev-card-head">
+          <div class="ev-card-dot" style="--d:#6C63FF"></div>
+          <h3>All Tasks</h3>
+          <span class="ev-count-badge">{{ tasks.length }}</span>
         </div>
 
-        <!-- Status -->
-        <div class="col-md-3">
-          <select class="form-select"
-                  [(ngModel)]="newTask.status"
-                  name="taskStatus"
-                  required>
-            <option value="">Status</option>
-            <option>Pending</option>
-            <option>Completed</option>
-          </select>
-        </div>
-
-        <!-- Event -->
-        <div class="col-md-3">
-          <select class="form-select"
-                  [(ngModel)]="newTaskEventId"
-                  name="taskEventId">
-            <option [ngValue]="null">Select Event</option>
-            <option *ngFor="let e of events" [value]="e.id">
-              {{ e.title }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Assign Staff -->
-        <div class="col-md-4">
-          <select class="form-select"
-                  [(ngModel)]="newTask.assignedStaff"
-                  name="assignedStaff"
-                  [disabled]="newTask.status === 'Completed'">
-            <option [ngValue]="null">Assign Staff</option>
-            <option *ngFor="let s of staffs" [value]="s.id">
-              {{ s.username }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Button -->
-        <div class="col-12 text-end">
-          <button class="btn btn-success px-4">
-            Create Task
-          </button>
-        </div>
-
-      </form>
-    </div>
-  </div>
-<!-- ================= TASK LIST ================= -->
-<div class="card dashboard-card">
-  <div class="card-body">
-    <h5>📋 Task List</h5>
-
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mt-3">
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Event</th>
-            <th>Status</th>
-            <th>Assigned Staff</th>
-            <th>Reassign</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr *ngFor="let t of tasks">
-
-            <!-- Description -->
-            <td>{{ t.description }}</td>
-
-            <!-- Event -->
-            <td>{{ t.event?.title || '-' }}</td>
-
-            <!-- Status -->
-            <td>
-              <span class="badge"
-                    [ngClass]="t.status === 'Completed'
-                      ? 'bg-success'
-                      : 'bg-warning text-dark'">
-                {{ t.status }}
+        <div class="ev-task-grid" *ngIf="tasks.length > 0; else noTasksBlock">
+          <div class="ev-task-card" *ngFor="let task of tasks" [class.task-completed]="task.status==='Completed'">
+            <div class="etc-top">
+              <span class="ev-status-badge" [class.badge-done]="task.status==='Completed'"
+                [class.badge-pending]="task.status!=='Completed'">
+                {{ task.status }}
               </span>
-            </td>
+              <span class="ev-event-chip" *ngIf="task.event?.title">
+                <i class="bi bi-calendar3"></i> {{ task.event!.title }}
+              </span>
+            </div>
 
-            <!-- Current staff -->
-            <td>{{ t.assignedStaff?.username || 'Unassigned' }}</td>
+            <p class="etc-desc">{{ task.description }}</p>
 
-            <!-- ✅ REASSIGN STAFF -->
-            <td>
-              <div class="d-flex gap-2">
+            <div class="etc-staff">
+              <i class="bi bi-person-fill"></i>
+              <span>{{ task.assignedStaff?.username || 'Unassigned' }}</span>
+            </div>
 
-                <!-- Staff dropdown -->
-                <select class="form-select form-select-sm"
-                        [(ngModel)]="reassignMap[t.id]"
-                        [name]="'reassign_' + t.id"
-                        [disabled]="t.status === 'Completed'">
+            <!-- Reassign row -->
+            <div class="etc-reassign" *ngIf="task.status !== 'Completed'">
+              <select class="ev-input ev-input-sm" [(ngModel)]="reassignMap[task.id]" [name]="'r'+task.id">
+                <option [ngValue]="null">Reassign staff…</option>
+                <option *ngFor="let s of staffs" [value]="s.id">{{ s.username }}</option>
+              </select>
+              <button class="ev-assign-btn" (click)="reassignStaff(task.id)" [disabled]="!reassignMap[task.id]">
+                Assign
+              </button>
+            </div>
+            <p class="ev-done-note" *ngIf="task.status==='Completed'">🔒 Completed — no reassignment</p>
+          </div>
+        </div>
 
-                  <option [ngValue]="null">Select</option>
+        <ng-template #noTasksBlock>
+          <div class="ev-empty">
+            <i class="bi bi-clipboard-x"></i>
+            <p>No tasks yet. Create your first task above!</p>
+          </div>
+        </ng-template>
+      </div>
 
-                  <option *ngFor="let s of staffs"
-                          [value]="s.id">
-                    {{ s.username }}
-                  </option>
-                </select>
+    </div><!-- /tasks section -->
 
-                <!-- Assign button -->
-                <button class="btn btn-sm btn-outline-primary"
-                        (click)="reassignStaff(t.id)"
-                        [disabled]="!reassignMap[t.id] || t.status === 'Completed'">
-                  Assign
-                </button>
-
-              </div>
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
+  </main>
 </div>
 
-
 <style>
-.dashboard-layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f4f6f9;
-}
-
-.sidebar {
-  width: 240px;
-  background: linear-gradient(180deg, #1a0533, #0f3460);
-  color: #fff;
-  padding: 20px;
-}
-
-.brand {
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.menu-item {
-  padding: 12px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: background 0.2s;
-}
-
-.menu-item:hover,
-.menu-item.active {
-  background: rgba(255,255,255,0.15);
-}
-
-.content {
-  flex: 1;
-  padding: 24px;
-}
-
-.stat-card {
-  background: #fff;
-  padding: 16px;
-  border-radius: 14px;
-  text-align: center;
-  box-shadow: 0 10px 18px rgba(0,0,0,0.1);
-}
-
-.dashboard-card {
-  border-radius: 14px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-}
-/* =====================================
-   RESPONSIVE DASHBOARD (FIXED)
-===================================== */
-
-/* Tablets and below */
-@media (max-width: 992px) {
-
-  .dashboard-layout {
-    flex-direction: column;
+  /* ══ TOKENS ══════════════════════════════════════ */
+  :root {
+    --pri: #6C63FF;
+    --pri-l: #A78BFA;
+    --accent: #F59E0B;
+    --green: #10B981;
+    --pink: #F472B6;
+    --red: #EF4444;
+    --bg: #F5F3FF;
+    --bg-card: #FFFFFF;
+    --bg-inp: #F8F7FF;
+    --text: #1A103C;
+    --text2: #4B4570;
+    --text3: #9CA3AF;
+    --border: #E5E2FF;
+    --font-h: 'Syne', sans-serif;
+    --font-b: 'Inter', sans-serif;
   }
 
-  /* Sidebar becomes top bar */
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  body.dark-mode {
+    --bg: #0D0820;
+    --bg-card: #160F30;
+    --bg-inp: #1E1640;
+    --text: #EDE9FE;
+    --text2: #A78BFA;
+    --text3: #6B7280;
+    --border: rgba(108, 99, 255, 0.22);
   }
 
-  .menu {
+  /* ══ LAYOUT ══════════════════════════════════════ */
+  .pd-wrap {
     display: flex;
-    gap: 12px;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: var(--font-b);
+    color: var(--text);
   }
 
-  .menu-item {
-    margin-bottom: 0;
-    padding: 8px 14px;
-  }
-
-  .content {
-    padding: 16px;
-  }
-}
-
-/* Phones */
-@media (max-width: 768px) {
-
-  /* Sidebar stacks */
-  .sidebar {
+  /* ══ SIDEBAR ══════════════════════════════════════ */
+  .pd-sidebar {
+    width: 230px;
+    flex-shrink: 0;
+    background: linear-gradient(175deg, #1A103C 0%, #2D1B69 55%, #0F3460 100%);
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
+    padding: 24px 18px;
+    gap: 0;
   }
 
-  .menu {
-    flex-direction: column;
-    width: 100%;
+  .sb-top {
+    margin-bottom: 28px;
   }
 
-  .menu-item {
-    width: 100%;
-    text-align: center;
-  }
-
-  /* Stats stack */
-  .stat-card {
-    margin-bottom: 12px;
-  }
-
-  /* Cards spacing */
-  .dashboard-card {
+  .sb-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 16px;
   }
 
-  /* Buttons become touch-friendly */
-  .btn {
+  .sb-gem {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, #F59E0B, #F472B6);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: #fff;
+  }
+
+  .sb-name {
+    font-family: var(--font-h);
+    font-size: 1.15rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #F59E0B, #A78BFA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .sb-role {
+    background: rgba(108, 99, 255, 0.2);
+    border: 1px solid rgba(108, 99, 255, 0.3);
+    color: #A78BFA;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .sb-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    margin-bottom: 24px;
+  }
+
+  .sb-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: var(--font-b);
+  }
+
+  .sb-link:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+  }
+
+  .sb-link.sb-active {
+    background: rgba(108, 99, 255, 0.28);
+    color: #A78BFA;
+    border: 1px solid rgba(108, 99, 255, 0.35);
+  }
+
+  .sb-link i {
+    font-size: 1.05rem;
+  }
+
+  .sb-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 20px;
+  }
+
+  .sb-stat {
+    text-align: center;
+  }
+
+  .ss-val {
+    display: block;
+    font-family: var(--font-h);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #F59E0B;
+  }
+
+  .ss-lbl {
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  .ss-div {
+    width: 1px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .sb-logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #FCA5A5;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: var(--font-b);
+  }
+
+  .sb-logout:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fff;
+  }
+
+  /* ══ MAIN ════════════════════════════════════════ */
+  .pd-main {
+    flex: 1;
+    padding: 28px;
+    overflow-y: auto;
+    min-width: 0;
+  }
+
+  .pd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .pd-title {
+    font-family: var(--font-h);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .pd-sub {
+    color: var(--text3);
+    font-size: 0.85rem;
+  }
+
+  .pd-stat-pills {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stat-pill {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--c);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  }
+
+  /* ══ CARDS ═══════════════════════════════════════ */
+  .ev-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(108, 99, 255, 0.06);
+  }
+
+  .ev-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .ev-card-head h3 {
+    font-family: var(--font-h);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    flex: 1;
+  }
+
+  .ev-card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--d);
+    flex-shrink: 0;
+  }
+
+  .ev-count-badge {
+    background: rgba(108, 99, 255, 0.1);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    color: #6C63FF;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  /* ══ FORM ════════════════════════════════════════ */
+  .ev-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .ev-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .ev-field-full {
+    grid-column: 1/-1;
+  }
+
+  .ev-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  .ev-input {
+    background: var(--bg-inp);
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    color: var(--text);
+    padding: 10px 13px;
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s;
     width: 100%;
   }
 
-  .text-end {
-    text-align: center !important;
-  }
-}
-
-/* Extra small devices */
-@media (max-width: 576px) {
-
-  .content {
-    padding: 12px;
+  .ev-input:focus {
+    border-color: #6C63FF;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.14);
   }
 
-  h5 {
+  .ev-input::placeholder {
+    color: var(--text3);
+  }
+
+  .ev-input-sm {
+    padding: 7px 11px;
+    font-size: 0.82rem;
+  }
+
+  .ev-warn-text {
+    color: #F59E0B;
+    font-size: 0.75rem;
+    margin-top: 4px;
+  }
+
+  .ev-btn-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  /* Buttons */
+  .ev-btn-primary {
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    border: none;
+    color: #fff;
+    padding: 11px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-b);
+  }
+
+  .ev-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.35);
+  }
+
+  .ev-btn-ghost {
+    background: var(--bg-inp);
+    border: 1.5px solid var(--border);
+    color: var(--text2);
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: var(--font-b);
+  }
+
+  .ev-btn-ghost:hover {
+    border-color: #6C63FF;
+    color: #6C63FF;
+  }
+
+  /* Status badges */
+  .ev-status-badge {
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 700;
+  }
+
+  .badge-done {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .badge-pending {
+    background: rgba(245, 158, 11, 0.12);
+    color: #D97706;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+  }
+
+  /* ══ EVENT CARDS ══════════════════════════════════ */
+  .ev-event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .ev-event-card {
+    background: var(--bg-inp);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 18px;
+    transition: all 0.22s;
+  }
+
+  .ev-event-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(108, 99, 255, 0.35);
+    box-shadow: 0 8px 28px rgba(108, 99, 255, 0.1);
+  }
+
+  .eec-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .ev-edit-btn {
+    width: 32px;
+    height: 32px;
+    background: rgba(108, 99, 255, 0.1);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    border-radius: 8px;
+    color: #6C63FF;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s;
+    font-size: 0.82rem;
+  }
+
+  .ev-edit-btn:hover {
+    background: #6C63FF;
+    color: #fff;
+  }
+
+  .eec-title {
+    font-family: var(--font-h);
     font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
   }
 
-  .stat-card h3 {
-    font-size: 1.2rem;
+  .eec-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
   }
-}
 
+  .eec-meta span {
+    font-size: 0.78rem;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .eec-desc {
+    font-size: 0.82rem;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .eec-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #6C63FF;
+    font-weight: 600;
+  }
+
+  /* ══ TASK CARDS ══════════════════════════════════ */
+  .ev-task-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .ev-task-card {
+    background: var(--bg-inp);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.22s;
+  }
+
+  .ev-task-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(108, 99, 255, 0.35);
+    box-shadow: 0 8px 28px rgba(108, 99, 255, 0.1);
+  }
+
+  .ev-task-card.task-completed {
+    opacity: 0.72;
+  }
+
+  .etc-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ev-event-chip {
+    background: rgba(108, 99, 255, 0.1);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    color: #6C63FF;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .etc-desc {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .etc-staff {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.8rem;
+    color: var(--text3);
+  }
+
+  .etc-reassign {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ev-assign-btn {
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    border: none;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s;
+    font-family: var(--font-b);
+  }
+
+  .ev-assign-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(108, 99, 255, 0.35);
+  }
+
+  .ev-assign-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .ev-done-note {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin: 0;
+  }
+
+  /* ══ EMPTY STATE ══════════════════════════════════ */
+  .ev-empty {
+    text-align: center;
+    padding: 56px 20px;
+  }
+
+  .ev-empty i {
+    font-size: 3.5rem;
+    color: rgba(108, 99, 255, 0.2);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .ev-empty p {
+    color: var(--text3);
+    font-size: 0.88rem;
+  }
+
+  /* ══ TOAST ═══════════════════════════════════════ */
+  .ev-toast-stack {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ev-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: slideUp 0.3s ease;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+    font-family: var(--font-b);
+  }
+
+  .ev-toast-success {
+    background: linear-gradient(135deg, #10B981, #34D399);
+    color: #fff;
+  }
+
+  .ev-toast button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: .7;
+    padding: 0;
+    margin-left: auto;
+  }
+
+  .ev-toast button:hover {
+    opacity: 1;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1
+    }
+  }
+
+  /* ══ RESPONSIVE ══════════════════════════════════ */
+  @media(max-width:768px) {
+    .pd-wrap {
+      flex-direction: column;
+    }
+
+    .pd-sidebar {
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      gap: 12px;
+    }
+
+    .sb-top {
+      margin-bottom: 0;
+    }
+
+    .sb-nav {
+      flex-direction: row;
+      flex: unset;
+      margin-bottom: 0;
+    }
+
+    .sb-stats,
+    .sb-logout {
+      display: none;
+    }
+
+    .pd-main {
+      padding: 16px;
+    }
+
+    .ev-form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ev-field-full {
+      grid-column: 1;
+    }
+  }
 </style>

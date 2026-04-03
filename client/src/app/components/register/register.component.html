@@ -1,300 +1,601 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+<!-- TOASTS -->
+<div class="ev-toast-wrap" *ngIf="showToast">
+  <div class="ev-toast" [class.success]="!isError" [class.danger]="isError">
+    <i class="bi" [ngClass]="isError ? 'bi-x-circle-fill' : 'bi-check-circle-fill'"></i>
+    <span>{{toastMessage}}</span>
+  </div>
+</div>
 
-<div class="register-wrapper">
-
-  <!-- OVERLAY -->
-  <div class="overlay"></div>
-
-  <!-- TOAST -->
-  <div class="toast-container position-fixed top-0 end-0 p-3">
-    <div class="toast align-items-center text-bg-success border-0 show" *ngIf="showToast">
-      <div class="d-flex">
-        <div class="toast-body">
-          🎉 Account created successfully! Welcome aboard :)
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
-      </div>
-    </div>
+<div class="auth-page">
+  <div class="auth-bg">
+    <div class="auth-orb o1"></div>
+    <div class="auth-orb o2"></div>
+    <div class="auth-orb o3"></div>
   </div>
 
-  <div class="toast-container position-fixed top-0 end-0 p-3">
-
-    <!-- Success Toast -->
-    <div class="toast align-items-center text-bg-success border-0 show" *ngIf="showToast && !isError">
-      <div class="d-flex">
-        <div class="toast-body">{{ toastMessage }}</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
+  <!-- SIDE -->
+  <div class="auth-side d-none d-lg-flex">
+    <div class="auth-side-inner">
+      <div class="side-logo">
+        <div class="brand-gem-lg"><i class="bi bi-stars"></i></div>
+        <span class="brand-name-lg">Eventora</span>
       </div>
-    </div>
-
-    <!-- Error Toast -->
-    <div class="toast align-items-center text-bg-danger border-0 show" *ngIf="showToast && isError">
-      <div class="d-flex">
-        <div class="toast-body">{{ toastMessage }}</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- CARD -->
-  <div class="register-card">
-
-    <h2 class="title">🚀 Start Your Event Journey</h2>
-    <p class="subtitle">Create your account to begin</p>
-
-    <form #registerForm="ngForm">
-
-      <!-- USERNAME -->
-      <div class="mb-3">
-        <label class="form-label text-white">Username</label>
-        <input name="username" class="form-control" [(ngModel)]="user.username" #username="ngModel" required
-          minlength="3" placeholder="Enter username" />
-
-        <div class="text-danger small mt-1" *ngIf="username.touched && username.invalid">
-          <div *ngIf="username.errors?.['required']">Username is required</div>
-          <div *ngIf="username.errors?.['minlength']">Minimum 3 characters required</div>
+      <h2 class="side-heading">Join the <span class="text-gradient-gold">Event Revolution</span></h2>
+      <p class="side-sub">Create your account and start managing extraordinary events in minutes.</p>
+      <div class="role-cards">
+        <div class="role-card" [class.ractive]="user.role==='PLANNER'">
+          <span class="rc-icon">🎯</span>
+          <div><strong>Planner</strong>
+            <p>Create & manage events</p>
+          </div>
         </div>
-      </div>
-
-      <!-- EMAIL -->
-      <div class="mb-3">
-        <label class="form-label text-white">Email</label>
-        <input type="email" name="email" class="form-control" [(ngModel)]="user.email" #email="ngModel" required email
-          placeholder="Enter email" />
-
-        <div class="text-danger small mt-1" *ngIf="email.touched && email.invalid">
-          <div *ngIf="email.errors?.['required']">Email is required</div>
-          <div *ngIf="email.errors?.['email']">Enter a valid email</div>
+        <div class="role-card" [class.ractive]="user.role==='CLIENT'">
+          <span class="rc-icon">🧑‍💼</span>
+          <div><strong>Client</strong>
+            <p>View & pay for events</p>
+          </div>
         </div>
-      </div>
-
-      <!-- PASSWORD -->
-      <div class="mb-3">
-        <label class="form-label text-white">Password</label>
-        <input type="password" name="password" class="form-control" [(ngModel)]="user.password" #password="ngModel"
-          required pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" placeholder="Enter password" />
-
-        <div class="text-danger small mt-1" *ngIf="password.touched && password.invalid">
-          <div *ngIf="password.errors?.['required']">Password is required</div>
-
-          <div *ngIf="password.errors?.['pattern']">
-            Must be at least 8 characters long, include:
-            <ul class="mb-0 ps-3">
-              <li>1 uppercase letter</li>
-              <li>1 number</li>
-              <li>1 special character</li>
-            </ul>
+        <div class="role-card" [class.ractive]="user.role==='STAFF'">
+          <span class="rc-icon">👷</span>
+          <div><strong>Staff</strong>
+            <p>Complete assigned tasks</p>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- ROLE -->
-      <div class="mb-3">
-        <label class="form-label text-white">Role</label>
-        <select name="role" class="form-select" [(ngModel)]="user.role" #role="ngModel" required>
-          <option value="" disabled selected>Select role</option>
-          <option value="PLANNER">Planner</option>
-          <option value="CLIENT">Client</option>
-          <option value="STAFF">Staff</option>
-        </select>
+  <!-- FORM PANEL -->
+  <div class="auth-form-panel">
+    <div class="auth-card">
+      <div class="auth-card-stripe"></div>
 
-        <div class="text-danger small mt-1" *ngIf="role.touched && role.invalid">
-          Role is required
+      <div class="auth-logo-sm d-lg-none mb-3">
+        <div class="brand-gem-sm2"><i class="bi bi-stars"></i></div>
+        <span class="brand-name-sm2">Eventora</span>
+      </div>
+
+      <h3 class="auth-title">Create Account</h3>
+      <p class="auth-sub">Join thousands of event professionals</p>
+
+      <form #registerForm="ngForm">
+
+        <!-- USERNAME -->
+        <div class="auth-field">
+          <label>Username</label>
+          <div class="auth-input-wrap">
+            <i class="bi bi-person-fill auth-input-icon"></i>
+            <input class="auth-input" name="username" [(ngModel)]="user.username" #username="ngModel" required
+              minlength="3" placeholder="Choose a username" />
+          </div>
+          <div class="auth-error" *ngIf="username.touched && username.invalid">
+            <span *ngIf="username.errors?.['required']">Username is required</span>
+            <span *ngIf="username.errors?.['minlength']">Minimum 3 characters</span>
+          </div>
         </div>
-      </div>
 
-      <!-- BUTTON -->
-      <div class="d-grid mb-3">
-        <button class="btn register-btn" (click)="register()" [disabled]="registerForm.invalid">
-          Register
+        <!-- EMAIL -->
+        <div class="auth-field">
+          <label>Email</label>
+          <div class="auth-input-wrap">
+            <i class="bi bi-envelope-fill auth-input-icon"></i>
+            <input class="auth-input" type="email" name="email" [(ngModel)]="user.email" #email="ngModel" required email
+              placeholder="Enter your email" />
+          </div>
+          <div class="auth-error" *ngIf="email.touched && email.invalid">
+            <span *ngIf="email.errors?.['required']">Email is required</span>
+            <span *ngIf="email.errors?.['email']">Enter a valid email</span>
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="auth-field">
+          <label>Password</label>
+          <div class="auth-input-wrap">
+            <i class="bi bi-lock-fill auth-input-icon"></i>
+            <input class="auth-input" type="password" name="password" [(ngModel)]="user.password" #password="ngModel"
+              required pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+              placeholder="Create a strong password" />
+          </div>
+          <div class="auth-error" *ngIf="password.touched && password.invalid">
+            <span *ngIf="password.errors?.['required']">Password is required</span>
+            <span *ngIf="password.errors?.['pattern']">8+ chars, 1 uppercase, 1 number, 1 special character</span>
+          </div>
+        </div>
+
+        <!-- ROLE -->
+        <div class="auth-field">
+          <label>Your Role</label>
+          <div class="role-selector">
+            <button type="button" class="role-btn" [class.role-selected]="user.role==='PLANNER'"
+              (click)="user.role='PLANNER'">
+              <span>🎯</span> Planner
+            </button>
+            <button type="button" class="role-btn" [class.role-selected]="user.role==='CLIENT'"
+              (click)="user.role='CLIENT'">
+              <span>🧑‍💼</span> Client
+            </button>
+            <button type="button" class="role-btn" [class.role-selected]="user.role==='STAFF'"
+              (click)="user.role='STAFF'">
+              <span>👷</span> Staff
+            </button>
+          </div>
+        </div>
+
+        <button class="auth-submit-btn" type="button" (click)="register()" [disabled]="registerForm.invalid">
+          <i class="bi bi-person-plus-fill me-2"></i>Create Account
         </button>
+
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+      <div class="auth-footer-links">
+        <span>Already have an account?</span>
+        <a routerLink="/login">Sign in →</a>
       </div>
-
-    </form>
-
-    <!-- LOGIN -->
-    <div class="text-center mb-2">
-      <span class="text-light">Already have an account?</span>
-      <a routerLink="/login" class="login-link">
-        Login
-      </a>
+      <div class="text-center mt-3">
+        <a routerLink="/home" class="auth-back-link">
+          <i class="bi bi-arrow-left me-1"></i>Back to Home
+        </a>
+      </div>
     </div>
-
-    <!-- BACK TO HOME -->
-    <div class="text-center">
-      <button class="btn btn-outline-light btn-sm" routerLink="/home">
-        ← Back to Home
-      </button>
-    </div>
-
   </div>
 </div>
 
 <style>
-  /* BACKGROUND */
-  .register-wrapper {
-    height: 100vh;
-    background: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d') no-repeat center center/cover;
-    position: relative;
+  :root {
+    --ev-pri: #6C63FF;
+    --ev-accent: #F5A623;
+    --ev-deep: #1A103C;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  .ev-toast-wrap {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+  .ev-toast {
     display: flex;
-    justify-content: center;
-    /* ✅ horizontal center */
     align-items: center;
-    /* ✅ vertical center */
-    padding: 20px;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    animation: slideIn 0.35s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   }
 
-  /* OVERLAY */
-  /* OVERLAY */
-  .overlay {
-    position: absolute;
-    inset: 0;
-
-    /* Dark premium gradient */
-    background:
-      linear-gradient(135deg,
-        rgba(15, 23, 42, 0.88),
-        rgba(15, 23, 42, 0.65));
-
-    /* IMPORTANT: allow hover + clicks */
-    pointer-events: none;
+  .ev-toast.success {
+    background: linear-gradient(135deg, #10B981, #34D399);
+    color: #fff;
   }
 
-  /* CARD */
-  .register-card {
-    position: relative;
-    z-index: 2;
-    width: 520px;
-    max-width: 95%;
-    padding: 28px 34px;
-    border-radius: 16px;
-    backdrop-filter: blur(14px);
-    background: rgba(15, 23, 42, 0.85);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    color: white;
-
-    /* 🔥 IMPORTANT */
-    opacity: 0;
-    /* start invisible */
-    animation: fadeIn 0.8s ease forwards;
-    animation-delay: 0.15s;
-    /* slight delay for smoothness */
-
-
-    transition:
-      transform 0.35s ease,
-      box-shadow 0.35s ease;
+  .ev-toast.danger {
+    background: linear-gradient(135deg, #EF4444, #F87171);
+    color: #fff;
   }
 
-  .register-card:hover {
-    transform: translateY(-10px);
-    /* 🔥 floating effect */
-    box-shadow:
-      0 40px 80px rgba(0, 0, 0, 0.65),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  }
-
-  /* TEXT */
-  .title {
-    font-weight: 700;
-    text-align: center;
-  }
-
-  /* FIX DROPDOWN OPTIONS VISIBILITY */
-  .form-select option {
-    color: black;
-    /* text visible */
-    background: white;
-    /* proper dropdown background */
-  }
-
-  .subtitle {
-    text-align: center;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    opacity: 0.8;
-  }
-
-  /* INPUT */
-  .form-control,
-  .form-select {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-  }
-
-  .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  /* BUTTON */
-  .register-btn {
-    background: linear-gradient(135deg, #00c853, #64dd17);
-    border: none;
-    color: white;
-  }
-
-  .register-btn:hover {
-    transform: scale(1.02);
-  }
-
-  /* LINKS */
-  .login-link {
-    color: #ffd166;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  /* TOAST */
-  .toast {
-    animation: slideIn 0.4s ease;
-  }
-
-  /* ANIMATIONS */
   @keyframes slideIn {
     from {
-      transform: translateX(100%);
-      opacity: 0;
+      transform: translateX(120%);
+      opacity: 0
     }
 
     to {
       transform: translateX(0);
-      opacity: 1;
+      opacity: 1
     }
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .auth-page {
+    min-height: 100vh;
+    display: flex;
+    font-family: var(--font-body);
+    background: #0F0A24;
+    position: relative;
+    overflow: hidden;
   }
 
-  /* MOBILE */
-  @media(max-width: 768px) {
-    .register-wrapper {
-      justify-content: center;
-    }
-
-    .register-card {
-      width: 100%;
-    }
+  .auth-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
 
-  /* ======================
-   VALIDATION VISIBILITY
-====================== */
+  .auth-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+  }
 
-  .text-danger {
-    color: #ff6b6b !important;
-    /* brighter coral red */
-    font-weight: 500;
+  .o1 {
+    width: 500px;
+    height: 500px;
+    background: #F5A623;
+    opacity: 0.1;
+    top: -150px;
+    left: -100px;
+  }
+
+  .o2 {
+    width: 400px;
+    height: 400px;
+    background: #6C63FF;
+    opacity: 0.12;
+    bottom: -100px;
+    right: -50px;
+  }
+
+  .o3 {
+    width: 280px;
+    height: 280px;
+    background: #F472B6;
+    opacity: 0.08;
+    top: 40%;
+    left: 30%;
+  }
+
+  .auth-side {
+    width: 42%;
+    background: rgba(26, 16, 60, 0.6);
+    border-right: 1px solid rgba(108, 99, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-side-inner {
+    max-width: 360px;
+  }
+
+  .side-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .brand-gem-lg {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+  }
+
+  .brand-name-lg {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #F5A623, #FF6EB4, #A78BFA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .side-heading {
+    font-family: var(--font-head);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(90deg, #F5A623, #FF6EB4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .side-sub {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .role-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .role-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .role-card.ractive {
+    border-color: #6C63FF;
+    background: rgba(108, 99, 255, 0.15);
+  }
+
+  .role-card strong {
+    color: #fff;
+    font-size: 0.88rem;
+    display: block;
+  }
+
+  .role-card p {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.78rem;
+    margin: 0;
+  }
+
+  .rc-icon {
+    font-size: 1.4rem;
+  }
+
+  .auth-form-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    border-radius: 24px;
+    padding: 36px;
+    width: 100%;
+    max-width: 440px;
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-card-stripe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #F5A623, #FF6EB4, #6C63FF);
+  }
+
+  .auth-logo-sm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-gem-sm2 {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+  }
+
+  .brand-name-sm2 {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #F5A623, #A78BFA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .auth-title {
+    font-family: var(--font-head);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .auth-sub {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.88rem;
+    margin-bottom: 24px;
+  }
+
+  .auth-field {
+    margin-bottom: 16px;
+  }
+
+  .auth-field label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .auth-input-wrap {
+    position: relative;
+  }
+
+  .auth-input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.9rem;
+  }
+
+  .auth-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    padding: 11px 14px 11px 40px;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .auth-input:focus {
+    border-color: #6C63FF;
+    background: rgba(108, 99, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+  }
+
+  .auth-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .auth-error {
+    color: #F87171;
+    font-size: 0.78rem;
+    margin-top: 5px;
+  }
+
+  .role-selector {
+    display: flex;
+    gap: 8px;
+  }
+
+  .role-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 10px 6px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .role-btn:hover {
+    border-color: #6C63FF;
+    color: #A78BFA;
+  }
+
+  .role-selected {
+    border-color: #6C63FF;
+    background: rgba(108, 99, 255, 0.2);
+    color: #A78BFA;
+  }
+
+  .auth-submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    border: none;
+    color: #1A103C;
+    padding: 13px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: var(--font-body);
+    margin-top: 4px;
+  }
+
+  .auth-submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(245, 166, 35, 0.4);
+  }
+
+  .auth-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .auth-divider {
+    text-align: center;
+    margin: 16px 0;
+    position: relative;
+  }
+
+  .auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .auth-divider span {
+    background: rgba(15, 10, 36, 0.8);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8rem;
+    padding: 0 12px;
+    position: relative;
+  }
+
+  .auth-footer-links {
+    text-align: center;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .auth-footer-links a {
+    color: #A78BFA;
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 6px;
+  }
+
+  .auth-footer-links a:hover {
+    color: #F5A623;
+  }
+
+  .auth-back-link {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.82rem;
+    text-decoration: none;
+  }
+
+  .auth-back-link:hover {
+    color: #6C63FF;
+  }
+
+  @media(max-width:992px) {
+    .auth-side {
+      display: none !important;
+    }
+
+    .auth-form-panel {
+      padding: 30px 16px;
+    }
   }
 </style>

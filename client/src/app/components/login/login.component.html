@@ -1,246 +1,480 @@
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
-<div class="login-wrapper">
 
-  <!-- OVERLAY -->
-  <div class="overlay"></div>
+<!-- TOAST -->
+<div class="ev-toast-wrap" *ngIf="showToast">
+  <div class="ev-toast success">
+    <i class="bi bi-check-circle-fill"></i>
+    <span>Login successful! Redirecting…</span>
+  </div>
+</div>
 
-  <!-- TOAST -->
-  <div class="toast-container position-fixed top-0 end-0 p-3">
-    <div
-      class="toast align-items-center text-bg-success border-0 show"
-      role="alert"
-      *ngIf="showToast"
-    >
-      <div class="d-flex">
-        <div class="toast-body">
-          🎉 Login successful! Welcome :)
-        </div>
-        <button
-          type="button"
-          class="btn-close btn-close-white me-2 m-auto"
-          (click)="showToast = false"
-        ></button>
+<div class="auth-page">
+  <div class="auth-bg">
+    <div class="auth-orb o1"></div>
+    <div class="auth-orb o2"></div>
+    <div class="auth-orb o3"></div>
+  </div>
+
+  <!-- Branding aside (desktop) -->
+  <div class="auth-side d-none d-lg-flex">
+    <div class="auth-side-inner">
+      <div class="side-logo">
+        <div class="brand-gem-lg"><i class="bi bi-stars"></i></div>
+        <span class="brand-name-lg">Eventora</span>
+      </div>
+      <h2 class="side-heading">Plan. Manage.<br><span class="text-gradient-gold">Celebrate.</span></h2>
+      <p class="side-sub">The complete event management suite trusted by thousands of professionals.</p>
+      <div class="side-features">
+        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Role-based dashboards</div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Real-time task tracking</div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Integrated payments</div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Client management</div>
       </div>
     </div>
   </div>
 
-  <!-- LOGIN CARD -->
-  <div class="login-card">
+  <!-- Form panel -->
+  <div class="auth-form-panel">
+    <div class="auth-card">
+      <div class="auth-card-stripe"></div>
 
-    <h2 class="title">✨ Plan. Manage. Celebrate.</h2>
-    <p class="subtitle">Login to continue your event journey</p>
+      <div class="auth-logo-sm d-lg-none mb-3">
+        <div class="brand-gem-sm2"><i class="bi bi-stars"></i></div>
+        <span class="brand-name-sm2">Eventora</span>
+      </div>
 
-    <form #loginForm="ngForm">
+      <h3 class="auth-title">Welcome Back</h3>
+      <p class="auth-sub">Sign in to your account to continue</p>
 
       <!-- USERNAME -->
-      <div class="mb-3">
-        <label class="form-label text-white">Username</label>
-        <input
-          name="username"
-          class="form-control"
-          [(ngModel)]="credentials.username"
-          #username="ngModel"
-          required
-          minlength="3"
-          placeholder="Enter username"
-        />
-
-        <div class="text-danger small mt-1" *ngIf="username.touched && username.invalid">
-          <div *ngIf="username.errors?.['required']">
-            Username is required
-          </div>
-          <div *ngIf="username.errors?.['minlength']">
-            Minimum 3 characters required
-          </div>
+      <div class="auth-field">
+        <label>Username</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-person-fill auth-input-icon"></i>
+          <input type="text" class="auth-input" [(ngModel)]="credentials.username" placeholder="Enter your username"
+            name="username" />
         </div>
       </div>
 
       <!-- PASSWORD -->
-      <div class="mb-3">
-        <label class="form-label text-white">Password</label>
-        <input
-          type="password"
-          name="password"
-          class="form-control"
-          [(ngModel)]="credentials.password"
-          #password="ngModel"
-          required
-          pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-          placeholder="Enter password"
-        />
-
-        <div class="text-danger small mt-1" *ngIf="password.touched && password.invalid">
-
-          <div *ngIf="password.errors?.['required']">
-            Password is required
-          </div>
-
-          <div *ngIf="password.errors?.['pattern']">
-            Must be at least 8 characters long, include:
-            <ul class="mb-0 ps-3">
-              <li>1 uppercase letter</li>
-              <li>1 number</li>
-              <li>1 special character</li>
-            </ul>
-          </div>
-
+      <div class="auth-field">
+        <label>Password</label>
+        <div class="auth-input-wrap">
+          <i class="bi bi-lock-fill auth-input-icon"></i>
+          <input type="password" class="auth-input" [(ngModel)]="credentials.password" placeholder="Enter your password"
+            name="password" (keyup.enter)="login()" />
         </div>
       </div>
 
-      <!-- LOGIN BUTTON -->
-      <div class="d-grid mb-3">
-        <button
-          class="btn login-btn"
-          (click)="login()"
-          [disabled]="loginForm.invalid"
-        >
-          Login
-        </button>
+      <button class="auth-submit-btn" (click)="login()">
+        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+      </button>
+
+      <div class="auth-divider"><span>or</span></div>
+
+      <div class="auth-footer-links">
+        <span>Don't have an account?</span>
+        <a routerLink="/register">Create one →</a>
       </div>
 
-    </form>
-
-    <!-- REGISTER -->
-    <div class="text-center mb-2">
-      <span class="text-light">Don’t have an account?</span>
-      <a routerLink="/register" class="register-link">
-        Register
-      </a>
+      <div class="text-center mt-3">
+        <a routerLink="/home" class="auth-back-link">
+          <i class="bi bi-arrow-left me-1"></i>Back to Home
+        </a>
+      </div>
     </div>
-
-    <!-- BACK TO HOME -->
-    <div class="text-center">
-      <button class="btn btn-outline-light btn-sm" routerLink="/home">
-        ← Back to Home
-      </button>
-    </div>
-
   </div>
 </div>
 
 <style>
-
-/* BACKGROUND */
-.login-wrapper {
-  height: 100vh;
-  background: url('https://images.unsplash.com/photo-1511578314322-379afb476865') no-repeat center center/cover;
-  position: relative;
-  display: flex;
-  justify-content: center;  
-  align-items: center;       
-  padding: 20px;
-}
-/* OVERLAY */
-.overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(15, 23, 42, 0.85),
-      rgba(15, 23, 42, 0.55)
-    );
-}
-
-
-/* CARD */
-.login-card {
-  position: relative;
-  z-index: 2;
-  width: 380px;
-  padding: 30px;
-  border-radius: 15px;
-  backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  color: white;
-  animation: fadeIn 0.8s ease;
-}
-
-/* TEXT */
-.title {
-  font-weight: 700;
-  text-align: center;
-}
-
-.subtitle {
-  text-align: center;
-  font-size: 0.9rem;
-  margin-bottom: 20px;
-  opacity: 0.8;
-}
-
-/* INPUT */
-.form-control {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
-}
-
-.form-control::placeholder {
-  color: rgba(255,255,255,0.7);
-}
-
-/* BUTTON */
-.login-btn {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  border: none;
-  color: white;
-}
-
-.login-btn:hover {
-  transform: scale(1.02);
-}
-
-/* REGISTER */
-.register-link {
-  color: #ffd166;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-/* TOAST ANIMATION */
-.toast {
-  animation: slideIn 0.4s ease;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
+  :root {
+    --ev-pri: #2e25dd;
+    --ev-accent: #F5A623;
+    --ev-deep: #1A103C;
+    --ev-pink: #F472B6;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'Inter', sans-serif;
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
 
-/* CARD ANIMATION */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  /* TOAST */
+  .ev-toast-wrap {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-/* MOBILE */
-@media(max-width: 768px) {
-  .login-wrapper {
+  .ev-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    animation: slideIn 0.35s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  }
+
+  .ev-toast.success {
+    background: linear-gradient(135deg, #10B981, #34D399);
+    color: #fff;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(120%);
+      opacity: 0
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1
+    }
+  }
+
+  /* PAGE */
+  .auth-page {
+    min-height: 100vh;
+    display: flex;
+    background: #0F0A24;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .auth-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+  }
+
+  .o1 {
+    width: 600px;
+    height: 600px;
+    background: #6C63FF;
+    opacity: 0.12;
+    top: -200px;
+    right: -100px;
+  }
+
+  .o2 {
+    width: 400px;
+    height: 400px;
+    background: #F5A623;
+    opacity: 0.08;
+    bottom: -100px;
+    left: -50px;
+  }
+
+  .o3 {
+    width: 300px;
+    height: 300px;
+    background: #F472B6;
+    opacity: 0.08;
+    top: 50%;
+    right: 40%;
+  }
+
+  /* SIDE */
+  .auth-side {
+    width: 42%;
+    background: rgba(26, 16, 60, 0.6);
+    border-right: 1px solid rgba(108, 99, 255, 0.2);
+    display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 48px;
+    position: relative;
+    z-index: 1;
   }
 
-  .login-card {
+  .auth-side-inner {
+    max-width: 360px;
+  }
+
+  .side-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .brand-gem-lg {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+  }
+
+  .brand-name-lg {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #F5A623, #FF6EB4, #A78BFA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .side-heading {
+    font-family: var(--font-head);
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(90deg, #F5A623, #FF6EB4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .side-sub {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .side-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .side-feat {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .text-primary-ev {
+    color: #6C63FF !important;
+  }
+
+  /* FORM PANEL */
+  .auth-form-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    border-radius: 24px;
+    padding: 40px 36px;
     width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
   }
-}
 
+  .auth-card-stripe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6C63FF, #F5A623, #F472B6);
+  }
+
+  .auth-logo-sm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-gem-sm2 {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+  }
+
+  .brand-name-sm2 {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #F5A623, #A78BFA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .auth-title {
+    font-family: var(--font-head);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .auth-sub {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.88rem;
+    margin-bottom: 28px;
+  }
+
+  .auth-field {
+    margin-bottom: 18px;
+  }
+
+  .auth-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  .auth-input-wrap {
+    position: relative;
+  }
+
+  .auth-input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.9rem;
+  }
+
+  .auth-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px 14px 12px 40px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .auth-input:focus {
+    border-color: #6C63FF;
+    background: rgba(108, 99, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+  }
+
+  .auth-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .auth-submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    border: none;
+    color: #fff;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: var(--font-body);
+    margin-top: 4px;
+  }
+
+  .auth-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(108, 99, 255, 0.45);
+  }
+
+  .auth-divider {
+    text-align: center;
+    margin: 18px 0;
+    position: relative;
+  }
+
+  .auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .auth-divider span {
+    background: #1A103C;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8rem;
+    padding: 0 12px;
+    position: relative;
+  }
+
+  .auth-footer-links {
+    text-align: center;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .auth-footer-links a {
+    color: #A78BFA;
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 6px;
+    transition: color 0.2s;
+  }
+
+  .auth-footer-links a:hover {
+    color: #F5A623;
+  }
+
+  .auth-back-link {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .auth-back-link:hover {
+    color: #6C63FF;
+  }
+
+  @media(max-width:992px) {
+    .auth-side {
+      display: none !important;
+    }
+
+    .auth-form-panel {
+      padding: 30px 16px;
+    }
+  }
 </style>

@@ -1,4 +1,134 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif !important;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', sans-serif !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   EVENTORA — GLOBAL DESIGN SYSTEM
+   Apply in src/styles.css or index.html
+═══════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ── Light mode tokens ─────────────────────── */
+:root {
+    --pri: #6C63FF;
+    --pri-light: #A78BFA;
+    --pri-xlight: #EDE9FE;
+    --accent: #F59E0B;
+    --accent-light: #FEF3C7;
+    --green: #10B981;
+    --red: #EF4444;
+    --pink: #F472B6;
+    --deep: #1A103C;
+
+    --bg: #F5F3FF;
+    --bg-card: #FFFFFF;
+    --bg-input: #F8F7FF;
+    --text: #1A103C;
+    --text-2: #4B4570;
+    --text-3: #9CA3AF;
+    --border: #E5E2FF;
+    --shadow: 0 4px 24px rgba(108, 99, 255, 0.08);
+    --shadow-lg: 0 12px 48px rgba(108, 99, 255, 0.14);
+
+    --nav-bg: #1A103C;
+    --nav-text: rgba(255, 255, 255, 0.85);
+
+    --font-h: 'Syne', sans-serif;
+    --font-b: 'Inter', sans-serif;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+}
+
+/* ── Dark mode tokens ─────────────────────── */
+body.dark-mode {
+    --bg: #0D0820;
+    --bg-card: #160F30;
+    --bg-input: #1E1640;
+    --text: #EDE9FE;
+    --text-2: #A78BFA;
+    --text-3: #6B7280;
+    --border: rgba(108, 99, 255, 0.22);
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.5);
+    --pri-xlight: rgba(108, 99, 255, 0.15);
+    --accent-light: rgba(245, 158, 11, 0.12);
+}
+
+/* ── Base reset ─────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-b);
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.35s ease, color 0.35s ease;
+    margin: 0;
+}
+
+/* ── Scrollbar ─────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--pri);
+    border-radius: 3px;
+}
+
+/* ── Bootstrap overrides — inputs & selects ─ */
+.form-control,
+.form-select {
+    background: var(--bg-input) !important;
+    border: 1.5px solid var(--border) !important;
+    color: var(--text) !important;
+    border-radius: var(--radius-sm) !important;
+    font-family: var(--font-b) !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--pri) !important;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15) !important;
+    background: var(--bg-card) !important;
+}
+
+.form-control::placeholder {
+    color: var(--text-3) !important;
+}
+
+.form-label {
+    color: var(--text-2) !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+
+.form-select option {
+    background: var(--bg-card);
+    color: var(--text);
+}

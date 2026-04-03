@@ -1,85 +1,598 @@
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap"
+  rel="stylesheet" />
 
-<div class="container py-4">
+<div class="staff-page">
 
-  <!-- HEADER -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="fw-bold text-success mb-0">Staff Dashboard</h2>
-      <small class="text-muted">Welcome, manage your assigned tasks</small>
+  <!-- SIDEBAR -->
+  <aside class="staff-sidebar">
+    <div class="sb-brand">
+      <div class="brand-gem-s"><i class="bi bi-stars"></i></div>
+      <span class="sb-brand-name">Eventora</span>
     </div>
-    <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
-  </div>
-
-  <!-- TASKS SECTION -->
-  <div class="card shadow-sm">
-    <div class="card-body">
-
-      <h5 class="card-title mb-3 text-primary">My Tasks</h5>
-
-      <!-- TASK LIST -->
-      <div *ngIf="tasks.length > 0; else noTasks">
-        <table class="table table-striped table-bordered align-middle">
-          <thead class="table-success">
-            <tr>
-              <th>Description</th>
-              <!-- NEW: Event column so staff knows which event the task is for -->
-              <th>Event</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr *ngFor="let task of tasks">
-              <td>{{ task.description }}</td>
-
-              <!-- NEW: Display linked event name -->
-              <td>
-                <span *ngIf="task.event?.title; else noEvent" class="badge bg-info text-dark">
-                  {{ task.event!.title }}
-                </span>
-                <ng-template #noEvent>
-                  <span class="text-muted fst-italic">—</span>
-                </ng-template>
-              </td>
-
-              <td>
-                <span
-                  class="badge"
-                  [ngClass]="task.status === 'Completed' || task.status === 'COMPLETED'
-                    ? 'bg-success'
-                    : 'bg-warning text-dark'"
-                >
-                  {{ task.status }}
-                </span>
-              </td>
-
-              <td>
-                <button
-                  class="btn btn-sm btn-outline-success"
-                  (click)="updateTaskStatus(task.id, 'Completed')"
-                  [disabled]="task.status === 'Completed' || task.status === 'COMPLETED'"
-                >
-                  ✓ Mark Complete
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="sb-role-chip"><i class="bi bi-person-workspace me-2"></i>Staff Member</div>
+    <nav class="sb-nav">
+      <div class="sb-link active"><i class="bi bi-check2-square"></i><span>My Tasks</span></div>
+      <div class="sb-link" (click)="logout()"><i class="bi bi-box-arrow-right"></i><span>Logout</span></div>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-stat-mini">
+        <span class="sbsm-val">{{tasks.length}}</span>
+        <span class="sbsm-lbl">Assigned</span>
       </div>
-
-      <!-- NO TASKS MESSAGE -->
-      <ng-template #noTasks>
-        <div class="alert alert-info text-center">
-          You have no tasks assigned at the moment.
-        </div>
-      </ng-template>
-
+      <div class="sbsm-div"></div>
+      <div class="sb-stat-mini">
+        <span class="sbsm-val">{{completedTasks}}</span>
+        <span class="sbsm-lbl">Done</span>
+      </div>
     </div>
-  </div>
+  </aside>
 
+  <!-- MAIN CONTENT -->
+  <main class="staff-main">
+
+    <!-- HEADER -->
+    <div class="staff-header">
+      <div>
+        <h1 class="staff-title">My Task Board</h1>
+        <p class="staff-sub">Track and complete your assigned event tasks</p>
+      </div>
+      <div class="header-right">
+        <div class="progress-pill">
+          <span>{{completedTasks}}/{{tasks.length}} Done</span>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width]="progressPct + '%'"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="staff-stats">
+      <div class="staff-stat-card" style="--clr:#6C63FF">
+        <div class="ssc-icon"><i class="bi bi-list-task"></i></div>
+        <div class="ssc-val">{{tasks.length}}</div>
+        <div class="ssc-lbl">Total Tasks</div>
+      </div>
+      <div class="staff-stat-card" style="--clr:#F5A623">
+        <div class="ssc-icon"><i class="bi bi-hourglass-split"></i></div>
+        <div class="ssc-val">{{pendingTasks}}</div>
+        <div class="ssc-lbl">Pending</div>
+      </div>
+      <div class="staff-stat-card" style="--clr:#10B981">
+        <div class="ssc-icon"><i class="bi bi-check-circle-fill"></i></div>
+        <div class="ssc-val">{{completedTasks}}</div>
+        <div class="ssc-lbl">Completed</div>
+      </div>
+    </div>
+
+    <!-- TASK GRID -->
+    <div *ngIf="tasks.length > 0; else noTasks">
+      <div class="tasks-grid">
+        <div class="task-card" *ngFor="let task of tasks"
+          [class.task-done]="task.status==='Completed'||task.status==='COMPLETED'">
+
+          <!-- Card header -->
+          <div class="tc-header">
+            <div class="tc-status-icon">
+              <i class="bi"
+                [ngClass]="(task.status==='Completed'||task.status==='COMPLETED') ? 'bi-check-circle-fill text-success-ev' : 'bi-circle text-pending-ev'"></i>
+            </div>
+            <span class="tc-badge" [class.badge-done]="task.status==='Completed'||task.status==='COMPLETED'"
+              [class.badge-pending]="task.status!=='Completed'&&task.status!=='COMPLETED'">
+              {{task.status}}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <p class="tc-desc">{{task.description}}</p>
+
+          <!-- Event chip -->
+          <div class="tc-event" *ngIf="task.event?.title">
+            <i class="bi bi-calendar-event-fill"></i>
+            <span>{{task.event!.title}}</span>
+          </div>
+          <div class="tc-event tc-event-empty" *ngIf="!task.event?.title">
+            <i class="bi bi-calendar-x"></i>
+            <span>No event linked</span>
+          </div>
+
+          <!-- Action -->
+          <button class="tc-complete-btn" (click)="updateTaskStatus(task.id, 'Completed')"
+            [disabled]="task.status==='Completed'||task.status==='COMPLETED'">
+            <ng-container *ngIf="task.status!=='Completed'&&task.status!=='COMPLETED'">
+              <i class="bi bi-check2 me-2"></i>Mark Complete
+            </ng-container>
+            <ng-container *ngIf="task.status==='Completed'||task.status==='COMPLETED'">
+              <i class="bi bi-trophy-fill me-2"></i>Completed!
+            </ng-container>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <ng-template #noTasks>
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+        <h4>No tasks assigned yet</h4>
+        <p>Your task board is clear. New tasks will appear here when assigned by your planner.</p>
+      </div>
+    </ng-template>
+
+  </main>
 </div>
+
+<style>
+  :root {
+    --ev-pri: #6C63FF;
+    --ev-accent: #F5A623;
+    --ev-deep: #1A103C;
+    --ev-green: #10B981;
+    --ev-pink: #F472B6;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --bg-page: #F5F3FF;
+    --bg-card: #FFFFFF;
+    --text-main: #1A103C;
+    --text-muted: #6B7280;
+    --border-clr: #EDE9FF;
+  }
+
+  body.dark-mode {
+    --bg-page: #0F0A24;
+    --bg-card: #1A1035;
+    --text-main: #F0EEFF;
+    --text-muted: #9CA3AF;
+    --border-clr: rgba(108, 99, 255, 0.2);
+  }
+
+  .staff-page {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-page);
+    font-family: var(--font-body);
+    color: var(--text-main);
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* SIDEBAR */
+  .staff-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #1A103C 0%, #2D1B69 60%, #0F3460 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 20px;
+  }
+
+  .sb-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .brand-gem-s {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #F5A623, #FF6EB4);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #fff;
+  }
+
+  .sb-brand-name {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #F5A623, #A78BFA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .sb-role-chip {
+    background: rgba(108, 99, 255, 0.2);
+    border: 1px solid rgba(108, 99, 255, 0.3);
+    color: #A78BFA;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .sb-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .sb-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .sb-link:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+  }
+
+  .sb-link.active {
+    background: rgba(108, 99, 255, 0.25);
+    color: #A78BFA;
+    border: 1px solid rgba(108, 99, 255, 0.3);
+  }
+
+  .sb-link i {
+    font-size: 1.1rem;
+  }
+
+  .sb-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .sb-stat-mini {
+    text-align: center;
+  }
+
+  .sbsm-val {
+    display: block;
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #F5A623;
+  }
+
+  .sbsm-lbl {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sbsm-div {
+    width: 1px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* MAIN */
+  .staff-main {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+  }
+
+  .staff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .staff-title {
+    font-family: var(--font-head);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+
+  .staff-sub {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .progress-pill {
+    background: var(--bg-card);
+    border: 1px solid var(--border-clr);
+    border-radius: 20px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .progress-track {
+    width: 80px;
+    height: 6px;
+    background: var(--border-clr);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6C63FF, #10B981);
+    border-radius: 3px;
+    transition: width 0.6s ease;
+  }
+
+  /* STATS */
+  .staff-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .staff-stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-clr);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .staff-stat-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--clr);
+  }
+
+  .staff-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .ssc-icon {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    color: var(--clr);
+  }
+
+  .ssc-val {
+    font-family: var(--font-head);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .ssc-lbl {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  /* TASK GRID */
+  .tasks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .task-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-clr);
+    border-radius: 16px;
+    padding: 22px;
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .task-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(108, 99, 255, 0.1);
+    border-color: rgba(108, 99, 255, 0.3);
+  }
+
+  .task-done {
+    opacity: 0.75;
+  }
+
+  .tc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tc-status-icon {
+    font-size: 1.4rem;
+  }
+
+  .text-success-ev {
+    color: #10B981;
+  }
+
+  .text-pending-ev {
+    color: #F5A623;
+  }
+
+  .tc-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  .badge-done {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .badge-pending {
+    background: rgba(245, 166, 35, 0.12);
+    color: #F5A623;
+    border: 1px solid rgba(245, 166, 35, 0.25);
+  }
+
+  .tc-desc {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-main);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .tc-event {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(108, 99, 255, 0.08);
+    border: 1px solid rgba(108, 99, 255, 0.15);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6C63FF;
+  }
+
+  .tc-event-empty {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--border-clr);
+    color: var(--text-muted);
+  }
+
+  .tc-complete-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    border: none;
+    color: #fff;
+    padding: 11px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+    margin-top: auto;
+  }
+
+  .tc-complete-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.35);
+  }
+
+  .tc-complete-btn:disabled {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    color: rgba(108, 99, 255, 0.25);
+    margin-bottom: 16px;
+  }
+
+  .empty-state h4 {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    color: var(--text-main);
+    margin-bottom: 8px;
+  }
+
+  .empty-state p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:768px) {
+    .staff-page {
+      flex-direction: column;
+    }
+
+    .staff-sidebar {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+    }
+
+    .sb-brand {
+      margin-bottom: 0;
+    }
+
+    .sb-role-chip,
+    .sb-footer {
+      display: none;
+    }
+
+    .sb-nav {
+      flex-direction: row;
+      gap: 4px;
+      flex: unset;
+    }
+
+    .sb-link span {
+      display: none;
+    }
+
+    .staff-main {
+      padding: 18px;
+    }
+
+    .staff-stats {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+  @media(max-width:480px) {
+    .staff-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .tasks-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

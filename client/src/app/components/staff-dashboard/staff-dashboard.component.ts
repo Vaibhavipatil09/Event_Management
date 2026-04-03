@@ -14,19 +14,26 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, FormsModule]
 })
 export class StaffDashboardComponent implements OnInit {
-
   tasks: Task[] = [];
   staffId: any = this.authService.getUserId();
+
+  get completedTasks(): number {
+    return this.tasks.filter(t => t.status === 'Completed' || t.status === 'COMPLETED').length;
+  }
+  get pendingTasks(): number {
+    return this.tasks.length - this.completedTasks;
+  }
+  get progressPct(): number {
+    return this.tasks.length ? Math.round((this.completedTasks / this.tasks.length) * 100) : 0;
+  }
 
   constructor(
     private staffService: StaffService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
-  ngOnInit(): void {
-    this.getTasks();
-  }
+  ngOnInit(): void { this.getTasks(); }
 
   getTasks(): void {
     this.staffService.getTasks(this.staffId).subscribe({
