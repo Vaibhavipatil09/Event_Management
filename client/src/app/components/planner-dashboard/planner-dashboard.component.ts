@@ -1,4 +1,3 @@
-// planner-dashboard.component.ts
 import { Component, OnInit } from '@angular/core';
 import { PlannerService } from '../../services/planner.service';
 import { Event } from '../../models/event.model';
@@ -24,26 +23,30 @@ export class PlannerDashboardComponent implements OnInit {
   clients: any[] = [];
 
   showEvents = true;
-  showTasks  = false;
+  showTasks = false;
 
-  // Toast
-  showToast    = false;
+  showToast = false;
   toastMessage = '';
 
-  selectedEvent: Event = { title:'', date:'', location:'', description:'', status:'' };
-  newEvent:      Event = { title:'', date:'', location:'', description:'', status:'' };
+  selectedEvent: Event = { title: '', date: '', location: '', description: '', status: '' };
+  newEvent: Event = { title: '', date: '', location: '', description: '', status: '' };
+
   selectedClientId: number | null = null;
-  newTask: Task = { description:'', status:'', assignedStaff: null };
+
+  newTask: Task = { description: '', status: '', assignedStaff: null };
   newTaskEventId: number | null = null;
+
   reassignMap: { [taskId: number]: number | null } = {};
 
-  get plannerId(): number { return Number(this.authService.getUserId()); }
+  get plannerId(): number {
+    return Number(this.authService.getUserId());
+  }
 
   constructor(
     private plannerService: PlannerService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getEvents();
@@ -55,88 +58,143 @@ export class PlannerDashboardComponent implements OnInit {
   private toast(msg: string): void {
     this.toastMessage = msg;
     this.showToast = true;
-    setTimeout(() => { this.showToast = false; }, 3500);
+    setTimeout(() => this.showToast = false, 3500);
   }
 
   navigateTo(section: string): void {
     this.showEvents = section === 'events';
-    this.showTasks  = section === 'tasks';
+    this.showTasks = section === 'tasks';
   }
 
-  getStaffs():  void { this.plannerService.getStaffs().subscribe({ next: d => this.staffs = d, error: e => console.error(e) }); }
-  getClients(): void { this.plannerService.getClients().subscribe({ next: d => this.clients = d, error: e => console.error(e) }); }
-  getEvents():  void { this.plannerService.getEvents(this.plannerId).subscribe({ next: d => this.events = d, error: e => console.error(e) }); }
+  getStaffs(): void {
+    this.plannerService.getStaffs().subscribe(d => this.staffs = d);
+  }
+
+  getClients(): void {
+    this.plannerService.getClients().subscribe(d => this.clients = d);
+  }
+
+  getEvents(): void {
+    this.plannerService.getEvents(this.plannerId).subscribe(d => this.events = d);
+  }
 
   getTasks(): void {
-    this.plannerService.getTasks().subscribe({
-      next: data => {
-        this.tasks = data;
-        this.reassignMap = {};
-        data.forEach((t: any) => { if (t.id != null) this.reassignMap[t.id] = null; });
-      },
-      error: e => console.error(e)
+    this.plannerService.getTasks().subscribe(data => {
+      this.tasks = data;
+      this.reassignMap = {};
+      data.forEach(t => {
+        if (t.id != null) this.reassignMap[t.id] = null;
+      });
     });
   }
 
   createEvent(): void {
     const clientId = this.selectedClientId ?? undefined;
-    this.plannerService.createEvent(this.newEvent, this.plannerId, clientId).subscribe({
-      next: event => {
+
+    this.plannerService
+      .createEvent(this.newEvent, this.plannerId, clientId)
+      .subscribe(event => {
         this.events.push(event);
-        this.newEvent = { title:'', date:'', location:'', description:'', status:'' };
+        this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
         this.selectedClientId = null;
         this.getEvents();
-        this.toast('🎉 Event "' + event.title + '" created!');
-      },
-      error: e => console.error(e)
-    });
+        this.toast(`🎉 Event "${event.title}" created!`);
+      });
   }
 
-  editEvent(event: Event): void { this.selectedEvent = { ...event }; }
-  cancelEdit(): void { this.selectedEvent = { title:'', date:'', location:'', description:'', status:'' }; }
+  // editEvent(event: Event): void {
+  //   this.selectedEvent = { ...event };
+  // }
+
+  editEvent(event: Event): void {
+    // 1️⃣ Switch form to Edit mode
+    this.selectedEvent = { ...event };
+
+    // 2️⃣ Wait for Angular to update the DOM
+    setTimeout(() => {
+
+      // ✅ Smooth scroll to the form
+      const anchor = document.getElementById('eventFormAnchor');
+      if (anchor) {
+        const yOffset = -20;
+        const y =
+          anchor.getBoundingClientRect().top +
+          window.pageYOffset +
+          yOffset;
+
+        window.scrollTo({
+          top: y,
+          behavior: 'smooth'
+        });
+      }
+
+      // ✅ Add glow + slide animation
+      const formCard = document.querySelector('.event-form-card');
+      if (formCard) {
+        formCard.classList.add('edit-focus');
+
+        // Remove class after animation
+        setTimeout(() => {
+          formCard.classList.remove('edit-focus');
+        }, 700);
+      }
+
+    }, 0);
+  }
+
+
+  cancelEdit(): void {
+    this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
+  }
 
   updateEvent(): void {
-    this.plannerService.updateEvent(this.selectedEvent, this.selectedEvent.id!).subscribe({
-      next: updated => {
+    this.plannerService
+      .updateEvent(this.selectedEvent, this.selectedEvent.id!)
+      .subscribe(updated => {
         const i = this.events.findIndex(e => e.id === updated.id);
         if (i !== -1) this.events[i] = updated;
-        this.selectedEvent = { title:'', date:'', location:'', description:'', status:'' };
+        this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
         this.getEvents();
         this.toast('✅ Event updated successfully!');
-      },
-      error: e => console.error(e)
-    });
+      });
   }
 
   createTask(): void {
     const staffId = this.newTask.status === 'Completed' ? null : this.newTask.assignedStaff;
     const taskToSend: Task = { description: this.newTask.description, status: this.newTask.status };
     const eventId = this.newTaskEventId ?? undefined;
-    this.plannerService.createTask(taskToSend, eventId).subscribe({
-      next: task => {
-        if (staffId) {
-          this.plannerService.assignTask(task.id!, staffId).subscribe({ next: () => this.getTasks(), error: e => console.error(e) });
-        } else {
-          this.getTasks();
-        }
-        this.newTask = { description:'', status:'', assignedStaff: null };
-        this.newTaskEventId = null;
-        this.toast('📋 Task created successfully!');
-      },
-      error: e => console.error(e)
+
+    this.plannerService.createTask(taskToSend, eventId).subscribe(task => {
+      if (staffId) {
+        this.plannerService.assignTask(task.id!, staffId).subscribe(() => this.getTasks());
+      } else {
+        this.getTasks();
+      }
+      this.newTask = { description: '', status: '', assignedStaff: null };
+      this.newTaskEventId = null;
+      this.toast('📋 Task created successfully!');
     });
   }
 
   reassignStaff(taskId: any): void {
     const staffId = this.reassignMap[taskId];
     if (!staffId) return;
+
     const task = this.tasks.find(t => t.id === taskId);
-    if (!task || task.status === 'Completed') { alert('Cannot assign staff to a completed task.'); return; }
-    this.plannerService.assignTask(taskId, staffId).subscribe({
-      next: () => { this.reassignMap[taskId] = null; this.getTasks(); this.toast('👷 Staff assigned!'); },
-      error: err => { console.error(err); alert(err?.error?.message || 'Failed to assign staff.'); }
+    if (!task || task.status === 'Completed') {
+      alert('Cannot assign staff to a completed task.');
+      return;
+    }
+
+    this.plannerService.assignTask(taskId, staffId).subscribe(() => {
+      this.reassignMap[taskId] = null;
+      this.getTasks();
+      this.toast('👷 Staff assigned!');
     });
   }
 
-  logout(): void { this.authService.logout(); this.router.navigate(['/login']); }
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }

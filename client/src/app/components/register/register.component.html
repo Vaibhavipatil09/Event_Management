@@ -63,21 +63,15 @@
       <form #registerForm="ngForm">
 
         <!-- USERNAME -->
-<input class="auth-input"
-  name="username"
-  [(ngModel)]="user.username"
-  #username="ngModel"
-  required
-  minlength="3"
-  pattern="^(?=.*[A-Za-z])[A-Za-z0-9_]{3,20}$"
-  placeholder="Choose a username" />
-<div class="auth-error" *ngIf="(username.dirty || username.touched) && username.invalid">
-  <span *ngIf="username.errors?.['required']">Username is required</span>
-  <span *ngIf="username.errors?.['minlength']">Minimum 3 characters</span>
-  <span *ngIf="username.errors?.['pattern']">
-    Username must contain at least one letter (numbers-only not allowed)
-  </span>
-</div>
+        <input class="auth-input" name="username" [(ngModel)]="user.username" #username="ngModel" required minlength="3"
+          pattern="^(?=.*[A-Za-z])[A-Za-z0-9_]{3,20}$" placeholder="Choose a username" />
+        <div class="auth-error" *ngIf="(username.dirty || username.touched) && username.invalid">
+          <span *ngIf="username.errors?.['required']">Username is required</span>
+          <span *ngIf="username.errors?.['minlength']">Minimum 3 characters</span>
+          <span *ngIf="username.errors?.['pattern']">
+            Username must contain at least one letter (numbers-only not allowed)
+          </span>
+        </div>
         <!-- EMAIL -->
         <div class="auth-field">
           <label>Email</label>
