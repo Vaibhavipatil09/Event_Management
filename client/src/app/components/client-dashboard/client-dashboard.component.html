@@ -141,11 +141,32 @@
           <label class="cec-sec-label">
             <i class="bi bi-pencil-square"></i> Your Feedback
           </label>
+
           <div class="cec-fb-row">
-            <input class="ev-input" [(ngModel)]="feedbackMap[event.id!]" placeholder="Write your feedback…" />
-            <button class="ev-btn-sm-outline" (click)="provideFeedback(event.id!)">
+            <input
+              class="ev-input"
+              [(ngModel)]="feedbackMap[event.id!]"
+              [name]="'fb_'+event.id"
+              #fbModel="ngModel"
+              required
+              minlength="2"
+              placeholder="Write your feedback…"
+              [class.ev-invalid]="fbModel.invalid && (fbModel.touched || fbModel.dirty)"
+            />
+
+            <button
+              class="ev-btn-sm-outline"
+              (click)="provideFeedback(event.id!)"
+              [disabled]="fbModel.invalid"
+              title="Submit feedback"
+            >
               <i class="bi bi-send-fill"></i>
             </button>
+          </div>
+
+          <div class="ev-err" *ngIf="fbModel.invalid && (fbModel.touched || fbModel.dirty)">
+            <span *ngIf="fbModel.errors?.['required']">Feedback is required.</span>
+            <span *ngIf="fbModel.errors?.['minlength']">Feedback must be at least 2 characters.</span>
           </div>
         </div>
 
@@ -167,15 +188,34 @@
             <div class="cec-pay-row">
               <div class="cec-rupee-wrap">
                 <span class="cec-rupee">₹</span>
-                <input type="number" class="ev-input" [(ngModel)]="paymentAmountMap[event.id!]"
-                  [name]="'amt_'+event.id" placeholder="Enter amount" min="1" />
+
+                <input
+                  type="number"
+                  class="ev-input"
+                  [(ngModel)]="paymentAmountMap[event.id!]"
+                  [name]="'amt_'+event.id"
+                  #amtModel="ngModel"
+                  required
+                  min="1"
+                  placeholder="Enter amount"
+                  [class.ev-invalid]="amtModel.invalid && (amtModel.touched || amtModel.dirty)"
+                />
               </div>
-              <button class="ev-btn-pay" (click)="payForEvent(event.id!)"
-                [disabled]="processingPayment[event.id!]">
+
+              <button
+                class="ev-btn-pay"
+                (click)="payForEvent(event.id!)"
+                [disabled]="processingPayment[event.id!] || amtModel.invalid"
+              >
                 <span *ngIf="processingPayment[event.id!]" class="ev-spinner"></span>
                 <i *ngIf="!processingPayment[event.id!]" class="bi bi-credit-card-fill me-1"></i>
                 {{ processingPayment[event.id!] ? 'Processing…' : 'Pay Now' }}
               </button>
+            </div>
+
+            <div class="ev-err" *ngIf="amtModel.invalid && (amtModel.touched || amtModel.dirty)">
+              <span *ngIf="amtModel.errors?.['required']">Amount is required.</span>
+              <span *ngIf="amtModel.errors?.['min']">Minimum amount is ₹1.</span>
             </div>
           </ng-template>
 
@@ -617,6 +657,19 @@
   }
 
   .ev-input::placeholder { color: var(--text3); }
+
+  /* ✅ Invalid state */
+  .ev-invalid {
+    border-color: #EF4444 !important;
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+  }
+
+  .ev-err {
+    margin-top: 7px;
+    font-size: 0.78rem;
+    color: #EF4444;
+    font-weight: 600;
+  }
 
   /* Buttons */
   .ev-btn-sm-outline {
