@@ -3,6 +3,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap"
   rel="stylesheet" />
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <!-- TOAST -->
 <div class="ev-toast-stack">
@@ -70,7 +71,6 @@
         <h1 class="cd-title">🎫 My Events</h1>
         <p class="cd-sub">Client Dashboard — view events, leave feedback & make payments</p>
       </div>
-      <!-- Progress -->
       <div class="cd-progress-card d-none d-md-block">
         <div class="cp-label">Completion</div>
         <div class="cp-track">
@@ -154,18 +154,31 @@
           <label class="cec-sec-label">
             <i class="bi bi-credit-card-fill"></i> Make Payment
           </label>
-          <div class="cec-pay-row">
-            <div class="cec-rupee-wrap">
-              <span class="cec-rupee">₹</span>
-              <input type="number" class="ev-input" [(ngModel)]="paymentAmountMap[event.id!]" [name]="'amt_'+event.id"
-                placeholder="Enter amount" min="1" />
+
+          <!-- ✅ Already paid -->
+          <ng-container *ngIf="paidEvents.has(event.id!); else showPayForm">
+            <div class="ev-paid-badge">
+              <i class="bi bi-check-circle-fill"></i> Paid
             </div>
-            <button class="ev-btn-pay" (click)="payForEvent(event.id!)" [disabled]="processingPayment[event.id!]">
-              <span *ngIf="processingPayment[event.id!]" class="ev-spinner"></span>
-              <i *ngIf="!processingPayment[event.id!]" class="bi bi-credit-card-fill me-1"></i>
-              {{ processingPayment[event.id!] ? 'Processing…' : 'Pay Now' }}
-            </button>
-          </div>
+          </ng-container>
+
+          <!-- 💳 Pay form -->
+          <ng-template #showPayForm>
+            <div class="cec-pay-row">
+              <div class="cec-rupee-wrap">
+                <span class="cec-rupee">₹</span>
+                <input type="number" class="ev-input" [(ngModel)]="paymentAmountMap[event.id!]"
+                  [name]="'amt_'+event.id" placeholder="Enter amount" min="1" />
+              </div>
+              <button class="ev-btn-pay" (click)="payForEvent(event.id!)"
+                [disabled]="processingPayment[event.id!]">
+                <span *ngIf="processingPayment[event.id!]" class="ev-spinner"></span>
+                <i *ngIf="!processingPayment[event.id!]" class="bi bi-credit-card-fill me-1"></i>
+                {{ processingPayment[event.id!] ? 'Processing…' : 'Pay Now' }}
+              </button>
+            </div>
+          </ng-template>
+
         </div>
 
         <ng-template #payLocked>
@@ -238,9 +251,7 @@
     padding: 24px 18px;
   }
 
-  .sb-top {
-    margin-bottom: 28px;
-  }
+  .sb-top { margin-bottom: 28px; }
 
   .sb-brand {
     display: flex;
@@ -306,10 +317,7 @@
     transition: all 0.18s;
   }
 
-  .sb-link:hover {
-    background: rgba(255, 255, 255, 0.07);
-    color: #fff;
-  }
+  .sb-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
 
   .sb-link.sb-active {
     background: rgba(16, 185, 129, 0.2);
@@ -317,249 +325,228 @@
     border: 1px solid rgba(16, 185, 129, 0.3);
   }
 
-  .sb-link i {
-    font-size: 1.05rem;
-  }
+  .sb-link i { font-size: 1.05rem; }
 
   .sb-stats {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 14px;
-    padding: 16px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 12px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 14px 12px;
     margin-bottom: 20px;
   }
 
-  .sb-stat {
-    text-align: center;
-  }
+  .sb-stat { display: flex; flex-direction: column; align-items: center; flex: 1; }
 
   .ss-val {
-    display: block;
     font-family: var(--font-h);
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: #F59E0B;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
   }
 
   .ss-lbl {
-    font-size: 0.68rem;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.45);
+    margin-top: 3px;
     text-transform: uppercase;
-    letter-spacing: .5px;
+    letter-spacing: .4px;
   }
 
-  .ss-div {
-    width: 1px;
-    height: 34px;
-    background: rgba(255, 255, 255, 0.1);
-  }
+  .ss-div { width: 1px; height: 28px; background: rgba(255,255,255,0.1); }
 
   .sb-logout {
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #FCA5A5;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    background: rgba(239, 68, 68, 0.12);
-    border: 1px solid rgba(239, 68, 68, 0.25);
-    color: #FCA5A5;
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
     transition: all 0.18s;
     font-family: var(--font-b);
   }
 
-  .sb-logout:hover {
-    background: rgba(239, 68, 68, 0.25);
-    color: #fff;
-  }
+  .sb-logout:hover { background: rgba(239,68,68,0.28); color: #fff; }
 
   /* ══ MAIN ════════════════════════════════════════ */
-  .cd-main {
-    flex: 1;
-    padding: 28px;
-    overflow-y: auto;
-    min-width: 0;
-  }
+  .cd-main { flex: 1; padding: 28px 32px; overflow-y: auto; }
 
   .cd-header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 24px;
     gap: 16px;
-    margin-bottom: 28px;
   }
 
   .cd-title {
     font-family: var(--font-h);
-    font-size: 1.85rem;
-    font-weight: 700;
+    font-size: 1.6rem;
+    font-weight: 800;
     color: var(--text);
-    margin-bottom: 4px;
+    margin: 0 0 4px;
   }
 
-  .cd-sub {
-    color: var(--text3);
-    font-size: 0.85rem;
-  }
+  .cd-sub { font-size: 0.85rem; color: var(--text3); margin: 0; }
 
-  /* Progress card */
   .cd-progress-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
     padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 200px;
+    min-width: 160px;
   }
 
   .cp-label {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: var(--text3);
     text-transform: uppercase;
     letter-spacing: .4px;
-    flex-shrink: 0;
+    margin-bottom: 8px;
   }
 
   .cp-track {
-    flex: 1;
     height: 6px;
     background: var(--border);
-    border-radius: 3px;
+    border-radius: 99px;
     overflow: hidden;
+    margin-bottom: 6px;
   }
 
   .cp-fill {
     height: 100%;
-    background: linear-gradient(90deg, #6C63FF, #10B981);
-    border-radius: 3px;
-    transition: width 0.6s ease;
+    background: linear-gradient(90deg, #6C63FF, #A78BFA);
+    border-radius: 99px;
+    transition: width 0.5s ease;
   }
 
   .cp-pct {
     font-family: var(--font-h);
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 800;
     color: #6C63FF;
-    font-size: 0.9rem;
-    flex-shrink: 0;
+    text-align: right;
   }
 
-  /* Stat row */
+  /* ══ STAT ROW ════════════════════════════════════ */
   .cd-stat-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 14px;
     margin-bottom: 28px;
   }
 
   .cd-stat {
     background: var(--bg-card);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: 14px;
-    padding: 18px;
+    padding: 16px 18px;
     display: flex;
     align-items: center;
     gap: 14px;
-    transition: all 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: default;
   }
 
   .cd-stat:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.12);
+    border-color: var(--c);
   }
 
   .cd-stat i {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     color: var(--c);
+    background: var(--cl);
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
   .cds-val {
     display: block;
     font-family: var(--font-h);
-    font-size: 1.6rem;
-    font-weight: 700;
+    font-size: 1.35rem;
+    font-weight: 800;
     color: var(--text);
+    line-height: 1;
   }
 
-  .cds-lbl {
-    font-size: 0.72rem;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: .4px;
-  }
+  .cds-lbl { display: block; font-size: 0.75rem; color: var(--text3); margin-top: 3px; }
 
   /* ══ EVENT CARDS ══════════════════════════════════ */
   .cd-events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 18px;
   }
 
   .cd-event-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 22px;
+    border: 1.5px solid var(--border);
+    border-left: 5px solid #F59E0B;
+    border-radius: 18px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 14px;
-    transition: all 0.22s;
+    transition: box-shadow 0.2s, transform 0.2s;
   }
 
   .cd-event-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(108, 99, 255, 0.3);
-    box-shadow: 0 10px 32px rgba(108, 99, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(108,99,255,0.1);
+    transform: translateY(-2px);
   }
 
   .cd-event-card.card-completed {
-    border-left: 3px solid #10B981;
+    border-left-color: #10B981;
   }
 
-  .cec-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .cec-header { display: flex; align-items: center; justify-content: space-between; }
 
   .cec-icon {
-    width: 42px;
-    height: 42px;
-    background: rgba(108, 99, 255, 0.1);
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(167,139,250,0.15));
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.1rem;
     color: #6C63FF;
-    font-size: 1.2rem;
   }
 
-  /* Status badges */
   .ev-status-badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.73rem;
+    font-size: 0.7rem;
     font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
   }
 
   .badge-done {
-    background: rgba(16, 185, 129, 0.12);
-    color: #10B981;
-    border: 1px solid rgba(16, 185, 129, 0.25);
+    background: rgba(16,185,129,0.12);
+    color: #059669;
+    border: 1px solid rgba(16,185,129,0.25);
   }
 
   .badge-pending {
-    background: rgba(245, 158, 11, 0.12);
+    background: rgba(245,158,11,0.12);
     color: #D97706;
-    border: 1px solid rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245,158,11,0.25);
   }
 
   .cec-title {
@@ -570,11 +557,7 @@
     margin: 0;
   }
 
-  .cec-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
+  .cec-meta { display: flex; flex-direction: column; gap: 5px; }
 
   .cec-meta span {
     font-size: 0.8rem;
@@ -585,8 +568,8 @@
   }
 
   .cec-feedback-existing {
-    background: rgba(108, 99, 255, 0.07);
-    border: 1px solid rgba(108, 99, 255, 0.15);
+    background: rgba(108,99,255,0.07);
+    border: 1px solid rgba(108,99,255,0.15);
     border-radius: 9px;
     padding: 10px 13px;
     font-size: 0.82rem;
@@ -596,16 +579,9 @@
     gap: 8px;
   }
 
-  .cec-feedback-existing i {
-    color: #6C63FF;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
+  .cec-feedback-existing i { color: #6C63FF; flex-shrink: 0; margin-top: 2px; }
 
-  .cec-divider {
-    height: 1px;
-    background: var(--border);
-  }
+  .cec-divider { height: 1px; background: var(--border); }
 
   .cec-sec-label {
     font-size: 0.75rem;
@@ -619,10 +595,7 @@
     margin-bottom: 8px;
   }
 
-  .cec-fb-row {
-    display: flex;
-    gap: 8px;
-  }
+  .cec-fb-row { display: flex; gap: 8px; }
 
   /* Inputs */
   .ev-input {
@@ -640,17 +613,15 @@
 
   .ev-input:focus {
     border-color: #6C63FF;
-    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.14);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.14);
   }
 
-  .ev-input::placeholder {
-    color: var(--text3);
-  }
+  .ev-input::placeholder { color: var(--text3); }
 
   /* Buttons */
   .ev-btn-sm-outline {
-    background: rgba(108, 99, 255, 0.1);
-    border: 1.5px solid rgba(108, 99, 255, 0.25);
+    background: rgba(108,99,255,0.1);
+    border: 1.5px solid rgba(108,99,255,0.25);
     color: #6C63FF;
     padding: 10px 14px;
     border-radius: 9px;
@@ -661,24 +632,12 @@
     align-items: center;
   }
 
-  .ev-btn-sm-outline:hover {
-    background: #6C63FF;
-    color: #fff;
-  }
+  .ev-btn-sm-outline:hover { background: #6C63FF; color: #fff; }
 
   /* Payment */
-  .cec-payment-section {}
+  .cec-pay-row { display: flex; gap: 8px; align-items: center; }
 
-  .cec-pay-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .cec-rupee-wrap {
-    position: relative;
-    flex: 1;
-  }
+  .cec-rupee-wrap { position: relative; flex: 1; }
 
   .cec-rupee {
     position: absolute;
@@ -690,20 +649,19 @@
     pointer-events: none;
   }
 
-  .cec-rupee-wrap .ev-input {
-    padding-left: 28px;
-  }
+  .cec-rupee-wrap .ev-input { padding-left: 28px; }
 
+  /* ── Pay Now button — !important overrides Bootstrap reset ── */
   .ev-btn-pay {
-    background: linear-gradient(135deg, #10B981, #34D399);
-    border: none;
-    color: #fff;
+    background: linear-gradient(135deg, #10B981, #34D399) !important;
+    border: none !important;
+    color: #fff !important;
     padding: 10px 18px;
     border-radius: 9px;
     font-size: 0.86rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -712,29 +670,43 @@
   }
 
   .ev-btn-pay:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 18px rgba(16, 185, 129, 0.4);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5) !important;
+    background: linear-gradient(135deg, #059669, #10B981) !important;
   }
 
   .ev-btn-pay:disabled {
-    opacity: 0.6;
+    opacity: 0.6 !important;
     cursor: not-allowed;
+    transform: none !important;
   }
+
+  /* ── Paid badge ── */
+  .ev-paid-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1.5px solid rgba(16, 185, 129, 0.35);
+    color: #059669;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 9px;
+  }
+
+  .ev-paid-badge i { font-size: 0.95rem; }
 
   .ev-spinner {
     width: 14px;
     height: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255,255,255,0.3);
     border-top-color: #fff;
     border-radius: 50%;
     animation: spin 0.75s linear infinite;
   }
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg)
-    }
-  }
+  @keyframes spin { to { transform: rotate(360deg) } }
 
   .cec-pay-locked {
     display: flex;
@@ -767,20 +739,13 @@
     font-size: 0.875rem;
     font-weight: 500;
     animation: slideUp 0.3s ease;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.22);
     max-width: 380px;
     font-family: var(--font-b);
   }
 
-  .ev-toast-success {
-    background: linear-gradient(135deg, #10B981, #34D399);
-    color: #fff;
-  }
-
-  .ev-toast-danger {
-    background: linear-gradient(135deg, #EF4444, #F87171);
-    color: #fff;
-  }
+  .ev-toast-success { background: linear-gradient(135deg, #10B981, #34D399); color: #fff; }
+  .ev-toast-danger  { background: linear-gradient(135deg, #EF4444, #F87171); color: #fff; }
 
   .ev-toast button {
     background: none;
@@ -794,91 +759,39 @@
     line-height: 1;
   }
 
-  .ev-toast button:hover {
-    opacity: 1;
-  }
+  .ev-toast button:hover { opacity: 1; }
 
   @keyframes slideUp {
-    from {
-      transform: translateY(20px);
-      opacity: 0
-    }
-
-    to {
-      transform: translateY(0);
-      opacity: 1
-    }
+    from { transform: translateY(20px); opacity: 0 }
+    to   { transform: translateY(0);    opacity: 1 }
   }
 
   /* ══ EMPTY STATE ══════════════════════════════════ */
-  .ev-empty {
-    text-align: center;
-    padding: 72px 20px;
-  }
+  .ev-empty { text-align: center; padding: 72px 20px; }
 
   .ev-empty i {
     font-size: 3.5rem;
-    color: rgba(108, 99, 255, 0.2);
+    color: rgba(108,99,255,0.2);
     display: block;
     margin-bottom: 14px;
   }
 
-  .ev-empty h5 {
-    font-family: var(--font-h);
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .ev-empty p {
-    color: var(--text3);
-    font-size: 0.88rem;
-  }
+  .ev-empty h5 { font-family: var(--font-h); color: var(--text); margin-bottom: 8px; }
+  .ev-empty p  { color: var(--text3); font-size: 0.88rem; }
 
   /* ══ RESPONSIVE ══════════════════════════════════ */
   @media(max-width:768px) {
-    .cd-wrap {
-      flex-direction: column;
-    }
-
-    .cd-sidebar {
-      width: 100%;
-      flex-direction: row;
-      flex-wrap: wrap;
-      padding: 12px 16px;
-      gap: 12px;
-    }
-
-    .sb-top {
-      margin-bottom: 0;
-    }
-
-    .sb-nav {
-      flex-direction: row;
-      flex: unset;
-      margin-bottom: 0;
-    }
-
-    .sb-stats,
-    .sb-logout {
-      display: none;
-    }
-
-    .cd-main {
-      padding: 16px;
-    }
-
-    .cd-stat-row {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    .cd-events-grid {
-      grid-template-columns: 1fr;
-    }
+    .cd-wrap { flex-direction: column; }
+    .cd-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; padding: 12px 16px; gap: 12px; }
+    .sb-top { margin-bottom: 0; }
+    .sb-nav { flex-direction: row; flex: unset; margin-bottom: 0; }
+    .sb-stats, .sb-logout { display: none; }
+    .cd-main { padding: 16px; }
+    .cd-stat-row { grid-template-columns: 1fr 1fr 1fr; }
+    .cd-events-grid { grid-template-columns: 1fr; }
   }
 
   @media(max-width:480px) {
-    .cd-stat-row {
-      grid-template-columns: 1fr;
-    }
+    .cd-stat-row { grid-template-columns: 1fr; }
   }
 </style>

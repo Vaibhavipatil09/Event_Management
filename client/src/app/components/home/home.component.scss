@@ -1,4 +1,6 @@
-/* OFFER POPUP */
+/* =====================
+   OFFER POPUP
+===================== */
 .offer-popup {
   position: fixed;
   top: 20px;
@@ -9,7 +11,7 @@
 }
 
 .offer-content {
-  background: linear-gradient(135deg, #ff6a00, #ee0979);
+  background: linear-gradient(135deg, #FF6A00, #EE0979);
   color: white;
   padding: 20px 25px;
   border-radius: 12px;
@@ -17,14 +19,154 @@
   min-width: 280px;
 }
 
-/* ANIMATION */
 @keyframes slideDown {
-  from {
-    transform: translate(-50%, -100%);
-    opacity: 0;
-  }
-  to {
-    transform: translate(-50%, 0);
-    opacity: 1;
-  }
+  from { transform: translate(-50%, -100%); opacity: 0; }
+  to   { transform: translate(-50%, 0);    opacity: 1; }
 }
+
+/* =====================
+   GENERAL
+===================== */
+html { scroll-behavior: smooth; }
+
+/* =====================
+   HERO
+===================== */
+.hero {
+  height: 80vh;
+  background:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678')
+    no-repeat center center / cover;
+}
+
+.hero-title {
+  color: #FFFFFF;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.85), 0 0 25px rgba(255,193,7,0.35);
+  letter-spacing: 1px;
+}
+
+.hero-title span { color: #FBBF24; }
+
+/* =====================
+   TYPING EFFECT
+===================== */
+.typing-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid #FBBF24;
+  animation: typingLoop 6s steps(30, end) infinite, blink 0.75s step-end infinite;
+}
+
+@keyframes typingLoop {
+  0%   { width: 0; }
+  40%  { width: 100%; }
+  60%  { width: 100%; }
+  100% { width: 0; }
+}
+
+@keyframes blink { 50% { border-color: transparent; } }
+
+/* =====================
+   CAROUSEL
+===================== */
+.carousel-img {
+  height: 400px;
+  object-fit: cover;
+}
+
+/* =====================
+   SERVICES
+===================== */
+.service-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* =====================
+   CLIENTS
+===================== */
+.client-box {
+  padding: 20px;
+  background: #F8F9FA;
+  border-radius: 10px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.client-box:hover {
+  background: #FFC107;
+  transform: scale(1.05);
+}
+
+/* =====================
+   CTA
+===================== */
+.cta {
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #6A11CB, #2575FC);
+}
+
+/* =====================
+   FOOTER
+===================== */
+.footer           { background: #0F172A; color: #E5E7EB; }
+.footer-title     { font-weight: 700; font-size: 1.2rem; }
+.footer-text      { font-size: 0.9rem; opacity: 0.8; }
+.footer-heading   { font-weight: 600; margin-bottom: 10px; }
+.footer-links     { list-style: none; padding: 0; }
+.footer-links li  { margin-bottom: 6px; }
+.footer-links a   { color: #CBD5E1; text-decoration: none; font-size: 0.9rem; }
+.footer-links a:hover { color: #FBBF24; }
+.footer-divider   { border-color: rgba(255,255,255,0.08); margin: 20px 0; }
+.footer-bottom    { font-size: 0.85rem; opacity: 0.7; }
+
+/* =====================
+   SCROLL REVEAL — HIDDEN STATE
+   Sections start invisible, shifted down
+===================== */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+/* Cards hidden with staggered delay via --delay variable */
+.reveal-card {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease var(--delay, 0s),
+              transform 0.6s ease var(--delay, 0s);
+}
+
+/* =====================
+   SCROLL REVEAL — VISIBLE STATE
+   .visible class added by JS in index.html
+===================== */
+.reveal-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =====================
+   DARK MODE
+===================== */
+body.dark-mode { background-color: #0F172A; color: #E5E7EB; }
+body.dark-mode .hero { background-blend-mode: overlay; background-color: rgba(0,0,0,0.7); }
+body.dark-mode .card { background-color: #1E293B; color: #E5E7EB; }
+body.dark-mode .card p { color: #CBD5E1; }
+body.dark-mode #services h2 { color: #FBBF24; }
+body.dark-mode .client-box { background: #1E293B; color: #E5E7EB; }
+body.dark-mode .client-box:hover { background: #FBBF24; color: #111; }
+body.dark-mode .cta { background: linear-gradient(135deg, #020617, #1E293B); }
+
+/* =====================
+   MOBILE
+===================== */
+@media(max-width: 768px) { .hero { height: 60vh; } }
