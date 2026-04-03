@@ -1,7 +1,7 @@
-// navbar.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -17,18 +17,13 @@ export class NavbarComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    // Restore saved theme on load
+    // Restore saved theme
     const saved = localStorage.getItem('ev-theme');
-    if (saved === 'dark') {
-      this.isDark = true;
-      document.body.classList.add('dark-mode');
-    } else {
-      this.isDark = false;
-      document.body.classList.remove('dark-mode');
-    }
-    this.loadUser();
+    this.isDark = saved === 'dark';
+    document.body.classList.toggle('dark-mode', this.isDark);
 
-    // Re-check login state on every navigation (fixes stale state)
+    this.loadUser();
+    // Re-check login on every navigation
     this.router.events.subscribe(() => this.loadUser());
   }
 
@@ -39,21 +34,47 @@ export class NavbarComponent implements OnInit {
 
   toggleTheme(): void {
     this.isDark = !this.isDark;
-    if (this.isDark) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('ev-theme', 'dark');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('ev-theme', 'light');
-    }
+    document.body.classList.toggle('dark-mode', this.isDark);
+    localStorage.setItem('ev-theme', this.isDark ? 'dark' : 'light');
   }
 
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('userId');
+    localStorage.removeItem('username');
     this.isLoggedIn = false;
     this.role = null;
     this.router.navigate(['/login']);
+  }
+
+  /** Navigate to home then scroll to a section fragment */
+  scrollToSection(sectionId: string): void {
+    const currentUrl = this.router.url;
+    if (currentUrl === '/home' || currentUrl === '/') {
+      // Already on home — just scroll
+      this._scroll(sectionId);
+    } else {
+      // Navigate to home first, then scroll after render
+      this.router.navigate(['/home']).then(() => {
+        setTimeout(() => this._scroll(sectionId), 150);
+      });
+    }
+  }
+
+  scrollToTop(): void {
+    const currentUrl = this.router.url;
+    if (currentUrl === '/home' || currentUrl === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      this.router.navigate(['/home']).then(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  }
+
+  private _scroll(id: string): void {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }

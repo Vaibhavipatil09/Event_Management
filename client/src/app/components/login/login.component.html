@@ -1,9 +1,11 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap"
+  rel="stylesheet" />
 
 <!-- TOAST -->
 <div class="ev-toast-wrap" *ngIf="showToast">
-  <div class="ev-toast success">
+  <div class="ev-toast ev-toast-success">
     <i class="bi bi-check-circle-fill"></i>
     <span>Login successful! Redirecting…</span>
   </div>
@@ -16,93 +18,60 @@
     <div class="auth-orb o3"></div>
   </div>
 
-  <!-- Branding aside (desktop) -->
+  <!-- LEFT SIDEBAR -->
   <div class="auth-side d-none d-lg-flex">
     <div class="auth-side-inner">
       <div class="side-logo">
         <div class="brand-gem-lg"><i class="bi bi-stars"></i></div>
         <span class="brand-name-lg">Eventora</span>
       </div>
-      <h2 class="side-heading">
-        Plan. Manage.<br>
-        <span class="text-gradient-gold">Celebrate.</span>
-      </h2>
+      <h2 class="side-heading">Plan. Manage.<br><span class="gold-grad">Celebrate.</span></h2>
       <p class="side-sub">The complete event management suite trusted by thousands of professionals.</p>
       <div class="side-features">
-        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Role-based dashboards</div>
-        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Real-time task tracking</div>
-        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Integrated payments</div>
-        <div class="side-feat"><i class="bi bi-check-circle-fill text-primary-ev"></i> Client management</div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Role-based dashboards</span></div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Real-time task tracking</span>
+        </div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Integrated payments</span></div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Client management</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Form panel -->
+  <!-- RIGHT FORM -->
   <div class="auth-form-panel">
     <div class="auth-card">
       <div class="auth-card-stripe"></div>
 
-      <div class="auth-logo-sm d-lg-none mb-3">
-        <div class="brand-gem-sm2"><i class="bi bi-stars"></i></div>
-        <span class="brand-name-sm2">Eventora</span>
+      <div class="auth-logo-sm d-lg-none mb-4">
+        <div class="brand-gem-sm"><i class="bi bi-stars"></i></div>
+        <span class="brand-sm-name">Eventora</span>
       </div>
 
       <h3 class="auth-title">Welcome Back</h3>
       <p class="auth-sub">Sign in to your account to continue</p>
 
-      <!-- ✅ FORM WRAPPER ADDED -->
       <form #loginForm="ngForm" (ngSubmit)="login()" novalidate>
 
-        <!-- USERNAME -->
         <div class="auth-field">
-          <label>Username</label>
+          <label class="auth-label">Username</label>
           <div class="auth-input-wrap">
-            <i class="bi bi-person-fill auth-input-icon"></i>
-
-            <!-- ✅ required + ngModel ref -->
-            <input
-              type="text"
-              class="auth-input"
-              [(ngModel)]="credentials.username"
-              name="username"
-              placeholder="Enter your username"
-              required
-              #username="ngModel"
-            />
+            <i class="bi bi-person-fill auth-ico"></i>
+            <input type="text" class="auth-input" [(ngModel)]="credentials.username" name="username"
+              placeholder="Enter your username" required #uname="ngModel" />
           </div>
-
-          <!-- ✅ error message -->
-          <div class="auth-err" *ngIf="username.invalid && (username.dirty || username.touched)">
-            Username is required
-          </div>
+          <div class="auth-err" *ngIf="uname.invalid && (uname.dirty || uname.touched)">Username is required</div>
         </div>
 
-        <!-- PASSWORD -->
         <div class="auth-field">
-          <label>Password</label>
+          <label class="auth-label">Password</label>
           <div class="auth-input-wrap">
-            <i class="bi bi-lock-fill auth-input-icon"></i>
-
-            <!-- ✅ required + ngModel ref -->
-            <input
-              type="password"
-              class="auth-input"
-              [(ngModel)]="credentials.password"
-              name="password"
-              placeholder="Enter your password"
-              required
-              #password="ngModel"
-              (keyup.enter)="login()"
-            />
+            <i class="bi bi-lock-fill auth-ico"></i>
+            <input type="password" class="auth-input" [(ngModel)]="credentials.password" name="password"
+              placeholder="Enter your password" required #pw="ngModel" (keyup.enter)="loginForm.valid && login()" />
           </div>
-
-          <!-- ✅ error message -->
-          <div class="auth-err" *ngIf="password.invalid && (password.dirty || password.touched)">
-            Password is required
-          </div>
+          <div class="auth-err" *ngIf="pw.invalid && (pw.dirty || pw.touched)">Password is required</div>
         </div>
 
-        <!-- ✅ submit button disabled when invalid -->
         <button class="auth-submit-btn" type="submit" [disabled]="loginForm.invalid">
           <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
         </button>
@@ -115,7 +84,6 @@
         <span>Don't have an account?</span>
         <a routerLink="/register">Create one →</a>
       </div>
-
       <div class="text-center mt-3">
         <a routerLink="/home" class="auth-back-link">
           <i class="bi bi-arrow-left me-1"></i>Back to Home
@@ -126,24 +94,17 @@
 </div>
 
 <style>
+  /* ── Tokens ───────────────────────────────── */
   :root {
-    --ev-pri: #2e25dd;
-    --ev-accent: #F5A623;
-    --ev-deep: #1A103C;
-    --ev-pink: #F472B6;
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --pri: #6C63FF;
+    --acc: #F5A623;
+    --deep: #1A103C;
+    --pink: #F472B6;
+    --fh: 'Syne', sans-serif;
+    --fb: 'Inter', sans-serif;
   }
 
-  /* ✅ Required validation error */
-  .auth-err {
-    margin-top: 6px;
-    font-size: 0.78rem;
-    color: #EF4444;
-    font-weight: 600;
-  }
-
-  /* TOAST */
+  /* ── Toast ───────────────────────────────── */
   .ev-toast-wrap {
     position: fixed;
     top: 20px;
@@ -157,59 +118,84 @@
     gap: 10px;
     padding: 14px 20px;
     border-radius: 12px;
-    font-size: 0.88rem;
+    font-size: .88rem;
     font-weight: 500;
-    font-family: var(--font-body);
-    animation: slideIn 0.35s ease;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    font-family: var(--fb);
+    animation: slideIn .35s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
   }
 
-  .ev-toast.success {
+  .ev-toast-success {
     background: linear-gradient(135deg, #10B981, #34D399);
     color: #fff;
   }
 
   @keyframes slideIn {
-    from { transform: translateX(120%); opacity: 0 }
-    to { transform: translateX(0); opacity: 1 }
+    from {
+      transform: translateX(120%);
+      opacity: 0
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1
+    }
   }
 
-  /* PAGE */
+  /* ── Page layout ─────────────────────────── */
   .auth-page {
     min-height: 100vh;
     display: flex;
     background: #0F0A24;
     position: relative;
     overflow: hidden;
+    font-family: var(--fb);
   }
 
-  .auth-bg { position: absolute; inset: 0; pointer-events: none; }
+  .auth-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
 
-  .auth-orb { position: absolute; border-radius: 50%; filter: blur(100px); }
+  .auth-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+  }
 
   .o1 {
-    width: 600px; height: 600px;
-    background: #6C63FF; opacity: 0.12;
-    top: -200px; right: -100px;
+    width: 600px;
+    height: 600px;
+    background: #6C63FF;
+    opacity: .12;
+    top: -200px;
+    right: -100px;
   }
 
   .o2 {
-    width: 400px; height: 400px;
-    background: #F5A623; opacity: 0.08;
-    bottom: -100px; left: -50px;
+    width: 400px;
+    height: 400px;
+    background: #F5A623;
+    opacity: .08;
+    bottom: -100px;
+    left: -50px;
   }
 
   .o3 {
-    width: 300px; height: 300px;
-    background: #F472B6; opacity: 0.08;
-    top: 50%; right: 40%;
+    width: 300px;
+    height: 300px;
+    background: #F472B6;
+    opacity: .08;
+    top: 50%;
+    right: 40%;
   }
 
-  /* SIDE */
+  /* ── Left sidebar ────────────────────────── */
   .auth-side {
     width: 42%;
-    background: rgba(26, 16, 60, 0.6);
-    border-right: 1px solid rgba(108, 99, 255, 0.2);
+    background: rgba(26, 16, 60, .65);
+    border-right: 1px solid rgba(108, 99, 255, .18);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -218,7 +204,10 @@
     z-index: 1;
   }
 
-  .auth-side-inner { max-width: 360px; }
+  .auth-side-inner {
+    max-width: 340px;
+    width: 100%;
+  }
 
   .side-logo {
     display: flex;
@@ -228,36 +217,41 @@
   }
 
   .brand-gem-lg {
-    width: 50px; height: 50px;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
-    border-radius: 14px;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 21px;
     color: #fff;
   }
 
   .brand-name-lg {
-    font-family: var(--font-head);
-    font-size: 1.8rem;
+    font-family: var(--fh);
+    font-size: 1.75rem;
     font-weight: 800;
     background: linear-gradient(90deg, #F5A623, #FF6EB4, #A78BFA);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    white-space: nowrap;
   }
 
+  /* ✅ FIX: use px not clamp so text never gets clipped */
   .side-heading {
-    font-family: var(--font-head);
-    font-size: 2.4rem;
+    font-family: var(--fh);
+    font-size: 2.2rem;
     font-weight: 800;
     color: #fff;
-    line-height: 1.2;
-    margin-bottom: 16px;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    /* no overflow hidden, no fixed width */
   }
 
-  .text-gradient-gold {
+  .gold-grad {
     background: linear-gradient(90deg, #F5A623, #FF6EB4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -265,25 +259,37 @@
   }
 
   .side-sub {
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 32px;
+    color: rgba(255, 255, 255, .55);
+    font-size: .9rem;
+    line-height: 1.65;
+    margin-bottom: 28px;
   }
 
-  .side-features { display: flex; flex-direction: column; gap: 12px; }
+  .side-features {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
 
   .side-feat {
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 0.88rem;
     display: flex;
     align-items: center;
     gap: 10px;
   }
 
-  .text-primary-ev { color: #6C63FF !important; }
+  .feat-icon {
+    font-size: .95rem;
+    color: #6C63FF;
+    flex-shrink: 0;
+  }
 
-  /* FORM PANEL */
+  .side-feat span {
+    color: rgba(255, 255, 255, .75);
+    font-size: .87rem;
+    line-height: 1.4;
+  }
+
+  /* ── Right form ──────────────────────────── */
   .auth-form-panel {
     flex: 1;
     display: flex;
@@ -295,8 +301,8 @@
   }
 
   .auth-card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(108, 99, 255, 0.2);
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(108, 99, 255, .2);
     border-radius: 24px;
     padding: 40px 36px;
     width: 100%;
@@ -308,15 +314,24 @@
 
   .auth-card-stripe {
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     background: linear-gradient(90deg, #6C63FF, #F5A623, #F472B6);
   }
 
-  .auth-logo-sm { display: flex; align-items: center; gap: 8px; }
+  /* Mobile logo */
+  .auth-logo-sm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-  .brand-gem-sm2 {
-    width: 30px; height: 30px;
+  .brand-gem-sm {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
     border-radius: 8px;
     display: flex;
@@ -326,8 +341,8 @@
     color: #fff;
   }
 
-  .brand-name-sm2 {
-    font-family: var(--font-head);
+  .brand-sm-name {
+    font-family: var(--fh);
     font-size: 1.1rem;
     font-weight: 700;
     background: linear-gradient(90deg, #F5A623, #A78BFA);
@@ -337,137 +352,163 @@
   }
 
   .auth-title {
-    font-family: var(--font-head);
-    font-size: 1.75rem;
+    font-family: var(--fh);
+    font-size: 1.7rem;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
   .auth-sub {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.88rem;
-    margin-bottom: 28px;
+    color: rgba(255, 255, 255, .5);
+    font-size: .87rem;
+    margin-bottom: 26px;
   }
 
-  .auth-field { margin-bottom: 18px; }
+  .auth-field {
+    margin-bottom: 16px;
+  }
 
-  .auth-field label {
-    font-size: 0.78rem;
+  .auth-label {
+    font-size: .76rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, .5);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: .5px;
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
   }
 
-  .auth-input-wrap { position: relative; }
+  .auth-input-wrap {
+    position: relative;
+  }
 
-  .auth-input-icon {
+  .auth-ico {
     position: absolute;
-    left: 14px;
+    left: 13px;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, .3);
+    font-size: .88rem;
+    pointer-events: none;
   }
 
   .auth-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, .06);
+    border: 1.5px solid rgba(255, 255, 255, .1);
     border-radius: 10px;
     color: #fff;
-    padding: 12px 14px 12px 40px;
-    font-family: var(--font-body);
-    font-size: 0.9rem;
+    padding: 11px 14px 11px 38px;
+    font-family: var(--fb);
+    font-size: .88rem;
     outline: none;
-    transition: all 0.2s;
+    transition: all .2s;
   }
 
   .auth-input:focus {
     border-color: #6C63FF;
-    background: rgba(108, 99, 255, 0.1);
-    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+    background: rgba(108, 99, 255, .1);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, .15);
   }
 
-  .auth-input::placeholder { color: rgba(255, 255, 255, 0.25); }
+  .auth-input::placeholder {
+    color: rgba(255, 255, 255, .25);
+  }
+
+  .auth-err {
+    margin-top: 5px;
+    font-size: .76rem;
+    color: #EF4444;
+    font-weight: 600;
+  }
 
   .auth-submit-btn {
     width: 100%;
     background: linear-gradient(135deg, #6C63FF, #A78BFA);
     border: none;
     color: #fff;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 0.95rem;
+    padding: 13px;
+    border-radius: 11px;
+    font-size: .93rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.25s;
-    font-family: var(--font-body);
+    transition: all .25s;
+    font-family: var(--fb);
     margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .auth-submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(108, 99, 255, 0.45);
+    box-shadow: 0 8px 28px rgba(108, 99, 255, .45);
   }
 
-  /* ✅ disabled style */
   .auth-submit-btn:disabled {
-    opacity: 0.55;
+    opacity: .5;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
   }
 
-  .auth-divider { text-align: center; margin: 18px 0; position: relative; }
+  .auth-divider {
+    text-align: center;
+    margin: 18px 0;
+    position: relative;
+  }
 
   .auth-divider::before {
     content: '';
     position: absolute;
     top: 50%;
-    left: 0; right: 0;
+    left: 0;
+    right: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, .1);
   }
 
   .auth-divider span {
-    background: #1A103C;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.8rem;
+    background: #160F30;
+    color: rgba(255, 255, 255, .3);
+    font-size: .78rem;
     padding: 0 12px;
     position: relative;
   }
 
   .auth-footer-links {
     text-align: center;
-    font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: .87rem;
+    color: rgba(255, 255, 255, .5);
   }
 
   .auth-footer-links a {
     color: #A78BFA;
     font-weight: 600;
     text-decoration: none;
-    margin-left: 6px;
-    transition: color 0.2s;
+    margin-left: 5px;
   }
 
-  .auth-footer-links a:hover { color: #F5A623; }
+  .auth-footer-links a:hover {
+    color: #F5A623;
+  }
 
   .auth-back-link {
-    color: rgba(255, 255, 255, 0.35);
-    font-size: 0.82rem;
+    color: rgba(255, 255, 255, .3);
+    font-size: .8rem;
     text-decoration: none;
-    transition: color 0.2s;
   }
 
-  .auth-back-link:hover { color: #6C63FF; }
+  .auth-back-link:hover {
+    color: #6C63FF;
+  }
 
   @media(max-width:992px) {
-    .auth-side { display: none !important; }
-    .auth-form-panel { padding: 30px 16px; }
+    .auth-side {
+      display: none !important;
+    }
+
+    .auth-form-panel {
+      padding: 30px 16px;
+    }
   }
 </style>

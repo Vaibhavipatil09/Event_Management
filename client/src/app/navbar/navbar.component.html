@@ -4,7 +4,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap"
   rel="stylesheet" />
 
-<nav class="ev-nav" [class.dark]="isDark">
+<nav class="ev-nav">
   <div class="ev-nav-inner container-fluid px-3 px-lg-4">
 
     <!-- LOGO -->
@@ -15,22 +15,22 @@
 
     <!-- DESKTOP LINKS -->
     <ul class="ev-nav-links d-none d-lg-flex">
-      <li><a routerLink="/home" routerLinkActive="ev-active">Home</a></li>
-      <li><a routerLink="/home" fragment="services">Services</a></li>
+      <li><a (click)="scrollToTop()" class="nav-link-item">Home</a></li>
+      <li><a (click)="scrollToSection('services')" class="nav-link-item">Services</a></li>
       <ng-container *ngIf="isLoggedIn && role==='PLANNER'">
-        <li><a routerLink="/planner-dashboard" routerLinkActive="ev-active">Dashboard</a></li>
+        <li><a routerLink="/planner-dashboard" routerLinkActive="ev-active" class="nav-link-item">Dashboard</a></li>
       </ng-container>
       <ng-container *ngIf="isLoggedIn && role==='STAFF'">
-        <li><a routerLink="/staff-dashboard" routerLinkActive="ev-active">My Tasks</a></li>
+        <li><a routerLink="/staff-dashboard" routerLinkActive="ev-active" class="nav-link-item">My Tasks</a></li>
       </ng-container>
       <ng-container *ngIf="isLoggedIn && role==='CLIENT'">
-        <li><a routerLink="/client-dashboard" routerLinkActive="ev-active">My Events</a></li>
+        <li><a routerLink="/client-dashboard" routerLinkActive="ev-active" class="nav-link-item">My Events</a></li>
       </ng-container>
+      <li><a (click)="scrollToSection('contact')" class="nav-link-item">Contact Us</a></li>
     </ul>
 
     <!-- RIGHT -->
     <div class="ev-nav-right">
-
       <!-- Theme toggle -->
       <button class="ev-icon-btn" (click)="toggleTheme()" [title]="isDark ? 'Switch to Light' : 'Switch to Dark'">
         <i class="bi" [ngClass]="isDark ? 'bi-sun-fill' : 'bi-moon-fill'"></i>
@@ -60,8 +60,8 @@
   <!-- MOBILE MENU -->
   <div class="collapse" id="evMobileMenu">
     <div class="ev-mobile-menu">
-      <a routerLink="/home" class="ev-mob-link">🏠 Home</a>
-      <a routerLink="/home" fragment="services" class="ev-mob-link">✨ Services</a>
+      <a (click)="scrollToTop()" class="ev-mob-link">🏠 Home</a>
+      <a (click)="scrollToSection('services')" class="ev-mob-link">✨ Services</a>
       <ng-container *ngIf="isLoggedIn && role==='PLANNER'">
         <a routerLink="/planner-dashboard" class="ev-mob-link">🎉 Planner Dashboard</a>
       </ng-container>
@@ -71,6 +71,7 @@
       <ng-container *ngIf="isLoggedIn && role==='CLIENT'">
         <a routerLink="/client-dashboard" class="ev-mob-link">🎫 My Events</a>
       </ng-container>
+      <a (click)="scrollToSection('contact')" class="ev-mob-link">📞 Contact Us</a>
       <ng-container *ngIf="!isLoggedIn">
         <a routerLink="/login" class="ev-mob-link">Sign In</a>
         <a routerLink="/register" class="ev-mob-link">Register</a>
@@ -83,31 +84,24 @@
 </nav>
 
 <style>
-  /* ══ TOKENS ══════════════════════════════════════ */
   :root {
     --pri: #6C63FF;
-    --accent: #F59E0B;
-    --green: #10B981;
-    --font-h: 'Syne', sans-serif;
-    --font-b: 'Inter', sans-serif;
+    --acc: #F59E0B;
+    --fh: 'Syne', sans-serif;
+    --fb: 'Inter', sans-serif;
   }
 
-  /* ══ NAV BASE ════════════════════════════════════ */
   .ev-nav {
-  background: rgba(26, 16, 60, 0.8); /* semi transparent */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 1050;
-
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  transition: all 0.3s ease;
-}
-
-  
+    background: rgba(20, 12, 50, .92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .25);
+    transition: background .3s;
+  }
 
   .ev-nav-inner {
     display: flex;
@@ -118,7 +112,6 @@
     gap: 20px;
   }
 
-  /* ══ BRAND ═══════════════════════════════════════ */
   .ev-brand {
     display: flex;
     align-items: center;
@@ -137,12 +130,12 @@
     justify-content: center;
     font-size: 17px;
     color: #fff;
-    box-shadow: 0 3px 12px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 3px 12px rgba(245, 158, 11, .4);
     flex-shrink: 0;
   }
 
   .ev-brand-name {
-    font-family: var(--font-h);
+    font-family: var(--fh);
     font-size: 1.35rem;
     font-weight: 800;
     background: linear-gradient(90deg, #F59E0B, #F472B6, #A78BFA);
@@ -151,7 +144,6 @@
     background-clip: text;
   }
 
-  /* ══ DESKTOP LINKS ═══════════════════════════════ */
   .ev-nav-links {
     list-style: none;
     margin: 0;
@@ -163,28 +155,25 @@
     justify-content: center;
   }
 
-  .ev-nav-links li a {
-    color: rgba(255, 255, 255, 0.7);
+  /* ✅ nav-link-item — cursor pointer + same styling as routerLink anchors */
+  .nav-link-item {
+    color: rgba(255, 255, 255, .7);
     text-decoration: none;
-    font-size: 0.875rem;
+    font-size: .875rem;
     font-weight: 500;
     padding: 7px 14px;
     border-radius: 8px;
-    transition: all 0.18s;
+    transition: all .18s;
     display: block;
+    cursor: pointer;
   }
 
-  .ev-nav-links li a:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
+  .nav-link-item:hover,
+  .ev-active {
+    color: #fff !important;
+    background: rgba(108, 99, 255, .25);
   }
 
-  .ev-nav-links li a.ev-active {
-    color: #fff;
-    background: rgba(108, 99, 255, 0.3);
-  }
-
-  /* ══ RIGHT CONTROLS ══════════════════════════════ */
   .ev-nav-right {
     display: flex;
     align-items: center;
@@ -195,66 +184,66 @@
   .ev-icon-btn {
     width: 36px;
     height: 36px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .15);
     border-radius: 50%;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.95rem;
-    transition: all 0.18s;
+    font-size: .95rem;
+    transition: all .18s;
   }
 
   .ev-icon-btn:hover {
-    background: rgba(108, 99, 255, 0.3);
+    background: rgba(108, 99, 255, .3);
     transform: scale(1.08);
   }
 
   .ev-role-badge {
-    background: rgba(245, 158, 11, 0.18);
-    border: 1px solid rgba(245, 158, 11, 0.35);
+    background: rgba(245, 158, 11, .18);
+    border: 1px solid rgba(245, 158, 11, .35);
     color: #FCD34D;
     padding: 5px 13px;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: .75rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: .5px;
     text-transform: uppercase;
     white-space: nowrap;
   }
 
   .ev-logout-btn {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, .15);
+    border: 1px solid rgba(239, 68, 68, .3);
     color: #FCA5A5;
     padding: 7px 16px;
     border-radius: 20px;
-    font-size: 0.82rem;
+    font-size: .82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.18s;
-    font-family: var(--font-b);
+    transition: all .18s;
+    font-family: var(--fb);
     display: flex;
     align-items: center;
   }
 
   .ev-logout-btn:hover {
-    background: rgba(239, 68, 68, 0.28);
+    background: rgba(239, 68, 68, .28);
     color: #fff;
     transform: translateY(-1px);
   }
 
   .ev-outline-btn {
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
-    color: rgba(255, 255, 255, 0.85);
+    border: 1.5px solid rgba(255, 255, 255, .3);
+    color: rgba(255, 255, 255, .85);
     padding: 7px 18px;
     border-radius: 20px;
-    font-size: 0.82rem;
+    font-size: .82rem;
     font-weight: 500;
     text-decoration: none;
-    transition: all 0.18s;
+    transition: all .18s;
     white-space: nowrap;
   }
 
@@ -268,43 +257,43 @@
     color: #fff;
     padding: 7px 18px;
     border-radius: 20px;
-    font-size: 0.82rem;
+    font-size: .82rem;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s;
-    box-shadow: 0 3px 14px rgba(108, 99, 255, 0.35);
+    transition: all .2s;
+    box-shadow: 0 3px 14px rgba(108, 99, 255, .35);
     white-space: nowrap;
   }
 
   .ev-solid-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.5);
+    box-shadow: 0 6px 20px rgba(108, 99, 255, .5);
     color: #fff;
   }
 
-  /* ══ MOBILE MENU ═════════════════════════════════ */
   .ev-mobile-menu {
     display: flex;
     flex-direction: column;
     gap: 2px;
     padding: 10px 16px 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, .08);
     background: #1A103C;
   }
 
   .ev-mob-link {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, .75);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: .9rem;
     font-weight: 500;
     padding: 10px 14px;
     border-radius: 8px;
-    transition: all 0.18s;
+    transition: all .18s;
     display: block;
+    cursor: pointer;
   }
 
   .ev-mob-link:hover {
-    background: rgba(108, 99, 255, 0.2);
+    background: rgba(108, 99, 255, .2);
     color: #fff;
   }
 
@@ -314,7 +303,7 @@
     cursor: pointer;
     width: 100%;
     text-align: left;
-    font-family: var(--font-b);
+    font-family: var(--fb);
     color: #FCA5A5 !important;
   }
 </style>

@@ -1,8 +1,11 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap"
+  rel="stylesheet" />
+
 <!-- TOASTS -->
 <div class="ev-toast-wrap" *ngIf="showToast">
-  <div class="ev-toast" [class.success]="!isError" [class.danger]="isError">
+  <div class="ev-toast" [class.ev-toast-success]="!isError" [class.ev-toast-danger]="isError">
     <i class="bi" [ngClass]="isError ? 'bi-x-circle-fill' : 'bi-check-circle-fill'"></i>
     <span>{{toastMessage}}</span>
   </div>
@@ -15,124 +18,107 @@
     <div class="auth-orb o3"></div>
   </div>
 
-  <!-- SIDE -->
+  <!-- LEFT SIDEBAR -->
   <div class="auth-side d-none d-lg-flex">
     <div class="auth-side-inner">
       <div class="side-logo">
         <div class="brand-gem-lg"><i class="bi bi-stars"></i></div>
         <span class="brand-name-lg">Eventora</span>
       </div>
-      <h2 class="side-heading">Join the <span class="text-gradient-gold">Event Revolution</span></h2>
+      <h2 class="side-heading">Join the<br><span class="gold-grad">Event Revolution</span></h2>
       <p class="side-sub">Create your account and start managing extraordinary events in minutes.</p>
       <div class="role-cards">
-        <div class="role-card" [class.ractive]="user.role==='PLANNER'">
-          <span class="rc-icon">🎯</span>
-          <div><strong>Planner</strong>
-            <p>Create & manage events</p>
+        <div class="role-card" [class.role-active]="user.role==='PLANNER'">
+          <span class="rc-emoji">🎯</span>
+          <div class="rc-text">
+            <strong>Planner</strong>
+            <span>Create &amp; manage events</span>
           </div>
         </div>
-        <div class="role-card" [class.ractive]="user.role==='CLIENT'">
-          <span class="rc-icon">🧑‍💼</span>
-          <div><strong>Client</strong>
-            <p>View & pay for events</p>
+        <div class="role-card" [class.role-active]="user.role==='CLIENT'">
+          <span class="rc-emoji">🧑‍💼</span>
+          <div class="rc-text">
+            <strong>Client</strong>
+            <span>View &amp; pay for events</span>
           </div>
         </div>
-        <div class="role-card" [class.ractive]="user.role==='STAFF'">
-          <span class="rc-icon">👷</span>
-          <div><strong>Staff</strong>
-            <p>Complete assigned tasks</p>
+        <div class="role-card" [class.role-active]="user.role==='STAFF'">
+          <span class="rc-emoji">👷</span>
+          <div class="rc-text">
+            <strong>Staff</strong>
+            <span>Complete assigned tasks</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- FORM PANEL -->
+  <!-- RIGHT FORM -->
   <div class="auth-form-panel">
     <div class="auth-card">
       <div class="auth-card-stripe"></div>
 
-      <div class="auth-logo-sm d-lg-none mb-3">
-        <div class="brand-gem-sm2"><i class="bi bi-stars"></i></div>
-        <span class="brand-name-sm2">Eventora</span>
+      <div class="auth-logo-sm d-lg-none mb-4">
+        <div class="brand-gem-sm"><i class="bi bi-stars"></i></div>
+        <span class="brand-sm-name">Eventora</span>
       </div>
 
       <h3 class="auth-title">Create Account</h3>
       <p class="auth-sub">Join thousands of event professionals</p>
 
-      <form #registerForm="ngForm">
+      <form #registerForm="ngForm" novalidate>
 
-       <!-- USERNAME -->
-<div class="auth-field">
-  <label>Username <span class="req-star"></span></label>
-
-  <div class="auth-input-wrap">
-    <i class="bi bi-person-fill auth-input-icon"></i>
-
-    <input
-      class="auth-input"
-      name="username"
-      [(ngModel)]="user.username"
-      #username="ngModel"
-      required
-      minlength="3"
-      pattern="^(?=.*[A-Za-z])[A-Za-z0-9_]{3,20}$"
-      placeholder="Choose a username"
-    />
-  </div>
-
-  <div class="auth-error" *ngIf="(username.dirty || username.touched) && username.invalid">
-    <span *ngIf="username.errors?.['required']">* Username is required</span>
-    <span *ngIf="username.errors?.['minlength']">* Minimum 3 characters</span>
-    <span *ngIf="username.errors?.['pattern']">
-      * Username must contain at least one letter (numbers-only not allowed)
-    </span>
-  </div>
-</div>
-
-        <!-- EMAIL -->
         <div class="auth-field">
-          <label>Email</label>
+          <label class="auth-label">Username</label>
           <div class="auth-input-wrap">
-            <i class="bi bi-envelope-fill auth-input-icon"></i>
-            <input class="auth-input" type="email" name="email" [(ngModel)]="user.email" #email="ngModel" required email
+            <i class="bi bi-person-fill auth-ico"></i>
+            <input class="auth-input" name="username" [(ngModel)]="user.username" #uname="ngModel" required
+              minlength="3" placeholder="Choose a username" />
+          </div>
+          <div class="auth-err" *ngIf="uname.touched && uname.invalid">
+            <span *ngIf="uname.errors?.['required']">Username is required</span>
+            <span *ngIf="uname.errors?.['minlength']">Minimum 3 characters</span>
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label">Email</label>
+          <div class="auth-input-wrap">
+            <i class="bi bi-envelope-fill auth-ico"></i>
+            <input class="auth-input" type="email" name="email" [(ngModel)]="user.email" #em="ngModel" required email
               placeholder="Enter your email" />
           </div>
-          <div class="auth-error" *ngIf="email.touched && email.invalid">
-            <span *ngIf="email.errors?.['required']">Email is required</span>
-            <span *ngIf="email.errors?.['email']">Enter a valid email</span>
+          <div class="auth-err" *ngIf="em.touched && em.invalid">
+            <span *ngIf="em.errors?.['required']">Email is required</span>
+            <span *ngIf="em.errors?.['email']">Enter a valid email</span>
           </div>
         </div>
 
-        <!-- PASSWORD -->
         <div class="auth-field">
-          <label>Password</label>
+          <label class="auth-label">Password</label>
           <div class="auth-input-wrap">
-            <i class="bi bi-lock-fill auth-input-icon"></i>
-            <input class="auth-input" type="password" name="password" [(ngModel)]="user.password" #password="ngModel"
-              required pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+            <i class="bi bi-lock-fill auth-ico"></i>
+            <input class="auth-input" type="password" name="password" [(ngModel)]="user.password" #pw="ngModel" required
+              pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
               placeholder="Create a strong password" />
           </div>
-          <div class="auth-error" *ngIf="password.touched && password.invalid">
-            <span *ngIf="password.errors?.['required']">Password is required</span>
-            <span *ngIf="password.errors?.['pattern']">8+ chars, 1 uppercase, 1 number, 1 special character</span>
+          <div class="auth-err" *ngIf="pw.touched && pw.invalid">
+            <span *ngIf="pw.errors?.['required']">Password is required</span>
+            <span *ngIf="pw.errors?.['pattern']">8+ chars, 1 uppercase, 1 number, 1 special char</span>
           </div>
         </div>
 
-        <!-- ROLE -->
         <div class="auth-field">
-          <label>Your Role</label>
+          <label class="auth-label">Your Role</label>
           <div class="role-selector">
-            <button type="button" class="role-btn" [class.role-selected]="user.role==='PLANNER'"
+            <button type="button" class="role-btn" [class.role-sel]="user.role==='PLANNER'"
               (click)="user.role='PLANNER'">
               <span>🎯</span> Planner
             </button>
-            <button type="button" class="role-btn" [class.role-selected]="user.role==='CLIENT'"
-              (click)="user.role='CLIENT'">
+            <button type="button" class="role-btn" [class.role-sel]="user.role==='CLIENT'" (click)="user.role='CLIENT'">
               <span>🧑‍💼</span> Client
             </button>
-            <button type="button" class="role-btn" [class.role-selected]="user.role==='STAFF'"
-              (click)="user.role='STAFF'">
+            <button type="button" class="role-btn" [class.role-sel]="user.role==='STAFF'" (click)="user.role='STAFF'">
               <span>👷</span> Staff
             </button>
           </div>
@@ -160,11 +146,12 @@
 
 <style>
   :root {
-    --ev-pri: #6C63FF;
-    --ev-accent: #F5A623;
-    --ev-deep: #1A103C;
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --pri: #6C63FF;
+    --acc: #F5A623;
+    --deep: #1A103C;
+    --pink: #F472B6;
+    --fh: 'Syne', sans-serif;
+    --fb: 'Inter', sans-serif;
   }
 
   .ev-toast-wrap {
@@ -180,19 +167,19 @@
     gap: 10px;
     padding: 14px 20px;
     border-radius: 12px;
-    font-size: 0.88rem;
+    font-size: .88rem;
     font-weight: 500;
-    font-family: var(--font-body);
-    animation: slideIn 0.35s ease;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    font-family: var(--fb);
+    animation: slideIn .35s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
   }
 
-  .ev-toast.success {
+  .ev-toast-success {
     background: linear-gradient(135deg, #10B981, #34D399);
     color: #fff;
   }
 
-  .ev-toast.danger {
+  .ev-toast-danger {
     background: linear-gradient(135deg, #EF4444, #F87171);
     color: #fff;
   }
@@ -212,10 +199,10 @@
   .auth-page {
     min-height: 100vh;
     display: flex;
-    font-family: var(--font-body);
     background: #0F0A24;
     position: relative;
     overflow: hidden;
+    font-family: var(--fb);
   }
 
   .auth-bg {
@@ -234,7 +221,7 @@
     width: 500px;
     height: 500px;
     background: #F5A623;
-    opacity: 0.1;
+    opacity: .1;
     top: -150px;
     left: -100px;
   }
@@ -243,7 +230,7 @@
     width: 400px;
     height: 400px;
     background: #6C63FF;
-    opacity: 0.12;
+    opacity: .12;
     bottom: -100px;
     right: -50px;
   }
@@ -252,15 +239,16 @@
     width: 280px;
     height: 280px;
     background: #F472B6;
-    opacity: 0.08;
+    opacity: .08;
     top: 40%;
     left: 30%;
   }
 
+  /* ── Sidebar ─── */
   .auth-side {
     width: 42%;
-    background: rgba(26, 16, 60, 0.6);
-    border-right: 1px solid rgba(108, 99, 255, 0.2);
+    background: rgba(26, 16, 60, .65);
+    border-right: 1px solid rgba(108, 99, 255, .18);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -270,48 +258,52 @@
   }
 
   .auth-side-inner {
-    max-width: 360px;
+    max-width: 340px;
+    width: 100%;
   }
 
   .side-logo {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
   }
 
   .brand-gem-lg {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
-    border-radius: 14px;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 21px;
     color: #fff;
   }
 
   .brand-name-lg {
-    font-family: var(--font-head);
-    font-size: 1.8rem;
+    font-family: var(--fh);
+    font-size: 1.75rem;
     font-weight: 800;
     background: linear-gradient(90deg, #F5A623, #FF6EB4, #A78BFA);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    white-space: nowrap;
   }
 
+  /* ✅ FIX: no overflow, solid px sizing, good line-height */
   .side-heading {
-    font-family: var(--font-head);
-    font-size: 2.2rem;
+    font-family: var(--fh);
+    font-size: 2.1rem;
     font-weight: 800;
     color: #fff;
-    line-height: 1.2;
-    margin-bottom: 16px;
+    line-height: 1.25;
+    margin-bottom: 14px;
   }
 
-  .text-gradient-gold {
+  .gold-grad {
     background: linear-gradient(90deg, #F5A623, #FF6EB4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -319,64 +311,71 @@
   }
 
   .side-sub {
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 28px;
+    color: rgba(255, 255, 255, .55);
+    font-size: .9rem;
+    line-height: 1.65;
+    margin-bottom: 24px;
   }
 
+  /* Role preview cards in sidebar */
   .role-cards {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 9px;
   }
 
   .role-card {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
-    transition: all 0.2s;
-    cursor: default;
+    padding: 11px 14px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .04);
+    transition: all .2s;
   }
 
-  .role-card.ractive {
+  .role-card.role-active {
     border-color: #6C63FF;
-    background: rgba(108, 99, 255, 0.15);
+    background: rgba(108, 99, 255, .18);
   }
 
-  .role-card strong {
+  .rc-emoji {
+    font-size: 1.35rem;
+    flex-shrink: 0;
+  }
+
+  .rc-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .rc-text strong {
     color: #fff;
-    font-size: 0.88rem;
-    display: block;
+    font-size: .85rem;
+    font-weight: 700;
   }
 
-  .role-card p {
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 0.78rem;
-    margin: 0;
+  .rc-text span {
+    color: rgba(255, 255, 255, .45);
+    font-size: .76rem;
   }
 
-  .rc-icon {
-    font-size: 1.4rem;
-  }
-
+  /* ── Form panel ─── */
   .auth-form-panel {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 24px;
+    padding: 36px 24px;
     position: relative;
     z-index: 1;
   }
 
   .auth-card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(108, 99, 255, 0.2);
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(108, 99, 255, .2);
     border-radius: 24px;
     padding: 36px;
     width: 100%;
@@ -401,9 +400,10 @@
     gap: 8px;
   }
 
-  .brand-gem-sm2 {
+  .brand-gem-sm {
     width: 30px;
     height: 30px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
     border-radius: 8px;
     display: flex;
@@ -413,8 +413,8 @@
     color: #fff;
   }
 
-  .brand-name-sm2 {
-    font-family: var(--font-head);
+  .brand-sm-name {
+    font-family: var(--fh);
     font-size: 1.1rem;
     font-weight: 700;
     background: linear-gradient(90deg, #F5A623, #A78BFA);
@@ -424,29 +424,29 @@
   }
 
   .auth-title {
-    font-family: var(--font-head);
-    font-size: 1.7rem;
+    font-family: var(--fh);
+    font-size: 1.65rem;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
   .auth-sub {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.88rem;
-    margin-bottom: 24px;
+    color: rgba(255, 255, 255, .5);
+    font-size: .87rem;
+    margin-bottom: 22px;
   }
 
   .auth-field {
-    margin-bottom: 16px;
+    margin-bottom: 15px;
   }
 
-  .auth-field label {
-    font-size: 0.76rem;
+  .auth-label {
+    font-size: .75rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, .5);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: .5px;
     display: block;
     margin-bottom: 6px;
   }
@@ -455,42 +455,44 @@
     position: relative;
   }
 
-  .auth-input-icon {
+  .auth-ico {
     position: absolute;
-    left: 14px;
+    left: 13px;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, .3);
+    font-size: .88rem;
+    pointer-events: none;
   }
 
   .auth-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, .06);
+    border: 1.5px solid rgba(255, 255, 255, .1);
     border-radius: 10px;
     color: #fff;
-    padding: 11px 14px 11px 40px;
-    font-family: var(--font-body);
-    font-size: 0.88rem;
+    padding: 11px 14px 11px 38px;
+    font-family: var(--fb);
+    font-size: .88rem;
     outline: none;
-    transition: all 0.2s;
+    transition: all .2s;
   }
 
   .auth-input:focus {
     border-color: #6C63FF;
-    background: rgba(108, 99, 255, 0.1);
-    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+    background: rgba(108, 99, 255, .1);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, .15);
   }
 
   .auth-input::placeholder {
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, .25);
   }
 
-  .auth-error {
-    color: #F87171;
-    font-size: 0.78rem;
+  .auth-err {
     margin-top: 5px;
+    font-size: .76rem;
+    color: #EF4444;
+    font-weight: 600;
   }
 
   .role-selector {
@@ -500,16 +502,16 @@
 
   .role-btn {
     flex: 1;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, .05);
+    border: 1.5px solid rgba(255, 255, 255, .1);
+    color: rgba(255, 255, 255, .6);
     padding: 10px 6px;
     border-radius: 10px;
-    font-size: 0.8rem;
+    font-size: .8rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    font-family: var(--font-body);
+    transition: all .2s;
+    font-family: var(--fb);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -521,9 +523,9 @@
     color: #A78BFA;
   }
 
-  .role-selected {
+  .role-sel {
     border-color: #6C63FF;
-    background: rgba(108, 99, 255, 0.2);
+    background: rgba(108, 99, 255, .2);
     color: #A78BFA;
   }
 
@@ -533,22 +535,25 @@
     border: none;
     color: #1A103C;
     padding: 13px;
-    border-radius: 12px;
-    font-size: 0.95rem;
+    border-radius: 11px;
+    font-size: .93rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.25s;
-    font-family: var(--font-body);
+    transition: all .25s;
+    font-family: var(--fb);
     margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .auth-submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(245, 166, 35, 0.4);
+    box-shadow: 0 8px 28px rgba(245, 158, 11, .38);
   }
 
   .auth-submit-btn:disabled {
-    opacity: 0.5;
+    opacity: .5;
     cursor: not-allowed;
   }
 
@@ -565,28 +570,28 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, .1);
   }
 
   .auth-divider span {
-    background: rgba(15, 10, 36, 0.8);
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.8rem;
+    background: #160F30;
+    color: rgba(255, 255, 255, .3);
+    font-size: .78rem;
     padding: 0 12px;
     position: relative;
   }
 
   .auth-footer-links {
     text-align: center;
-    font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: .87rem;
+    color: rgba(255, 255, 255, .5);
   }
 
   .auth-footer-links a {
     color: #A78BFA;
     font-weight: 600;
     text-decoration: none;
-    margin-left: 6px;
+    margin-left: 5px;
   }
 
   .auth-footer-links a:hover {
@@ -594,8 +599,8 @@
   }
 
   .auth-back-link {
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.82rem;
+    color: rgba(255, 255, 255, .3);
+    font-size: .8rem;
     text-decoration: none;
   }
 
@@ -607,114 +612,9 @@
     .auth-side {
       display: none !important;
     }
+
+    .auth-form-panel {
+      padding: 28px 16px;
+    }
   }
-/* ✅ NO SCROLL + FIT EVERYTHING INSIDE VIEWPORT */
-.auth-page{
-  height: 100vh;
-  overflow: hidden; /* no page scroll */
-}
-
-/* ✅ Make form panel always centered and fit */
-.auth-form-panel{
-  height: 100%;
-  padding: 24px 18px !important;  /* less padding */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ✅ Make card a bit wider and shorter */
-.auth-card{
-  width: 100%;
-  max-width: 520px !important;     /* wider than before (was 440) */
-  padding: 26px 28px !important;   /* smaller padding */
-  border-radius: 22px;
-}
-
-/* ✅ Reduce title/sub spacing */
-.auth-title{
-  font-size: 1.55rem !important;
-  margin-bottom: 4px !important;
-}
-.auth-sub{
-  margin-bottom: 14px !important;
-  font-size: 0.82rem !important;
-}
-
-/* ✅ Reduce field spacing */
-.auth-field{
-  margin-bottom: 10px !important;
-}
-.auth-field label{
-  margin-bottom: 4px !important;
-  font-size: 0.70rem !important;
-}
-
-/* ✅ Make inputs more compact */
-.auth-input{
-  padding: 9px 12px 9px 38px !important; /* smaller height */
-  font-size: 0.84rem !important;
-  border-radius: 10px !important;
-}
-.auth-input-icon{
-  left: 12px !important;
-  font-size: 0.95rem !important;
-  color: rgba(255,255,255,0.7) !important;
-}
-
-/* ✅ Errors compact */
-.auth-error{
-  margin-top: 4px !important;
-  font-size: 0.74rem !important;
-  line-height: 1.25 !important;
-}
-
-/* ✅ Role selector more compact (still clean) */
-.role-selector{
-  gap: 6px !important;
-}
-.role-btn{
-  padding: 8px 6px !important;
-  border-radius: 10px !important;
-  font-size: 0.76rem !important;
-  gap: 2px !important;
-}
-
-/* ✅ Button smaller so it doesn't get cut */
-.auth-submit-btn{
-  padding: 11px !important;
-  font-size: 0.88rem !important;
-  margin-top: 6px !important;
-}
-
-/* ✅ Reduce divider space */
-.auth-divider{
-  margin: 10px 0 !important;
-}
-
-/* ✅ Reduce footer spacing */
-.auth-footer-links{
-  font-size: 0.82rem !important;
-}
-.text-center.mt-3{
-  margin-top: 8px !important;
-}
-
-/* ✅ Make sidebar typography a bit smaller on short screens to avoid overflow */
-@media (max-height: 760px){
-  .auth-side{
-    padding: 36px !important;
-  }
-  .side-heading{
-    font-size: 2.0rem !important;
-    line-height: 1.15 !important;
-  }
-  .side-sub{
-    font-size: 0.88rem !important;
-    margin-bottom: 18px !important;
-  }
-  .role-card{
-    padding: 10px 12px !important;
-  }
-}
 </style>
