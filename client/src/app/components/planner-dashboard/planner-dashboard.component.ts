@@ -102,9 +102,6 @@ export class PlannerDashboardComponent implements OnInit {
       });
   }
 
-  // editEvent(event: Event): void {
-  //   this.selectedEvent = { ...event };
-  // }
 
   editEvent(event: Event): void {
     // 1️⃣ Switch form to Edit mode
@@ -196,5 +193,43 @@ export class PlannerDashboardComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  deleteEvent(event: Event): void {
+    if (!event.id) return;
+
+    const ok = confirm(`Delete event "${event.title}" ?`);
+    if (!ok) return;
+
+    this.plannerService
+      .deleteEvent(this.plannerId, event.id)
+      .subscribe({
+        next: () => {
+          this.events = this.events.filter(e => e.id !== event.id);
+          this.toast(`🗑️ Event "${event.title}" deleted`);
+        },
+        error: () => {
+          this.toast('❌ Failed to delete event');
+          this.getEvents(); // ✅ resync
+        }
+      });
+  }
+
+  deleteTask(task: Task): void {
+    if (!task.id) return;
+
+    const ok = confirm('Delete this task?');
+    if (!ok) return;
+
+    this.plannerService.deleteTask(task.id).subscribe({
+      next: () => {
+        this.tasks = this.tasks.filter(t => t.id !== task.id);
+        this.toast('🗑️ Task deleted');
+      },
+      error: () => {
+        this.toast('❌ Failed to delete task');
+        this.getTasks();
+      }
+    });
   }
 }

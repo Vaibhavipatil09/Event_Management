@@ -58,4 +58,18 @@ export class PlannerService {
       {}
     );
   }
+
+  // ✅ Delete Event (planner-scoped)
+deleteEvent(plannerId: number, eventId: number) {
+  return this.http.delete(
+    `${this.baseUrl}/${plannerId}/events/${eventId}`
+  );
+}
+
+// ✅ Delete Task
+deleteTask(taskId: number) {
+  return this.http.delete(
+    `${this.baseUrl}/tasks/${taskId}`
+  );
+}
 }

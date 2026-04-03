@@ -88,4 +88,14 @@ public class EventService {
         event.setPaymentStatus(status);
         eventRepository.save(event);
     }
+
+    
+    public void deleteEventByPlanner(Long plannerId, Long eventId) {
+        Event event = eventRepository
+                .findByIdAndPlannerId(eventId, plannerId)
+                .orElseThrow(() ->
+                        new RuntimeException("Event not found"));
+        eventRepository.delete(event);
+    }
+
 }

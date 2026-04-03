@@ -93,4 +93,25 @@ public class PlannerController {
             @PathVariable Long staffId) {
         return ResponseEntity.ok(taskService.assignTask(taskId, staffId));
     }
+
+
+    
+    // ✅ DELETE EVENT
+    @DeleteMapping("/{plannerId}/events/{eventId}")
+    public ResponseEntity<Void> deleteEvent(
+            @PathVariable Long plannerId,
+            @PathVariable Long eventId) {
+
+        eventService.deleteEventByPlanner(plannerId, eventId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ✅ DELETE TASK
+    @DeleteMapping("/tasks/{taskId}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+
+        taskService.deleteTaskById(taskId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

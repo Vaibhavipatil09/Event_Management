@@ -200,7 +200,7 @@
 
         <div class="ev-event-grid" *ngIf="events.length > 0; else noEventsBlock">
           <div class="ev-event-card" *ngFor="let event of events">
-            <div class="eec-top">
+            <!-- <div class="eec-top">
               <span class="ev-status-badge" [class.badge-done]="event.status==='Completed'"
                 [class.badge-pending]="event.status!=='Completed'">
                 {{ event.status }}
@@ -208,6 +208,24 @@
               <button class="ev-edit-btn" (click)="editEvent(event)">
                 <i class="bi bi-pencil-fill"></i>
               </button>
+            </div> -->
+
+            <div class="eec-top">
+              <span class="ev-status-badge" [class.badge-done]="event.status==='Completed'"
+                [class.badge-pending]="event.status!=='Completed'">
+                {{ event.status }}
+              </span>
+
+              <!-- ✅ FIXED action group -->
+              <div class="ev-action-btns">
+                <button class="ev-edit-btn" (click)="editEvent(event)">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+
+                <button class="ev-delete-btn" (click)="deleteEvent(event)">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </div>
             </div>
 
             <h4 class="eec-title">{{ event.title }}</h4>
@@ -309,7 +327,7 @@
 
         <div class="ev-task-grid" *ngIf="tasks.length > 0; else noTasksBlock">
           <div class="ev-task-card" *ngFor="let task of tasks" [class.task-completed]="task.status==='Completed'">
-            <div class="etc-top">
+            <!-- <div class="etc-top">
               <span class="ev-status-badge" [class.badge-done]="task.status==='Completed'"
                 [class.badge-pending]="task.status!=='Completed'">
                 {{ task.status }}
@@ -317,6 +335,22 @@
               <span class="ev-event-chip" *ngIf="task.event?.title">
                 <i class="bi bi-calendar3"></i> {{ task.event!.title }}
               </span>
+            </div> -->
+
+            <div class="etc-top">
+              <span class="ev-status-badge" [class.badge-done]="task.status==='Completed'"
+                [class.badge-pending]="task.status!=='Completed'">
+                {{ task.status }}
+              </span>
+
+              <span *ngIf="task.event?.title" class="ev-event-chip">
+                <i class="bi bi-calendar3"></i>
+                {{ task.event!.title }}
+              </span>
+
+              <button class="ev-delete-btn ms-auto" (click)="deleteTask(task)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
             </div>
 
             <p class="etc-desc">{{ task.description }}</p>
@@ -1105,5 +1139,33 @@
     100% {
       box-shadow: none;
     }
+  }
+
+  /* Delete button  */
+  .ev-action-btns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ev-delete-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #EF4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-size: 0.82rem;
+  }
+
+  .ev-delete-btn:hover {
+    background: #EF4444;
+    color: #fff;
+    transform: scale(1.07);
   }
 </style>
