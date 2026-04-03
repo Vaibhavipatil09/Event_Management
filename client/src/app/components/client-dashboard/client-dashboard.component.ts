@@ -45,7 +45,39 @@ export class ClientDashboardComponent implements OnInit {
     private ngZone: NgZone
   ) {}
 
-  ngOnInit(): void { this.getEvents(); }
+  ngOnInit(): void {
+    this.loadPaidEvents(); // restore from localStorage before loading events
+    this.getEvents();
+  }
+
+  // ── localStorage helpers ──────────────────────────────────
+
+  private storageKey(): string {
+    return `paidEvents_${this.authService.getUserId()}`;
+  }
+
+  private loadPaidEvents(): void {
+    try {
+      const stored = localStorage.getItem(this.storageKey());
+      if (stored) {
+        const ids: any[] = JSON.parse(stored);
+        ids.forEach(id => this.paidEvents.add(id));
+      }
+    } catch { /* ignore parse errors */ }
+  }
+
+  private persistPaidEvent(eventId: any): void {
+    try {
+      const stored = localStorage.getItem(this.storageKey());
+      const ids: any[] = stored ? JSON.parse(stored) : [];
+      if (!ids.includes(eventId)) {
+        ids.push(eventId);
+        localStorage.setItem(this.storageKey(), JSON.stringify(ids));
+      }
+    } catch { /* ignore storage errors */ }
+  }
+
+  // ─────────────────────────────────────────────────────────
 
   getEvents(): void {
     const clientId = this.authService.getUserId();
@@ -125,16 +157,16 @@ export class ClientDashboardComponent implements OnInit {
           order_id: order.id,
 
           handler: (response: any) => {
-            // ngZone.run() forces Angular change detection inside Razorpay's external callback
             this.ngZone.run(() => {
               this.processingPayment[eventId] = false;
               this.paidEvents.add(eventId);
+              this.persistPaidEvent(eventId); // ← save to localStorage
               this.paymentSuccess = true;
               this.paymentMessage = 'Payment successful!';
               this.paymentAmountMap[eventId] = 0;
             });
 
-            // Verify payment in background
+            // Verify in background
             fetch(`${environment.apiUrl}/payment/verify`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
