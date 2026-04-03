@@ -88,19 +88,47 @@ export class PlannerDashboardComponent implements OnInit {
     });
   }
 
-  createEvent(): void {
-    const clientId = this.selectedClientId ?? undefined;
+  // createEvent(): void {
+  //   const clientId = this.selectedClientId ?? undefined;
 
-    this.plannerService
-      .createEvent(this.newEvent, this.plannerId, clientId)
-      .subscribe(event => {
+  //   this.plannerService
+  //     .createEvent(this.newEvent, this.plannerId, clientId)
+  //     .subscribe(event => {
+  //       this.events.push(event);
+  //       this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
+  //       this.selectedClientId = null;
+  //       this.getEvents();
+  //       this.toast(`🎉 Event "${event.title}" created!`);
+  //     });
+  // }
+
+  createEvent(): void {
+  const clientId = this.selectedClientId ?? undefined;
+
+  this.plannerService
+    .createEvent(this.newEvent, this.plannerId, clientId)
+    .subscribe({
+      next: (event) => {
         this.events.push(event);
         this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
         this.selectedClientId = null;
-        this.getEvents();
+
         this.toast(`🎉 Event "${event.title}" created!`);
-      });
-  }
+        this.getEvents();
+      },
+
+      error: (err) => {
+        // 🔴 UNAUTHORIZED / TOKEN REMOVED
+        if (err.status === 401 || err.status === 403) {
+          this.toast('❌ Session expired. Please login again.');
+        } 
+        // 🔴 ANY OTHER FAILURE
+        else {
+          this.toast('❌ Failed to create event. Please try again.');
+        }
+      }
+    });
+}
 
 
   editEvent(event: Event): void {
