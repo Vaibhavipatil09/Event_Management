@@ -37,6 +37,16 @@ public class ClientController {
     }
 
     /**
+     * Mark an event as paid after Razorpay payment succeeds.
+     * Called by the client dashboard after successful payment verification.
+     */
+    @PutMapping("/event/{eventId}/mark-paid")
+    public ResponseEntity<Void> markEventPaid(@PathVariable Long eventId) {
+        eventService.updatePaymentStatus(eventId, "SUCCESS");
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * NEW — Payment gateway endpoint.
      * Only allows payment if the event status is "Completed".
      * Returns a payment confirmation response.

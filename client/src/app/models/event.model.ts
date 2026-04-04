@@ -6,5 +6,6 @@ export interface Event {
   description?: string;
   status?: string;
   feedback?: string;
+  paymentStatus?: string;   // 'SUCCESS' | 'PENDING' | 'FAILED' — set by backend after Razorpay
   client?: { id?: any; username?: string };
 }

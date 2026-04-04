@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { PlannerService } from '../../services/planner.service';
 import { Event } from '../../models/event.model';
 import { Task } from '../../models/task.model';
@@ -38,6 +38,9 @@ export class PlannerDashboardComponent implements OnInit {
 
   reassignMap: { [taskId: number]: number | null } = {};
 
+  /** Name of the currently open custom dropdown — null means all closed */
+  openDropdown: string | null = null;
+
   get plannerId(): number {
     return Number(this.authService.getUserId());
   }
@@ -54,6 +57,37 @@ export class PlannerDashboardComponent implements OnInit {
     this.getStaffs();
     this.getClients();
   }
+
+  // ── Custom dropdown helpers ─────────────────────────────────────────────────
+
+  /** Close all dropdowns when clicking anywhere outside */
+  @HostListener('document:click')
+  closeAllDropdowns(): void {
+    this.openDropdown = null;
+  }
+
+  /** Toggle a named dropdown; stopPropagation prevents document:click from closing it immediately */
+  toggleDropdown(name: string, e: MouseEvent): void {
+    e.stopPropagation();
+    this.openDropdown = this.openDropdown === name ? null : name;
+  }
+
+  getClientName(id: number | null): string {
+    if (!id) return '— Select Client —';
+    return this.clients.find(c => c.id == id)?.username ?? '— Select Client —';
+  }
+
+  getStaffName(id: any): string {
+    if (!id) return '— None —';
+    return this.staffs.find(s => s.id == id)?.username ?? '— None —';
+  }
+
+  getEventTitle(id: number | null): string {
+    if (!id) return '— Select Event —';
+    return this.events.find(e => e.id == id)?.title ?? '— Select Event —';
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
 
   private toast(msg: string): void {
     this.toastMessage = msg;

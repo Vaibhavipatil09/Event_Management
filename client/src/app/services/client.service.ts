@@ -36,4 +36,12 @@ export class ClientService {
       {}
     );
   }
+
+  /**
+   * Persist payment success to the backend so the planner can see the PAID status.
+   * Called after Razorpay's payment handler fires successfully.
+   */
+  markEventPaid(eventId: any): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/event/${eventId}/mark-paid`, {});
+  }
 }

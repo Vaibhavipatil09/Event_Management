@@ -83,12 +83,27 @@ export class ClientDashboardComponent implements OnInit {
     const clientId = this.authService.getUserId();
     if (clientId) {
       this.clientService.getEventsByClient(clientId).subscribe({
-        next: (data) => this.events = data,
+        next: (data) => {
+          this.events = data;
+          // Sync paidEvents Set with DB — handles page refresh / cross-device
+          data.forEach(e => {
+            if (e.paymentStatus === 'SUCCESS' && e.id != null) {
+              this.paidEvents.add(e.id);
+            }
+          });
+        },
         error: (err) => console.error(err)
       });
     } else {
       this.clientService.getEvents().subscribe({
-        next: (data) => this.events = data,
+        next: (data) => {
+          this.events = data;
+          data.forEach(e => {
+            if (e.paymentStatus === 'SUCCESS' && e.id != null) {
+              this.paidEvents.add(e.id);
+            }
+          });
+        },
         error: (err) => console.error(err)
       });
     }
@@ -164,6 +179,17 @@ export class ClientDashboardComponent implements OnInit {
               this.paymentSuccess = true;
               this.paymentMessage = 'Payment successful!';
               this.paymentAmountMap[eventId] = 0;
+
+              // Optimistically update local event object
+              const idx = this.events.findIndex(e => e.id === eventId);
+              if (idx !== -1) {
+                this.events[idx] = { ...this.events[idx], paymentStatus: 'SUCCESS' };
+              }
+            });
+
+            // Persist payment status to backend so the planner is notified
+            this.clientService.markEventPaid(eventId).subscribe({
+              error: () => { /* silently fail — localStorage still works */ }
             });
 
             // Verify in background

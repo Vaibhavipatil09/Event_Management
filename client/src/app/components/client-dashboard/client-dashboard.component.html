@@ -272,6 +272,18 @@
     --border: rgba(108, 99, 255, 0.22);
   }
 
+  /* Fix: native <option> elements ignore CSS variables — force colours in dark mode */
+  body.dark-mode .ev-input option {
+    background-color: #1E1640;
+    color: #EDE9FE;
+  }
+
+  /* Fix: tells the browser/OS to render ALL native controls (select dropdown,
+     date-picker calendar icon, scrollbars) using dark-mode colours */
+  body.dark-mode .ev-input {
+    color-scheme: dark;
+  }
+
   /* ══ LAYOUT ══════════════════════════════════════ */
   .cd-wrap {
     display: flex;
