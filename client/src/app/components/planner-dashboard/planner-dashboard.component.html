@@ -94,7 +94,7 @@
           <h3 *ngIf="selectedEvent.id">Edit Event — {{ selectedEvent.title }}</h3>
         </div>
 
-        <form #eventForm="ngForm" class="ev-form-grid" (ngSubmit)="selectedEvent.id ? updateEvent() : createEvent()"
+        <form #eventForm="ngForm" class="ev-form-grid" (ngSubmit)="selectedEvent.id ? updateEvent(eventForm) : createEvent(eventForm)"
           novalidate>
 
           <!-- TITLE -->
@@ -110,13 +110,20 @@
           <!-- DATE -->
           <div class="ev-field">
             <label>Date & Time *</label>
-            <input type="datetime-local" class="ev-input"
-              [(ngModel)]="(selectedEvent.id ? selectedEvent : newEvent).date" name="date" required
-              onfocus="this.min = new Date().toISOString().slice(0,16)" #date="ngModel" />
+            <input
+  type="datetime-local"
+  class="ev-input"
+  [(ngModel)]="(selectedEvent.id ? selectedEvent : newEvent).date"
+  name="date"
+  required
+  onfocus="this.min = new Date().toISOString().slice(0,16)"
+  #date="ngModel"
+/>
 
-            <div class="ev-err" *ngIf="date.invalid && (date.dirty || date.touched)">
-              Date must be today or future
-            </div>
+<div class="ev-err"
+     *ngIf="date.invalid && (date.dirty || date.touched)">
+  Date must be today or future
+</div>
           </div>
 
           <!-- LOCATION -->
@@ -218,35 +225,15 @@
                 {{ event.status }}
               </span>
 
-              <span class="eec-paid-badge" *ngIf="event.paymentStatus === 'SUCCESS'">
-                <i class="bi bi-patch-check-fill"></i> Paid
-              </span>
-
-
-
-
-
-
               <!-- FIXED action group -->
-
               <div class="ev-action-btns">
-                <!-- ✅ Mark Completed (ONLY when status is pending) -->
-                <button *ngIf="(event.status || '').toLowerCase().trim() === 'pending'" class="ev-complete-btn"
-                  title="Mark Completed" (click)="markCompleted(event)" [disabled]="statusUpdating[event.id!]">
-                  <i class="bi bi-check2-circle"></i>
-                </button>
-
-                <!-- ✅ Edit hidden when completed -->
-                <button *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'" class="ev-edit-btn"
-                  (click)="editEvent(event)">
+                <button class="ev-edit-btn" (click)="editEvent(event)">
                   <i class="bi bi-pencil-fill"></i>
                 </button>
 
                 <button class="ev-delete-btn" (click)="deleteEvent(event)">
                   <i class="bi bi-trash-fill"></i>
                 </button>
-
-
               </div>
             </div>
 
@@ -261,11 +248,6 @@
             <div class="eec-footer" *ngIf="event.client">
               <i class="bi bi-person-fill"></i>
               <span>{{ event.client.username }}</span>
-            </div>
-            <!-- Client feedback — shown at the bottom once the client submits it -->
-            <div class="eec-client-feedback" *ngIf="event.feedback">
-              <i class="bi bi-chat-quote-fill"></i>
-              <span>{{ event.feedback }}</span>
             </div>
           </div>
         </div>
@@ -294,7 +276,7 @@
         </div>
 
         <!-- Added form ref -->
-        <form #createTaskForm="ngForm" (ngSubmit)="createTask()" class="ev-form-grid" novalidate>
+        <form #createTaskForm="ngForm" (ngSubmit)="createTask(createTaskForm)" class="ev-form-grid" novalidate>
 
           <div class="ev-field ev-field-full">
             <label>Task Description *</label>
@@ -1194,90 +1176,5 @@
     background: #EF4444;
     color: #fff;
     transform: scale(1.07);
-  }
-
-  /* ✅ Mark Completed button */
-  .ev-complete-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-
-    background: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.30);
-    color: #10B981;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.18s ease;
-  }
-
-  /* hover effect */
-  .ev-complete-btn:hover:not(:disabled) {
-    background: #10B981;
-    color: #fff;
-    transform: scale(1.07);
-  }
-
-  /* disabled state (API call running) */
-  .ev-complete-btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  /* ── Top-right group: paid badge + action buttons ── */
-  .ev-top-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-  }
- 
-  /* ── PAID badge on planner event card ── */
-  .eec-paid-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(16, 185, 129, 0.12);
-    border: 1.5px solid rgba(16, 185, 129, 0.35);
-    color: #059669;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: .35px;
-    white-space: nowrap;
-  }
- 
-  .eec-paid-badge i {
-    font-size: 0.75rem;
-  }
- 
-  /* ── Client feedback at bottom of event card ── */
-  .eec-client-feedback {
-    background: rgba(108, 99, 255, 0.06);
-    border: 1px solid rgba(108, 99, 255, 0.16);
-    border-radius: 9px;
-    padding: 9px 12px;
-    font-size: 0.79rem;
-    color: var(--text2);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-style: italic;
-    line-height: 1.45;
-    margin-top: 2px;
-  }
- 
-  .eec-client-feedback i {
-    color: #6C63FF;
-    flex-shrink: 0;
-    margin-top: 2px;
-    font-style: normal;
   }
 </style>

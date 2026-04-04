@@ -3,7 +3,7 @@ import { PlannerService } from '../../services/planner.service';
 import { Event } from '../../models/event.model';
 import { Task } from '../../models/task.model';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
@@ -37,8 +37,8 @@ export class PlannerDashboardComponent implements OnInit {
   newTaskEventId: number | null = null;
 
   reassignMap: { [taskId: number]: number | null } = {};
-// ✅ NEW: prevent double click while updating status
-statusUpdating: { [eventId: number]: boolean } = {};
+  // ✅ NEW: prevent double click while updating status
+  statusUpdating: { [eventId: number]: boolean } = {};
 
 
   /** Name of the currently open custom dropdown — null means all closed */
@@ -125,82 +125,72 @@ statusUpdating: { [eventId: number]: boolean } = {};
     });
   }
 
-  // createEvent(): void {
-  //   const clientId = this.selectedClientId ?? undefined;
-
-  //   this.plannerService
-  //     .createEvent(this.newEvent, this.plannerId, clientId)
-  //     .subscribe(event => {
-  //       this.events.push(event);
-  //       this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
-  //       this.selectedClientId = null;
-  //       this.getEvents();
-  //       this.toast(`🎉 Event "${event.title}" created!`);
-  //     });
-  // }
 
 
- 
-markCompleted(event: Event): void {
-  if (!event?.id) return;
-if ((event.status || '').toLowerCase().trim() !== 'pending') return;
+  markCompleted(event: Event): void {
+    if (!event?.id) return;
+    if ((event.status || '').toLowerCase().trim() !== 'pending') return;
 
-  this.statusUpdating[event.id] = true;
+    this.statusUpdating[event.id] = true;
 
-  // ✅ UI instantly changes -> edit button will disappear immediately
-  const oldStatus = event.status;
-  event.status = 'Completed';
+    // ✅ UI instantly changes -> edit button will disappear immediately
+    const oldStatus = event.status;
+    event.status = 'Completed';
 
-  const updatedEvent: Event = { ...event, status: 'Completed' };
+    const updatedEvent: Event = { ...event, status: 'Completed' };
 
-  this.plannerService.updateEvent(updatedEvent, event.id).subscribe({
-    next: (updated) => {
-      const idx = this.events.findIndex(e => e.id === updated.id);
-      if (idx !== -1) this.events[idx] = updated;
+    this.plannerService.updateEvent(updatedEvent, event.id).subscribe({
+      next: (updated) => {
+        const idx = this.events.findIndex(e => e.id === updated.id);
+        if (idx !== -1) this.events[idx] = updated;
 
-      this.toast(`✅ "${updated.title}" marked as Completed`);
-      this.getEvents();
-    },
-    error: () => {
-      // ✅ revert if API fails
-      event.status = oldStatus;
-
-      this.toast('❌ Failed to update status');
-      this.getEvents();
-    },
-    complete: () => {
-      this.statusUpdating[event.id!] = false;
-    }
-  });
-}
-
-  createEvent(): void {
-  const clientId = this.selectedClientId ?? undefined;
-
-  this.plannerService
-    .createEvent(this.newEvent, this.plannerId, clientId)
-    .subscribe({
-      next: (event) => {
-        this.events.push(event);
-        this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
-        this.selectedClientId = null;
-
-        this.toast(`🎉 Event "${event.title}" created!`);
+        this.toast(`✅ "${updated.title}" marked as Completed`);
         this.getEvents();
       },
+      error: () => {
+        // ✅ revert if API fails
+        event.status = oldStatus;
 
-      error: (err) => {
-        // 🔴 UNAUTHORIZED / TOKEN REMOVED
-        if (err.status === 401 || err.status === 403) {
-          this.toast('❌ Session expired. Please login again.');
-        } 
-        // 🔴 ANY OTHER FAILURE
-        else {
-          this.toast('❌ Failed to create event. Please try again.');
-        }
+        this.toast('❌ Failed to update status');
+        this.getEvents();
+      },
+      complete: () => {
+        this.statusUpdating[event.id!] = false;
       }
     });
-}
+  }
+
+  createEvent(form: NgForm): void {
+    const clientId = this.selectedClientId ?? undefined;
+
+    this.plannerService
+      .createEvent(this.newEvent, this.plannerId, clientId)
+      .subscribe({
+        next: (event) => {
+          this.events.push(event);
+          this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
+          this.selectedClientId = null;
+
+          this.toast(`🎉 Event "${event.title}" created!`);
+          this.getEvents();
+
+          // ✅ MOST IMPORTANT: reset form state (touched/dirty/submitted)
+          form.resetForm();
+
+        },
+
+        error: (err) => {
+          // 🔴 UNAUTHORIZED / TOKEN REMOVED
+          if (err.status === 401 || err.status === 403) {
+            this.toast('❌ Session expired. Please login again.');
+          }
+          // 🔴 ANY OTHER FAILURE
+          else {
+            this.toast('❌ Failed to create event. Please try again.');
+          }
+        }
+      });
+  }
 
 
   editEvent(event: Event): void {
@@ -244,19 +234,35 @@ if ((event.status || '').toLowerCase().trim() !== 'pending') return;
     this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
   }
 
-  updateEvent(): void {
+
+  updateEvent(form: NgForm): void {
     this.plannerService
       .updateEvent(this.selectedEvent, this.selectedEvent.id!)
-      .subscribe(updated => {
-        const i = this.events.findIndex(e => e.id === updated.id);
-        if (i !== -1) this.events[i] = updated;
-        this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
-        this.getEvents();
-        this.toast('✅ Event updated successfully!');
+      .subscribe({
+        next: (updated) => {
+          const i = this.events.findIndex(e => e.id === updated.id);
+          if (i !== -1) this.events[i] = updated;
+
+          this.toast('✅ Event updated successfully!');
+          this.getEvents();
+
+          // ✅ exit edit mode
+          this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
+
+          // ✅ MOST IMPORTANT: reset form state so required errors don't show
+          form.resetForm();
+
+          // ✅ also reset create-model + client dropdown (optional but clean)
+          this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
+          this.selectedClientId = null;
+        },
+        error: () => {
+          this.toast('❌ Failed to update event. Please try again.');
+        }
       });
   }
 
-  createTask(): void {
+  createTask(form: NgForm): void {
     const staffId = this.newTask.status === 'Completed' ? null : this.newTask.assignedStaff;
     const taskToSend: Task = { description: this.newTask.description, status: this.newTask.status };
     const eventId = this.newTaskEventId ?? undefined;
@@ -270,6 +276,10 @@ if ((event.status || '').toLowerCase().trim() !== 'pending') return;
       this.newTask = { description: '', status: '', assignedStaff: null };
       this.newTaskEventId = null;
       this.toast('📋 Task created successfully!');
+
+      // ✅ reset the form (this stops all validation messages)
+      form.resetForm();
+
     });
   }
 
