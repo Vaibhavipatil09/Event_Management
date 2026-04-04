@@ -33,7 +33,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   { img: 'https://1000logos.net/wp-content/uploads/2016/10/Amazon-logo-meaning.jpg' },
   { img: 'https://media.wired.com/photos/5926ffe47034dc5f91bed4e8/master/pass/google-logo.jpg' },
   { img: 'https://static.vecteezy.com/system/resources/previews/050/816/799/non_2x/bookmyshow-transparent-icon-free-png.png' },
-  { img: 'https://play-lh.googleusercontent.com/HcQNhKAOGBvV0OXP-LLrqltZulaXbyK3A-Am2i1JGH1NKIs3RvIqjJa7m-kNyHaNhujI' },
   { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_7c5ntMMlh2vFkMrDUU6bHBj5WdV3h1gH9w&s' },
   { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYJjBlvPGGVYNtf_eukbArBw_Df_CFLKuBWg&s' },
   { img: 'https://logosandtypes.com/wp-content/uploads/2020/08/Reliance.png' },
