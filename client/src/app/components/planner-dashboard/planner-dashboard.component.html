@@ -110,11 +110,20 @@
           <!-- DATE -->
           <div class="ev-field">
             <label>Date & Time *</label>
-            <input type="datetime-local" class="ev-input"
-              [(ngModel)]="(selectedEvent.id ? selectedEvent : newEvent).date" name="date" required #date="ngModel" />
-            <div class="ev-err" *ngIf="date.invalid && (date.dirty || date.touched)">
-              Date is required
-            </div>
+            <input
+  type="datetime-local"
+  class="ev-input"
+  [(ngModel)]="(selectedEvent.id ? selectedEvent : newEvent).date"
+  name="date"
+  required
+  onfocus="this.min = new Date().toISOString().slice(0,16)"
+  #date="ngModel"
+/>
+
+<div class="ev-err"
+     *ngIf="date.invalid && (date.dirty || date.touched)">
+  Date must be today or future
+</div>
           </div>
 
           <!-- LOCATION -->
@@ -216,7 +225,7 @@
                 {{ event.status }}
               </span>
 
-              <!-- ✅ FIXED action group -->
+              <!-- FIXED action group -->
               <div class="ev-action-btns">
                 <button class="ev-edit-btn" (click)="editEvent(event)">
                   <i class="bi bi-pencil-fill"></i>
@@ -266,7 +275,7 @@
           <h3>Create New Task *</h3>
         </div>
 
-        <!-- ✅ Added form ref -->
+        <!-- Added form ref -->
         <form #createTaskForm="ngForm" (ngSubmit)="createTask()" class="ev-form-grid" novalidate>
 
           <div class="ev-field ev-field-full">
@@ -388,7 +397,7 @@
 </div>
 
 <style>
-  /* ✅ Required validation message */
+  /*  Required validation message */
   .ev-err {
     margin-top: 6px;
     font-size: 0.78rem;

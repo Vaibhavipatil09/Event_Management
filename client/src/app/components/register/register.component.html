@@ -69,17 +69,32 @@
       <form #registerForm="ngForm" novalidate>
 
         <div class="auth-field">
-          <label class="auth-label">Username</label>
-          <div class="auth-input-wrap">
-            <i class="bi bi-person-fill auth-ico"></i>
-            <input class="auth-input" name="username" [(ngModel)]="user.username" #uname="ngModel" required
-              minlength="3" placeholder="Choose a username" />
-          </div>
-          <div class="auth-err" *ngIf="uname.touched && uname.invalid">
-            <span *ngIf="uname.errors?.['required']">Username is required</span>
-            <span *ngIf="uname.errors?.['minlength']">Minimum 3 characters</span>
-          </div>
-        </div>
+  <label class="auth-label">Username</label>
+
+  <div class="auth-input-wrap">
+    <i class="bi bi-person-fill auth-ico"></i>
+    <input
+      class="auth-input"
+      name="username"
+      [(ngModel)]="user.username"
+      #uname="ngModel"
+      required
+      minlength="3"
+      maxlength="12"
+      pattern="^[A-Za-z][A-Za-z0-9_]{2,11}$"
+      placeholder="Choose a username"
+    />
+  </div>
+
+  <div class="auth-err" *ngIf="uname.touched && uname.invalid">
+    <span *ngIf="uname.errors?.['required']">Username is required</span>
+    <span *ngIf="uname.errors?.['minlength']">Minimum 3 characters</span>
+    <span *ngIf="uname.errors?.['maxlength']">Maximum 12 characters</span>
+    <span *ngIf="uname.errors?.['pattern']">
+      Must start with a letter. Only letters, numbers, and underscore allowed.
+    </span>
+  </div>
+</div>
 
         <div class="auth-field">
           <label class="auth-label">Email</label>
