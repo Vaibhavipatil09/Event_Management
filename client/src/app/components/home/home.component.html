@@ -308,6 +308,11 @@
 </div>
 
 <style>
+  body {
+    background: var(--bg);
+    color: var(--text);
+  }
+
   /* ── Tokens ───────────────────────────────── */
   :root {
     --ev-pri: #6C63FF;
@@ -325,23 +330,28 @@
     --fb: 'Inter', sans-serif;
   }
 
-  body.dark-mode {
+  /* body.dark-mode {
     --bg-l: #0F0A24;
     --bg-card: #1A1035;
     --text-m: #F0EEFF;
     --text-mu: #9CA3AF;
     --bdr: rgba(108, 99, 255, .2);
-  }
+  } */
 
   * {
     box-sizing: border-box;
   }
 
   .ev-home {
-    background: var(--bg-l);
+    /* background: var(--bg-l);
     color: var(--text-m);
     font-family: var(--fb);
-    transition: background .3s, color .3s;
+    transition: background .3s, color .3s; */
+
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-b);
+    transition: background .35s ease, color .35s ease
   }
 
   .text-gradient {
@@ -1057,30 +1067,36 @@
     overflow: hidden;
     align-items: center;
   }
-.logo-card {
-  border-radius: 18px;
-  padding: 20px;
-  height: 110px; /* increased height */
-  display: flex;
-  align-items: center;   /* vertical center */
-  justify-content: center; /* horizontal center */
-  background: linear-gradient(135deg, #ffffff, #f8f9ff);
-  border: 1.5px solid rgba(108, 99, 255, 0.15);
-  transition: all 0.3s ease;
-  overflow: hidden; /* keep clean edges */
-}
-.logo-card:hover {
-  transform: translateY(-6px) scale(1.05);
 
-  background: linear-gradient(135deg, #6C63FF, #A78BFA);
-  border-color: transparent;
+  .logo-card {
+    border-radius: 18px;
+    padding: 20px;
+    height: 110px;
+    /* increased height */
+    display: flex;
+    align-items: center;
+    /* vertical center */
+    justify-content: center;
+    /* horizontal center */
+    background: linear-gradient(135deg, #ffffff, #f8f9ff);
+    border: 1.5px solid rgba(108, 99, 255, 0.15);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    /* keep clean edges */
+  }
 
-  box-shadow: 0 12px 30px rgba(108, 99, 255, 0.4);
-}
+  .logo-card:hover {
+    transform: translateY(-6px) scale(1.05);
 
-.logo-card:hover .logo-img {
-  transform: scale(1.1);
-}
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    border-color: transparent;
+
+    box-shadow: 0 12px 30px rgba(108, 99, 255, 0.4);
+  }
+
+  .logo-card:hover .logo-img {
+    transform: scale(1.1);
+  }
 
   .logo-emoji {
     font-size: 2rem;
@@ -1129,10 +1145,11 @@
     opacity: 1;
     transform: scale(1.08);
   }
+
   .logo-card.active {
-  background: linear-gradient(135deg, #6C63FF, #A78BFA);
-  box-shadow: 0 10px 30px rgba(108, 99, 255, 0.4);
-}
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    box-shadow: 0 10px 30px rgba(108, 99, 255, 0.4);
+  }
 
   /* ── CTA ──────────────────────────────────── */
   .ev-cta {
