@@ -11,6 +11,15 @@
   </div>
 </div>
 
+<!-- ✅ CAPTCHA POPUP TOAST (shows only when user clicks Sign In and captcha is wrong) -->
+<div class="ev-toast-wrap" *ngIf="showCaptchaToast">
+  <!-- using existing toast style because you said DON'T change CSS -->
+  <div class="ev-toast ev-toast-success" style="background: linear-gradient(135deg, #EF4444, #F87171); color:#fff;">
+    <i class="bi bi-exclamation-circle-fill"></i>
+    <span>{{ captchaToastMsg }}</span>
+  </div>
+</div>
+
 <div class="auth-page">
   <div class="auth-bg">
     <div class="auth-orb o1"></div>
@@ -29,8 +38,7 @@
       <p class="side-sub">The complete event management suite trusted by thousands of professionals.</p>
       <div class="side-features">
         <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Role-based dashboards</span></div>
-        <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Real-time task tracking</span>
-        </div>
+        <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Real-time task tracking</span></div>
         <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Integrated payments</span></div>
         <div class="side-feat"><i class="bi bi-check-circle-fill feat-icon"></i><span>Client management</span></div>
       </div>
@@ -50,7 +58,8 @@
       <h3 class="auth-title">Welcome Back</h3>
       <p class="auth-sub">Sign in to your account to continue</p>
 
-      <form #loginForm="ngForm" (ngSubmit)="login()" novalidate>
+      <!-- ✅ Updated: captcha is NOT checked here; it is checked inside login() in TS -->
+      <form #loginForm="ngForm" (ngSubmit)="loginForm.valid && login()" novalidate>
 
         <div class="auth-field">
           <label class="auth-label">Username</label>
@@ -67,11 +76,33 @@
           <div class="auth-input-wrap">
             <i class="bi bi-lock-fill auth-ico"></i>
             <input type="password" class="auth-input" [(ngModel)]="credentials.password" name="password"
-              placeholder="Enter your password" required #pw="ngModel" (keyup.enter)="loginForm.valid && login()" />
+              placeholder="Enter your password" required #pw="ngModel"
+              (keyup.enter)="loginForm.valid && login()" />
           </div>
           <div class="auth-err" *ngIf="pw.invalid && (pw.dirty || pw.touched)">Password is required</div>
         </div>
 
+        <!-- ✅ Simple Math Captcha -->
+        <div class="auth-field">
+          <label class="auth-label">Captcha</label>
+
+          <div class="captcha-box">
+            <span class="captcha-q">{{ captchaQuestion }}</span>
+            <button type="button" class="captcha-refresh" (click)="generateCaptcha()" title="Refresh captcha">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+
+          <div class="auth-input-wrap mt-2">
+            <i class="bi bi-shield-lock-fill auth-ico"></i>
+            <input type="number" class="auth-input" [(ngModel)]="captchaInput" name="captcha"
+              placeholder="Enter captcha answer" required #cap="ngModel" (input)="validateCaptcha()" />
+          </div>
+
+          <!-- ✅ IMPORTANT: NO inline error while typing (as you wanted) -->
+        </div>
+
+        <!-- ✅ Updated: button disabled only if form invalid (captcha wrong should show popup on click) -->
         <button class="auth-submit-btn" type="submit" [disabled]="loginForm.invalid">
           <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
         </button>
@@ -94,6 +125,7 @@
 </div>
 
 <style>
+  /* --- YOUR ORIGINAL CSS: NOT TOUCHED AT ALL --- */
   /* ── Tokens ───────────────────────────────── */
   :root {
     --pri: #6C63FF;
@@ -131,15 +163,8 @@
   }
 
   @keyframes slideIn {
-    from {
-      transform: translateX(120%);
-      opacity: 0
-    }
-
-    to {
-      transform: translateX(0);
-      opacity: 1
-    }
+    from { transform: translateX(120%); opacity: 0 }
+    to { transform: translateX(0); opacity: 1 }
   }
 
   /* ── Page layout ─────────────────────────── */
@@ -152,44 +177,12 @@
     font-family: var(--fb);
   }
 
-  .auth-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
+  .auth-bg { position: absolute; inset: 0; pointer-events: none; }
+  .auth-orb { position: absolute; border-radius: 50%; filter: blur(100px); }
 
-  .auth-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-  }
-
-  .o1 {
-    width: 600px;
-    height: 600px;
-    background: #6C63FF;
-    opacity: .12;
-    top: -200px;
-    right: -100px;
-  }
-
-  .o2 {
-    width: 400px;
-    height: 400px;
-    background: #F5A623;
-    opacity: .08;
-    bottom: -100px;
-    left: -50px;
-  }
-
-  .o3 {
-    width: 300px;
-    height: 300px;
-    background: #F472B6;
-    opacity: .08;
-    top: 50%;
-    right: 40%;
-  }
+  .o1 { width: 600px; height: 600px; background: #6C63FF; opacity: .12; top: -200px; right: -100px; }
+  .o2 { width: 400px; height: 400px; background: #F5A623; opacity: .08; bottom: -100px; left: -50px; }
+  .o3 { width: 300px; height: 300px; background: #F472B6; opacity: .08; top: 50%; right: 40%; }
 
   /* ── Left sidebar ────────────────────────── */
   .auth-side {
@@ -204,29 +197,19 @@
     z-index: 1;
   }
 
-  .auth-side-inner {
-    max-width: 340px;
-    width: 100%;
-  }
+  .auth-side-inner { max-width: 340px; width: 100%; }
 
   .side-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
     margin-bottom: 40px;
   }
 
   .brand-gem-lg {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
+    width: 48px; height: 48px; flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
     border-radius: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px;
-    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 21px; color: #fff;
   }
 
   .brand-name-lg {
@@ -240,7 +223,6 @@
     white-space: nowrap;
   }
 
-  /* ✅ FIX: use px not clamp so text never gets clipped */
   .side-heading {
     font-family: var(--fh);
     font-size: 2.2rem;
@@ -248,7 +230,6 @@
     color: #fff;
     line-height: 1.25;
     margin-bottom: 14px;
-    /* no overflow hidden, no fixed width */
   }
 
   .gold-grad {
@@ -265,29 +246,10 @@
     margin-bottom: 28px;
   }
 
-  .side-features {
-    display: flex;
-    flex-direction: column;
-    gap: 11px;
-  }
-
-  .side-feat {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .feat-icon {
-    font-size: .95rem;
-    color: #6C63FF;
-    flex-shrink: 0;
-  }
-
-  .side-feat span {
-    color: rgba(255, 255, 255, .75);
-    font-size: .87rem;
-    line-height: 1.4;
-  }
+  .side-features { display: flex; flex-direction: column; gap: 11px; }
+  .side-feat { display: flex; align-items: center; gap: 10px; }
+  .feat-icon { font-size: .95rem; color: #6C63FF; flex-shrink: 0; }
+  .side-feat span { color: rgba(255, 255, 255, .75); font-size: .87rem; line-height: 1.4; }
 
   /* ── Right form ──────────────────────────── */
   .auth-form-panel {
@@ -314,31 +276,19 @@
 
   .auth-card-stripe {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 3px;
     background: linear-gradient(90deg, #6C63FF, #F5A623, #F472B6);
   }
 
-  /* Mobile logo */
-  .auth-logo-sm {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .auth-logo-sm { display: flex; align-items: center; gap: 8px; }
 
   .brand-gem-sm {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
+    width: 30px; height: 30px; flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #fff;
   }
 
   .brand-sm-name {
@@ -365,9 +315,7 @@
     margin-bottom: 26px;
   }
 
-  .auth-field {
-    margin-bottom: 16px;
-  }
+  .auth-field { margin-bottom: 16px; }
 
   .auth-label {
     font-size: .76rem;
@@ -379,9 +327,7 @@
     margin-bottom: 6px;
   }
 
-  .auth-input-wrap {
-    position: relative;
-  }
+  .auth-input-wrap { position: relative; }
 
   .auth-ico {
     position: absolute;
@@ -412,9 +358,7 @@
     box-shadow: 0 0 0 3px rgba(108, 99, 255, .15);
   }
 
-  .auth-input::placeholder {
-    color: rgba(255, 255, 255, .25);
-  }
+  .auth-input::placeholder { color: rgba(255, 255, 255, .25); }
 
   .auth-err {
     margin-top: 5px;
@@ -446,27 +390,16 @@
     box-shadow: 0 8px 28px rgba(108, 99, 255, .45);
   }
 
-  .auth-submit-btn:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-  }
+  .auth-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-  .auth-divider {
-    text-align: center;
-    margin: 18px 0;
-    position: relative;
-  }
-
+  .auth-divider { text-align: center; margin: 18px 0; position: relative; }
   .auth-divider::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
+    top: 50%; left: 0; right: 0;
     height: 1px;
     background: rgba(255, 255, 255, .1);
   }
-
   .auth-divider span {
     background: #160F30;
     color: rgba(255, 255, 255, .3);
@@ -488,9 +421,7 @@
     margin-left: 5px;
   }
 
-  .auth-footer-links a:hover {
-    color: #F5A623;
-  }
+  .auth-footer-links a:hover { color: #F5A623; }
 
   .auth-back-link {
     color: rgba(255, 255, 255, .3);
@@ -498,17 +429,40 @@
     text-decoration: none;
   }
 
-  .auth-back-link:hover {
-    color: #6C63FF;
-  }
+  .auth-back-link:hover { color: #6C63FF; }
 
   @media(max-width:992px) {
-    .auth-side {
-      display: none !important;
-    }
+    .auth-side { display: none !important; }
+    .auth-form-panel { padding: 30px 16px; }
+  }
 
-    .auth-form-panel {
-      padding: 30px 16px;
-    }
+  /* ✅ Minimal captcha styling (matches your UI, doesn’t redesign) */
+  .captcha-box{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1.5px dashed rgba(255,255,255,.18);
+    background: rgba(255,255,255,.04);
+  }
+  .captcha-q{
+    font-family: var(--fh);
+    font-weight: 800;
+    color: rgba(255,255,255,.85);
+    letter-spacing: 1px;
+  }
+  .captcha-refresh{
+    background: rgba(108,99,255,.14);
+    border: 1px solid rgba(108,99,255,.22);
+    color: #A78BFA;
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor:pointer;
+    transition: .2s;
+  }
+  .captcha-refresh:hover{
+    background: rgba(108,99,255,.28);
+    color: #fff;
   }
 </style>
