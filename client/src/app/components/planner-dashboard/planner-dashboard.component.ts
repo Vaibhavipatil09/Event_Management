@@ -37,6 +37,9 @@ export class PlannerDashboardComponent implements OnInit {
   newTaskEventId: number | null = null;
 
   reassignMap: { [taskId: number]: number | null } = {};
+// ✅ NEW: prevent double click while updating status
+statusUpdating: { [eventId: number]: boolean } = {};
+
 
   /** Name of the currently open custom dropdown — null means all closed */
   openDropdown: string | null = null;
@@ -135,6 +138,41 @@ export class PlannerDashboardComponent implements OnInit {
   //       this.toast(`🎉 Event "${event.title}" created!`);
   //     });
   // }
+
+
+ 
+markCompleted(event: Event): void {
+  if (!event?.id) return;
+if ((event.status || '').toLowerCase().trim() !== 'pending') return;
+
+  this.statusUpdating[event.id] = true;
+
+  // ✅ UI instantly changes -> edit button will disappear immediately
+  const oldStatus = event.status;
+  event.status = 'Completed';
+
+  const updatedEvent: Event = { ...event, status: 'Completed' };
+
+  this.plannerService.updateEvent(updatedEvent, event.id).subscribe({
+    next: (updated) => {
+      const idx = this.events.findIndex(e => e.id === updated.id);
+      if (idx !== -1) this.events[idx] = updated;
+
+      this.toast(`✅ "${updated.title}" marked as Completed`);
+      this.getEvents();
+    },
+    error: () => {
+      // ✅ revert if API fails
+      event.status = oldStatus;
+
+      this.toast('❌ Failed to update status');
+      this.getEvents();
+    },
+    complete: () => {
+      this.statusUpdating[event.id!] = false;
+    }
+  });
+}
 
   createEvent(): void {
   const clientId = this.selectedClientId ?? undefined;

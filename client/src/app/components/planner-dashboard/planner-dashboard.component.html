@@ -132,33 +132,12 @@
           <!-- STATUS -->
           <div class="ev-field">
             <label>Status *</label>
-            <!-- Hidden native select — keeps ngModel + form validity working -->
-            <select class="ev-select-sr" [(ngModel)]="(selectedEvent.id ? selectedEvent : newEvent).status"
-              name="status" required #status="ngModel">
+            <select class="ev-input" [(ngModel)]="(selectedEvent.id ? selectedEvent : newEvent).status" name="status"
+              required #status="ngModel">
               <option value="">Select status</option>
-              <option value="Pending">Pending</option>
-              <option value="Completed">Completed</option>
+              <option value="Pending">⏳ Pending</option>
+              <option value="Completed">✅ Completed</option>
             </select>
-            <!-- Custom visible dropdown -->
-            <div class="custom-select" [class.cs-open]="openDropdown === 'eventStatus'"
-              (click)="toggleDropdown('eventStatus', $event)">
-              <div class="cs-trigger" [class.cs-placeholder]="!(selectedEvent.id ? selectedEvent : newEvent).status">
-                <span>{{ (selectedEvent.id ? selectedEvent : newEvent).status || 'Select status' }}</span>
-                <i class="bi bi-chevron-down cs-arrow"></i>
-              </div>
-              <div class="cs-menu" (click)="$event.stopPropagation()">
-                <div class="cs-option"
-                  [class.cs-selected]="(selectedEvent.id ? selectedEvent : newEvent).status === 'Pending'"
-                  (click)="(selectedEvent.id ? selectedEvent : newEvent).status = 'Pending'; openDropdown = null">
-                  ⏳ Pending
-                </div>
-                <div class="cs-option"
-                  [class.cs-selected]="(selectedEvent.id ? selectedEvent : newEvent).status === 'Completed'"
-                  (click)="(selectedEvent.id ? selectedEvent : newEvent).status = 'Completed'; openDropdown = null">
-                  ✅ Completed
-                </div>
-              </div>
-            </div>
             <div class="ev-err" *ngIf="status.invalid && (status.dirty || status.touched)">
               Status is required
             </div>
@@ -177,28 +156,14 @@
           </div> -->
 
           <!-- CLIENT (VISIBLE ONLY DURING CREATE) -->
-          <div class="ev-field" *ngIf="!selectedEvent.id" [class.dd-open]="openDropdown === 'assignClient'">
+          <div class="ev-field" *ngIf="!selectedEvent.id">
             <label>Assign Client *</label>
-            <select class="ev-select-sr" [(ngModel)]="selectedClientId" name="clientId" required #clientId="ngModel">
-              <option [ngValue]="null">— Select Client —</option>
-              <option *ngFor="let c of clients" [value]="c.id">{{ c.username }}</option>
+            <select class="ev-input" [(ngModel)]="selectedClientId" name="clientId" required #clientId="ngModel">
+              <option [ngValue]="null" disabled>— Select Client —</option>
+              <option *ngFor="let c of clients" [value]="c.id">
+                {{ c.username }}
+              </option>
             </select>
-            <div class="custom-select" [class.cs-open]="openDropdown === 'assignClient'"
-              (click)="toggleDropdown('assignClient', $event)">
-              <div class="cs-trigger" [class.cs-placeholder]="!selectedClientId">
-                <span>{{ getClientName(selectedClientId) }}</span>
-                <i class="bi bi-chevron-down cs-arrow"></i>
-              </div>
-              <div class="cs-menu" (click)="$event.stopPropagation()">
-                <div class="cs-option cs-option-placeholder" (click)="selectedClientId = null; openDropdown = null">
-                  — Select Client —
-                </div>
-                <div class="cs-option" *ngFor="let c of clients" [class.cs-selected]="selectedClientId == c.id"
-                  (click)="selectedClientId = c.id; openDropdown = null">
-                  {{ c.username }}
-                </div>
-              </div>
-            </div>
             <div class="ev-err" *ngIf="clientId.invalid && (clientId.dirty || clientId.touched)">
               Client is required
             </div>
@@ -253,22 +218,35 @@
                 {{ event.status }}
               </span>
 
-              <!-- Top-right group: PAID badge + action buttons -->
-              <div class="ev-top-right">
-                <span class="eec-paid-badge" *ngIf="event.paymentStatus === 'SUCCESS'">
-                  <i class="bi bi-patch-check-fill"></i> Paid
-                </span>
+              <span class="eec-paid-badge" *ngIf="event.paymentStatus === 'SUCCESS'">
+                <i class="bi bi-patch-check-fill"></i> Paid
+              </span>
 
-                <!-- FIXED action group -->
-                <div class="ev-action-btns">
-                  <button class="ev-edit-btn" (click)="editEvent(event)">
-                    <i class="bi bi-pencil-fill"></i>
-                  </button>
 
-                  <button class="ev-delete-btn" (click)="deleteEvent(event)">
-                    <i class="bi bi-trash-fill"></i>
-                  </button>
-                </div>
+
+
+
+
+              <!-- FIXED action group -->
+
+              <div class="ev-action-btns">
+                <!-- ✅ Mark Completed (ONLY when status is pending) -->
+                <button *ngIf="(event.status || '').toLowerCase().trim() === 'pending'" class="ev-complete-btn"
+                  title="Mark Completed" (click)="markCompleted(event)" [disabled]="statusUpdating[event.id!]">
+                  <i class="bi bi-check2-circle"></i>
+                </button>
+
+                <!-- ✅ Edit hidden when completed -->
+                <button *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'" class="ev-edit-btn"
+                  (click)="editEvent(event)">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+
+                <button class="ev-delete-btn" (click)="deleteEvent(event)">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+
+
               </div>
             </div>
 
@@ -284,7 +262,6 @@
               <i class="bi bi-person-fill"></i>
               <span>{{ event.client.username }}</span>
             </div>
-
             <!-- Client feedback — shown at the bottom once the client submits it -->
             <div class="eec-client-feedback" *ngIf="event.feedback">
               <i class="bi bi-chat-quote-fill"></i>
@@ -328,30 +305,13 @@
             </div>
           </div>
 
-          <div class="ev-field" [class.dd-push]="openDropdown === 'taskStatus'">
+          <div class="ev-field">
             <label>Status *</label>
-            <select class="ev-select-sr" [(ngModel)]="newTask.status" name="taskStatus" required #taskStatus="ngModel">
+            <select class="ev-input" [(ngModel)]="newTask.status" name="taskStatus" required #taskStatus="ngModel">
               <option value="">Select status</option>
-              <option value="Pending">Pending</option>
-              <option value="Completed">Completed</option>
+              <option value="Pending">⏳ Pending</option>
+              <option value="Completed">✅ Completed</option>
             </select>
-            <div class="custom-select" [class.cs-open]="openDropdown === 'taskStatus'"
-              (click)="toggleDropdown('taskStatus', $event)">
-              <div class="cs-trigger" [class.cs-placeholder]="!newTask.status">
-                <span>{{ newTask.status || 'Select status' }}</span>
-                <i class="bi bi-chevron-down cs-arrow"></i>
-              </div>
-              <div class="cs-menu" (click)="$event.stopPropagation()">
-                <div class="cs-option" [class.cs-selected]="newTask.status === 'Pending'"
-                  (click)="newTask.status = 'Pending'; openDropdown = null">
-                  ⏳ Pending
-                </div>
-                <div class="cs-option" [class.cs-selected]="newTask.status === 'Completed'"
-                  (click)="newTask.status = 'Completed'; openDropdown = null">
-                  ✅ Completed
-                </div>
-              </div>
-            </div>
             <div class="ev-err" *ngIf="taskStatus.invalid && (taskStatus.dirty || taskStatus.touched)">
               Status is required
             </div>
@@ -360,57 +320,20 @@
           <!-- Keeping these optional as per your current UI -->
           <div class="ev-field">
             <label>Link to Event *</label>
-            <select class="ev-select-sr" [(ngModel)]="newTaskEventId" name="taskEventId">
+            <select class="ev-input" [(ngModel)]="newTaskEventId" name="taskEventId">
               <option [ngValue]="null">— Select Event —</option>
               <option *ngFor="let e of events" [value]="e.id">{{ e.title }}</option>
             </select>
-            <div class="custom-select" [class.cs-open]="openDropdown === 'taskEvent'"
-              (click)="toggleDropdown('taskEvent', $event)">
-              <div class="cs-trigger" [class.cs-placeholder]="!newTaskEventId">
-                <span>{{ getEventTitle(newTaskEventId) }}</span>
-                <i class="bi bi-chevron-down cs-arrow"></i>
-              </div>
-              <div class="cs-menu" (click)="$event.stopPropagation()">
-                <div class="cs-option cs-option-placeholder" (click)="newTaskEventId = null; openDropdown = null">
-                  — Select Event —
-                </div>
-                <div class="cs-option" *ngFor="let e of events" [class.cs-selected]="newTaskEventId == e.id"
-                  (click)="newTaskEventId = e.id; openDropdown = null">
-                  {{ e.title }}
-                </div>
-              </div>
-            </div>
           </div>
 
-          <div class="ev-field" [class.dd-push]="openDropdown === 'assignStaff'">
-
+          <div class="ev-field">
             <label>Assign Staff *</label>
-            <select class="ev-select-sr" [(ngModel)]="newTask.assignedStaff" name="assignedStaff"
-              [disabled]="newTask.status === 'Completed'">
+            <select class="ev-input" [(ngModel)]="newTask.assignedStaff" name="assignedStaff"
+              [disabled]="newTask.status==='Completed'">
               <option [ngValue]="null">— None —</option>
               <option *ngFor="let s of staffs" [value]="s.id">{{ s.username }}</option>
             </select>
-            <div class="custom-select" [class.cs-open]="openDropdown === 'assignStaff'"
-              [class.cs-disabled]="newTask.status === 'Completed'"
-              (click)="newTask.status !== 'Completed' && toggleDropdown('assignStaff', $event)">
-              <div class="cs-trigger" [class.cs-placeholder]="!newTask.assignedStaff">
-                <span>{{ getStaffName(newTask.assignedStaff) }}</span>
-                <i class="bi bi-chevron-down cs-arrow"></i>
-              </div>
-              <div class="cs-menu" (click)="$event.stopPropagation()">
-                <div class="cs-option cs-option-placeholder"
-                  (click)="newTask.assignedStaff = null; openDropdown = null">
-                  — None —
-                </div>
-                <div class="cs-option" *ngFor="let s of staffs" [class.cs-selected]="newTask.assignedStaff == s.id"
-                  (click)="newTask.assignedStaff = s.id; openDropdown = null">
-                  {{ s.username }}
-                </div>
-              </div>
-            </div>
-            <small class="ev-warn-text" *ngIf="newTask.status === 'Completed'">
-              Staff disabled for completed tasks
-            </small>
+            <small class="ev-warn-text" *ngIf="newTask.status==='Completed'">Staff disabled for completed tasks</small>
           </div>
 
           <div class="ev-field-full">
@@ -465,25 +388,11 @@
             </div>
 
             <div class="etc-reassign" *ngIf="task.status !== 'Completed'">
-              <div class="custom-select cs-sm" [class.cs-open]="openDropdown === 'reassign_' + task.id"
-                (click)="toggleDropdown('reassign_' + task.id, $event)">
-                <div class="cs-trigger" [class.cs-placeholder]="!reassignMap[task.id!]">
-                  <span>{{ getStaffName(reassignMap[task.id!]) === '— None —' ? 'Reassign staff…' :
-                    getStaffName(reassignMap[task.id!]) }}</span>
-                  <i class="bi bi-chevron-down cs-arrow"></i>
-                </div>
-                <div class="cs-menu" (click)="$event.stopPropagation()">
-                  <div class="cs-option cs-option-placeholder"
-                    (click)="reassignMap[task.id!] = null; openDropdown = null">
-                    Reassign staff…
-                  </div>
-                  <div class="cs-option" *ngFor="let s of staffs" [class.cs-selected]="reassignMap[task.id!] == s.id"
-                    (click)="reassignMap[task.id!] = s.id; openDropdown = null">
-                    {{ s.username }}
-                  </div>
-                </div>
-              </div>
-              <button class="ev-assign-btn" (click)="reassignStaff(task.id)" [disabled]="!reassignMap[task.id!]">
+              <select class="ev-input ev-input-sm" [(ngModel)]="reassignMap[task.id]" [name]="'r'+task.id">
+                <option [ngValue]="null">Reassign staff…</option>
+                <option *ngFor="let s of staffs" [value]="s.id">{{ s.username }}</option>
+              </select>
+              <button class="ev-assign-btn" (click)="reassignStaff(task.id)" [disabled]="!reassignMap[task.id]">
                 Assign
               </button>
             </div>
@@ -514,132 +423,6 @@
     font-weight: 600;
   }
 
-  /* ══ CUSTOM SELECT DROPDOWN ══════════════════════════════
-     Replaces all native <select> elements so the dropdown
-     popup is fully CSS-controlled — fixes dark mode on
-     Windows Chrome / Edge where the OS popup ignores CSS.
-  ═══════════════════════════════════════════════════════ */
-
-  /* Visually hidden native select — kept for ngModel + form validity only */
-  .ev-select-sr {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .custom-select {
-    position: relative;
-    user-select: none;
-    width: 100%;
-  }
-
-  .cs-trigger {
-    background: var(--bg-inp);
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    color: var(--text);
-    padding: 10px 13px;
-    font-family: var(--font-b);
-    font-size: 0.875rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    transition: all 0.2s;
-    min-height: 42px;
-  }
-
-  .cs-trigger:hover,
-  .cs-open .cs-trigger {
-    border-color: #6C63FF;
-    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.14);
-  }
-
-  .cs-placeholder .cs-trigger,
-  .cs-trigger.cs-placeholder {
-    color: var(--text3);
-  }
-
-  /* Make span inside trigger fill width so chevron stays right */
-  .cs-trigger span {
-    flex: 1;
-  }
-
-  .cs-arrow {
-    font-size: 0.75rem;
-    color: var(--text3);
-    flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-
-  .cs-open .cs-arrow {
-    transform: rotate(180deg);
-  }
-
-  .cs-menu {
-    display: none;
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: var(--bg-card);
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    z-index: 9999;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-    max-height: 220px;
-    overflow-y: auto;
-  }
-
-  .cs-open .cs-menu {
-    display: block;
-  }
-
-  .cs-option {
-    padding: 10px 13px;
-    font-size: 0.875rem;
-    color: var(--text);
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .cs-option:hover {
-    background: rgba(108, 99, 255, 0.08);
-  }
-
-  .cs-option.cs-selected {
-    background: rgba(108, 99, 255, 0.12);
-    color: #6C63FF;
-    font-weight: 600;
-  }
-
-  .cs-option-placeholder {
-    color: var(--text3);
-    font-style: italic;
-  }
-
-  /* Disabled state (e.g., Staff when task is Completed) */
-  .cs-disabled .cs-trigger {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  /* Smaller variant used in task reassign row */
-  .cs-sm .cs-trigger {
-    padding: 7px 11px;
-    font-size: 0.82rem;
-    min-height: 36px;
-  }
-
-  .cs-sm .cs-option {
-    padding: 8px 11px;
-    font-size: 0.82rem;
-  }
-
   /* ✅ your original styles continue below unchanged (kept exactly same) */
   :root {
     --pri: #6C63FF;
@@ -667,18 +450,6 @@
     --text2: #A78BFA;
     --text3: #6B7280;
     --border: rgba(108, 99, 255, 0.22);
-  }
-
-  /* Fix: native <option> elements ignore CSS variables — force colours in dark mode */
-  body.dark-mode .ev-input option {
-    background-color: #1E1640;
-    color: #EDE9FE;
-  }
-
-  /* Fix: tells the browser/OS to render ALL native controls (select dropdown,
-     date-picker calendar icon, scrollbars) using dark-mode colours */
-  body.dark-mode .ev-input {
-    color-scheme: dark;
   }
 
   .pd-wrap {
@@ -1404,58 +1175,6 @@
     gap: 6px;
   }
 
-  /* ── Top-right group: paid badge + action buttons ── */
-  .ev-top-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-  }
-
-  /* ── PAID badge on planner event card ── */
-  .eec-paid-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(16, 185, 129, 0.12);
-    border: 1.5px solid rgba(16, 185, 129, 0.35);
-    color: #059669;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: .35px;
-    white-space: nowrap;
-  }
-
-  .eec-paid-badge i {
-    font-size: 0.75rem;
-  }
-
-  /* ── Client feedback at bottom of event card ── */
-  .eec-client-feedback {
-    background: rgba(108, 99, 255, 0.06);
-    border: 1px solid rgba(108, 99, 255, 0.16);
-    border-radius: 9px;
-    padding: 9px 12px;
-    font-size: 0.79rem;
-    color: var(--text2);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-style: italic;
-    line-height: 1.45;
-    margin-top: 2px;
-  }
-
-  .eec-client-feedback i {
-    color: #6C63FF;
-    flex-shrink: 0;
-    margin-top: 2px;
-    font-style: normal;
-  }
-
   .ev-delete-btn {
     width: 32px;
     height: 32px;
@@ -1477,123 +1196,88 @@
     transform: scale(1.07);
   }
 
-  /* ================================
-   ✅ FIX: Custom dropdown options not visible in dark mode
-   - Forces readable colors
-   - Fixes z-index stacking so menu isn't hidden behind cards
-================================= */
+  /* ✅ Mark Completed button */
+  .ev-complete-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
 
-  /* Make open dropdown sit above everything inside the scroll container */
-  .custom-select {
-    position: relative;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.30);
+    color: #10B981;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.18s ease;
   }
 
-  .custom-select.cs-open,
-  .custom-select[class*="cs-open"] {
-    z-index: 99999;
+  /* hover effect */
+  .ev-complete-btn:hover:not(:disabled) {
+    background: #10B981;
+    color: #fff;
+    transform: scale(1.07);
   }
 
-  /* Ensure menu always renders above cards/containers */
-  .cs-menu {
-    z-index: 999999 !important;
+  /* disabled state (API call running) */
+  .ev-complete-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
   }
 
-  /* ✅ DARK MODE: force menu + options colors (Windows Chrome safe) */
-  body.dark-mode .cs-menu {
-    background: #1E1640 !important;
-    /* dark input bg */
-    border-color: rgba(108, 99, 255, 0.35) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+  /* ── Top-right group: paid badge + action buttons ── */
+  .ev-top-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
   }
-
-  body.dark-mode .cs-option {
-    color: #EDE9FE !important;
-    /* visible text */
-    background: transparent !important;
+ 
+  /* ── PAID badge on planner event card ── */
+  .eec-paid-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1.5px solid rgba(16, 185, 129, 0.35);
+    color: #059669;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: .35px;
+    white-space: nowrap;
   }
-
-  body.dark-mode .cs-option:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
+ 
+  .eec-paid-badge i {
+    font-size: 0.75rem;
   }
-
-  body.dark-mode .cs-option.cs-selected {
-    background: rgba(108, 99, 255, 0.18) !important;
-    color: #A78BFA !important;
+ 
+  /* ── Client feedback at bottom of event card ── */
+  .eec-client-feedback {
+    background: rgba(108, 99, 255, 0.06);
+    border: 1px solid rgba(108, 99, 255, 0.16);
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: 0.79rem;
+    color: var(--text2);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-style: italic;
+    line-height: 1.45;
+    margin-top: 2px;
   }
-
-  body.dark-mode .cs-option-placeholder {
-    color: rgba(237, 233, 254, 0.55) !important;
-  }
-
-  /* Optional: make trigger text visible in dark mode too */
-  body.dark-mode .cs-trigger {
-    background: #1E1640 !important;
-    border-color: rgba(108, 99, 255, 0.28) !important;
-    color: #EDE9FE !important;
-  }
-
-  /* ✅ Force native control to use dark palette */
-  body.dark-mode select,
-  body.dark-mode .ev-input[type="date"],
-  body.dark-mode .ev-input[type="datetime-local"] {
-    color-scheme: dark;
-  }
-
-  /* ✅ Native option colors (some browsers respect this) */
-  body.dark-mode select option {
-    background: #1E1640 !important;
-    color: #EDE9FE !important;
-  }
-
-  /* ✅ FIX: Dropdown overlapping next fields */
-  .ev-field.dd-open {
-    margin-bottom: 240px;
-    /* space reserved for dropdown */
-  }
-
-  /* Ensure dropdown always stays above other UI */
-  .custom-select {
-    position: relative;
-  }
-
-  .cs-menu {
-    z-index: 999999 !important;
-  }
-
-  /* On smaller screens dropdown height smaller so spacing also smaller */
-  @media (max-width: 768px) {
-    .ev-field.dd-open {
-      margin-bottom: 210px;
-    }
-  }
-
-  /* If your dropdown menu max-height changes, keep spacing in sync */
-  .cs-menu {
-    max-height: 220px;
-    /* keep consistent with margin-bottom above */
-  }
-
-  /* ✅ Push-down spacing when dropdown is open (prevents overlap) */
-  .ev-field.dd-push {
-    margin-bottom: 240px;
-  }
-
-  /* Responsive adjustment */
-  @media (max-width: 768px) {
-    .ev-field.dd-push {
-      margin-bottom: 210px;
-    }
-  }
-
-  /* ✅ FIX: Dropdown overlapping next fields (Task Status / Link to Event / etc.) */
-  .ev-field.dd-push {
-    margin-bottom: 240px;
-    /* reserve space for dropdown menu */
-  }
-
-  @media (max-width: 768px) {
-    .ev-field.dd-push {
-      margin-bottom: 210px;
-    }
+ 
+  .eec-client-feedback i {
+    color: #6C63FF;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-style: normal;
   }
 </style>
