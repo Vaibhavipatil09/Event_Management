@@ -90,8 +90,8 @@
           <h3 *ngIf="selectedEvent.id">Edit Event — {{ selectedEvent.title }}</h3>
         </div>
 
-        <form #eventForm="ngForm" class="ev-form-grid" (ngSubmit)="selectedEvent.id ? updateEvent(eventForm) : createEvent(eventForm)"
-          novalidate>
+        <form #eventForm="ngForm" class="ev-form-grid"
+          (ngSubmit)="selectedEvent.id ? updateEvent(eventForm) : createEvent(eventForm)" novalidate>
 
           <!-- TITLE -->
           <div class="ev-field">
@@ -197,7 +197,7 @@
         </div>
 
         <div class="ev-event-grid" *ngIf="events.length > 0; else noEventsBlock">
-          <div class="ev-event-card" *ngFor="let event of events">
+          <div class="ev-event-card" *ngFor="let event of paginatedEvents">
             <!-- <div class="eec-top">
               <span class="ev-status-badge" [class.badge-done]="event.status==='Completed'"
                 [class.badge-pending]="event.status!=='Completed'">
@@ -233,12 +233,12 @@
                 </button>
 
                 <!-- ✅ Edit hidden when completed -->
-                <button *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'" class="ev-edit-btn"
+                <button title="Edit" *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'" class="ev-edit-btn"
                   (click)="editEvent(event)">
                   <i class="bi bi-pencil-fill"></i>
                 </button>
 
-                <button class="ev-delete-btn" (click)="deleteEvent(event)">
+                <button title="Delete" class="ev-delete-btn" (click)="deleteEvent(event)">
                   <i class="bi bi-trash-fill"></i>
                 </button>
 
@@ -264,6 +264,22 @@
               <span>{{ event.feedback }}</span>
             </div>
           </div>
+        </div>
+
+        <!-- ✅ EVENTS PAGINATION -->
+        <div class="ev-pagination" *ngIf="totalEventPages > 1">
+          <button class="pg-btn" (click)="prevEventPage()" [disabled]="eventPage === 1">
+            ◀ Prev
+          </button>
+
+          <button class="pg-num" *ngFor="let p of eventPageNumbers" [class.pg-active]="p === eventPage"
+            (click)="goToEventPage(p)">
+            {{ p }}
+          </button>
+
+          <button class="pg-btn" (click)="nextEventPage()" [disabled]="eventPage === totalEventPages">
+            Next ▶
+          </button>
         </div>
 
         <ng-template #noEventsBlock>
@@ -349,7 +365,8 @@
         </div>
 
         <div class="ev-task-grid" *ngIf="tasks.length > 0; else noTasksBlock">
-          <div class="ev-task-card" *ngFor="let task of tasks" [class.task-completed]="task.status==='Completed'">
+          <div class="ev-task-card" *ngFor="let task of paginatedTasks"
+            [class.task-completed]="task.status==='Completed'">
             <!-- <div class="etc-top">
               <span class="ev-status-badge" [class.badge-done]="task.status==='Completed'"
                 [class.badge-pending]="task.status!=='Completed'">
@@ -395,6 +412,22 @@
 
             <p class="ev-done-note" *ngIf="task.status==='Completed'">🔒 Completed — no reassignment</p>
           </div>
+        </div>
+
+        <!-- ✅ TASKS PAGINATION -->
+        <div class="ev-pagination" *ngIf="totalTaskPages > 1">
+          <button class="pg-btn" (click)="prevTaskPage()" [disabled]="taskPage === 1">
+            ◀ Prev
+          </button>
+
+          <button class="pg-num" *ngFor="let p of taskPageNumbers" [class.pg-active]="p === taskPage"
+            (click)="goToTaskPage(p)">
+            {{ p }}
+          </button>
+
+          <button class="pg-btn" (click)="nextTaskPage()" [disabled]="taskPage === totalTaskPages">
+            Next ▶
+          </button>
         </div>
 
         <ng-template #noTasksBlock>
@@ -1232,7 +1265,7 @@
     gap: 8px;
     margin-left: auto;
   }
- 
+
   /* ── PAID badge on planner event card ── */
   .eec-paid-badge {
     display: inline-flex;
@@ -1249,11 +1282,11 @@
     letter-spacing: .35px;
     white-space: nowrap;
   }
- 
+
   .eec-paid-badge i {
     font-size: 0.75rem;
   }
- 
+
   /* ── Client feedback at bottom of event card ── */
   .eec-client-feedback {
     background: rgba(108, 99, 255, 0.06);
@@ -1269,7 +1302,7 @@
     line-height: 1.45;
     margin-top: 2px;
   }
- 
+
   .eec-client-feedback i {
     color: #6C63FF;
     flex-shrink: 0;
@@ -1280,43 +1313,89 @@
   /* 🔽 FIX SELECT DROPDOWN VISIBILITY (DARK MODE) */
 
 
-/* Dropdown box */
-select.ev-input {
-  background-color: var(--bg-inp);
-  color: var(--text);
-}
+  /* Dropdown box */
+  select.ev-input {
+    background-color: var(--bg-inp);
+    color: var(--text);
+  }
 
-/* 🔥 Dropdown options (MAIN FIX) */
-select.ev-input option {
-  background: #EDE9FE;   /* light purple */
-  color: #8069cb;        /* dark text */
-}
+  /* 🔥 Dropdown options (MAIN FIX) */
+  select.ev-input option {
+    background: #EDE9FE;
+    /* light purple */
+    color: #8069cb;
+    /* dark text */
+  }
 
-/* Hover / selected option */
-select.ev-input option:checked {
-  background: #C4B5FD;   /* stronger purple */
-  color: #e1dcf1;
-}
+  /* Hover / selected option */
+  select.ev-input option:checked {
+    background: #C4B5FD;
+    /* stronger purple */
+    color: #e1dcf1;
+  }
 
-/* Optional: when dropdown opens (some browsers) */
-select.ev-input:focus {
-  background-color: #8977d6;
-}
-/* Force dark UI for date input */
-body.dark-mode input[type="datetime-local"] {
-  background-color: var(--bg-inp) !important;
-  color: var(--text) !important;
-  color-scheme: dark !important;
-}
+  /* Optional: when dropdown opens (some browsers) */
+  select.ev-input:focus {
+    background-color: #8977d6;
+  }
 
-/* 🔥 Fix calendar icon visibility */
-body.dark-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) brightness(100%) contrast(100%) !important;
-  cursor: pointer;
-}
+  /* Force dark UI for date input */
+  body.dark-mode input[type="datetime-local"] {
+    background-color: var(--bg-inp) !important;
+    color: var(--text) !important;
+    color-scheme: dark !important;
+  }
 
-/* 🔥 EXTRA FIX (important for Chrome) */
-body.dark-mode input[type="datetime-local"]::-webkit-datetime-edit {
-  color: var(--text);
-}
+  /* 🔥 Fix calendar icon visibility */
+  body.dark-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(100%) contrast(100%) !important;
+    cursor: pointer;
+  }
+
+  /* 🔥 EXTRA FIX (important for Chrome) */
+  body.dark-mode input[type="datetime-local"]::-webkit-datetime-edit {
+    color: var(--text);
+  }
+
+
+  /* ✅ PAGINATION UI */
+  .ev-pagination {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pg-btn,
+  .pg-num {
+    border: 1px solid var(--border);
+    background: var(--bg-inp);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .pg-btn:hover:not(:disabled),
+  .pg-num:hover {
+    border-color: #6C63FF;
+    color: #6C63FF;
+    transform: translateY(-1px);
+  }
+
+  .pg-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .pg-num.pg-active {
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    color: white;
+    border: none;
+  }
 </style>

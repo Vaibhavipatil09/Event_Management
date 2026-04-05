@@ -101,6 +101,10 @@ export class PlannerDashboardComponent implements OnInit {
   navigateTo(section: string): void {
     this.showEvents = section === 'events';
     this.showTasks = section === 'tasks';
+
+    if (this.showEvents) this.eventPage = 1;
+    if (this.showTasks) this.taskPage = 1;
+
   }
 
   getStaffs(): void {
@@ -112,12 +116,16 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
   getEvents(): void {
-    this.plannerService.getEvents(this.plannerId).subscribe(d => this.events = d);
+    this.plannerService.getEvents(this.plannerId).subscribe(d => {
+      this.events = d;
+      this.eventPage = 1;
+    });
   }
 
   getTasks(): void {
     this.plannerService.getTasks().subscribe(data => {
       this.tasks = data;
+      this.taskPage = 1;
       this.reassignMap = {};
       data.forEach(t => {
         if (t.id != null) this.reassignMap[t.id] = null;
@@ -232,7 +240,7 @@ export class PlannerDashboardComponent implements OnInit {
     this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
   }
 
-  updateEvent(form:NgForm): void {
+  updateEvent(form: NgForm): void {
     this.plannerService
       .updateEvent(this.selectedEvent, this.selectedEvent.id!)
       .subscribe(updated => {
@@ -324,5 +332,70 @@ export class PlannerDashboardComponent implements OnInit {
         this.getTasks();
       }
     });
+  }
+
+
+  // ✅ Pagination - Events
+  eventPage: number = 1;
+  eventsPerPage: number = 8;
+
+  // ✅ Pagination - Tasks
+  taskPage: number = 1;
+  tasksPerPage: number = 6;
+
+
+  // ✅ EVENTS PAGINATION
+  get totalEventPages(): number {
+    return Math.ceil(this.events.length / this.eventsPerPage) || 1;
+  }
+
+  get paginatedEvents(): Event[] {
+    const start = (this.eventPage - 1) * this.eventsPerPage;
+    return this.events.slice(start, start + this.eventsPerPage);
+  }
+
+  goToEventPage(p: number): void {
+    if (p < 1 || p > this.totalEventPages) return;
+    this.eventPage = p;
+  }
+
+  nextEventPage(): void {
+    if (this.eventPage < this.totalEventPages) this.eventPage++;
+  }
+
+  prevEventPage(): void {
+    if (this.eventPage > 1) this.eventPage--;
+  }
+
+  get eventPageNumbers(): number[] {
+    return Array.from({ length: this.totalEventPages }, (_, i) => i + 1);
+  }
+
+
+  // ✅ TASKS PAGINATION
+  get totalTaskPages(): number {
+    return Math.ceil(this.tasks.length / this.tasksPerPage) || 1;
+  }
+
+  get paginatedTasks(): Task[] {
+    const start = (this.taskPage - 1) * this.tasksPerPage;
+    return this.tasks.slice(start, start + this.tasksPerPage);
+  }
+
+  goToTaskPage(p: number): void {
+    if (p < 1 || p > this.totalTaskPages) return;
+    this.taskPage = p;
+  }
+
+  nextTaskPage(): void {
+    if (this.taskPage < this.totalTaskPages) this.taskPage++;
+  }
+
+  prevTaskPage(): void {
+    if (this.taskPage > 1) this.taskPage--;
+  }
+
+  get taskPageNumbers(): number[] {
+    return Array.from({ length: this.totalTaskPages }, (_, i) => i + 1);
   }
 }
