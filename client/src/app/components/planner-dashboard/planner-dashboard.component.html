@@ -18,10 +18,6 @@
   <!-- ================= SIDEBAR ================= -->
   <aside class="pd-sidebar">
     <div class="sb-top">
-      <div class="sb-brand">
-        <div class="sb-gem"><i class="bi bi-stars"></i></div>
-        <span class="sb-name">Eventora</span>
-      </div>
       <div class="sb-role"><i class="bi bi-person-workspace"></i>&nbsp; Planner</div>
     </div>
 
@@ -1280,4 +1276,47 @@
     margin-top: 2px;
     font-style: normal;
   }
+
+  /* 🔽 FIX SELECT DROPDOWN VISIBILITY (DARK MODE) */
+
+
+/* Dropdown box */
+select.ev-input {
+  background-color: var(--bg-inp);
+  color: var(--text);
+}
+
+/* 🔥 Dropdown options (MAIN FIX) */
+select.ev-input option {
+  background: #EDE9FE;   /* light purple */
+  color: #8069cb;        /* dark text */
+}
+
+/* Hover / selected option */
+select.ev-input option:checked {
+  background: #C4B5FD;   /* stronger purple */
+  color: #e1dcf1;
+}
+
+/* Optional: when dropdown opens (some browsers) */
+select.ev-input:focus {
+  background-color: #8977d6;
+}
+/* Force dark UI for date input */
+body.dark-mode input[type="datetime-local"] {
+  background-color: var(--bg-inp) !important;
+  color: var(--text) !important;
+  color-scheme: dark !important;
+}
+
+/* 🔥 Fix calendar icon visibility */
+body.dark-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(100%) contrast(100%) !important;
+  cursor: pointer;
+}
+
+/* 🔥 EXTRA FIX (important for Chrome) */
+body.dark-mode input[type="datetime-local"]::-webkit-datetime-edit {
+  color: var(--text);
+}
 </style>

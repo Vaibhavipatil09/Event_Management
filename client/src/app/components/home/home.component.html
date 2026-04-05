@@ -1,9 +1,10 @@
+
+
+
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
-<link
-  href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
-  rel="stylesheet" />
-
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <!-- FLASH OFFER -->
 <div class="ev-offer" *ngIf="showOffer">
   <div class="offer-inner">
@@ -326,7 +327,7 @@
     --text-m: #1A103C;
     --text-mu: #6B7280;
     --bdr: #E8E4FF;
-    --fh: 'Syne', sans-serif;
+    --fh: 'Bebas Neue', sans-serif;
     --fb: 'Inter', sans-serif;
   }
 
@@ -361,39 +362,25 @@
     background-clip: text;
   }
 
-  /* ── Typing line ─────────────────────────── */
   .typing-line {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 3px solid #F5A623;
-    width: 0;
-    animation: typing 3.5s steps(25, end) infinite, blink .7s step-end infinite;
-  }
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid #F5A623;
+  max-width: fit-content;
+  animation: typing 3.5s steps(30, end) infinite, blink .7s step-end infinite;
+}
 
-  @keyframes typing {
-    0% {
-      width: 0
-    }
+@keyframes typing {
+  0% { width: 0 }
+  50% { width: 100% }
+  80% { width: 100% }
+  100% { width: 0 }
+}
 
-    40% {
-      width: 100%
-    }
-
-    60% {
-      width: 100%
-    }
-
-    100% {
-      width: 0
-    }
-  }
-
-  @keyframes blink {
-    50% {
-      border-color: transparent
-    }
-  }
+@keyframes blink {
+  50% { border-color: transparent }
+}
 
   /* ── Flash offer ─────────────────────────── */
   .ev-offer {
@@ -1354,6 +1341,7 @@
 
     .hero-heading {
       font-size: 2.1rem;
+      letter-spacing: 1px;
     }
 
     .hero-btns {
@@ -1389,3 +1377,8 @@
     }
   }
 </style>
+
+
+
+
+
