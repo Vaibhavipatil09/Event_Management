@@ -126,7 +126,6 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
 
-
   markCompleted(event: Event): void {
     if (!event?.id) return;
     if ((event.status || '').toLowerCase().trim() !== 'pending') return;
@@ -174,7 +173,6 @@ export class PlannerDashboardComponent implements OnInit {
           this.toast(`🎉 Event "${event.title}" created!`);
           this.getEvents();
 
-          // ✅ MOST IMPORTANT: reset form state (touched/dirty/submitted)
           form.resetForm();
 
         },
@@ -234,31 +232,16 @@ export class PlannerDashboardComponent implements OnInit {
     this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
   }
 
-
-  updateEvent(form: NgForm): void {
+  updateEvent(form:NgForm): void {
     this.plannerService
       .updateEvent(this.selectedEvent, this.selectedEvent.id!)
-      .subscribe({
-        next: (updated) => {
-          const i = this.events.findIndex(e => e.id === updated.id);
-          if (i !== -1) this.events[i] = updated;
-
-          this.toast('✅ Event updated successfully!');
-          this.getEvents();
-
-          // ✅ exit edit mode
-          this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
-
-          // ✅ MOST IMPORTANT: reset form state so required errors don't show
-          form.resetForm();
-
-          // ✅ also reset create-model + client dropdown (optional but clean)
-          this.newEvent = { title: '', date: '', location: '', description: '', status: '' };
-          this.selectedClientId = null;
-        },
-        error: () => {
-          this.toast('❌ Failed to update event. Please try again.');
-        }
+      .subscribe(updated => {
+        const i = this.events.findIndex(e => e.id === updated.id);
+        if (i !== -1) this.events[i] = updated;
+        this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
+        this.getEvents();
+        this.toast('✅ Event updated successfully!');
+        form.resetForm();
       });
   }
 
@@ -277,7 +260,7 @@ export class PlannerDashboardComponent implements OnInit {
       this.newTaskEventId = null;
       this.toast('📋 Task created successfully!');
 
-      // ✅ reset the form (this stops all validation messages)
+
       form.resetForm();
 
     });
