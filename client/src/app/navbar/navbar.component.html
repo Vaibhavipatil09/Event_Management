@@ -51,14 +51,14 @@
       </ng-template>
 
       <!-- Mobile hamburger -->
-      <button class="ev-icon-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#evMobileMenu">
-        <i class="bi bi-list"></i>
+      <button class="ev-icon-btn d-lg-none" (click)="toggleMenu()">
+        <i class="bi" [ngClass]="isMenuOpen ? 'bi-x' : 'bi-list'"></i>
       </button>
     </div>
   </div>
 
   <!-- MOBILE MENU -->
-  <div class="collapse" id="evMobileMenu">
+  <div [class.collapse]="!isMenuOpen" [class.show]="isMenuOpen">
     <div class="ev-mobile-menu">
       <a (click)="scrollToTop()" class="ev-mob-link">🏠 Home</a>
       <a (click)="scrollToSection('services')" class="ev-mob-link">✨ Services</a>
@@ -305,5 +305,10 @@
     text-align: left;
     font-family: var(--fb);
     color: #FCA5A5 !important;
+  }
+
+  .ev-nav-inner {
+    flex-wrap: wrap;
+    /* 🔥 allows wrapping */
   }
 </style>
