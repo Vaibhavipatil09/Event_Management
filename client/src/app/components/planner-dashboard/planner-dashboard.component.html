@@ -233,8 +233,8 @@
                 </button>
 
                 <!-- ✅ Edit hidden when completed -->
-                <button title="Edit" *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'" class="ev-edit-btn"
-                  (click)="editEvent(event)">
+                <button title="Edit" *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'"
+                  class="ev-edit-btn" (click)="editEvent(event)">
                   <i class="bi bi-pencil-fill"></i>
                 </button>
 
