@@ -104,10 +104,6 @@
           <label class="auth-label">Password</label>
           <div class="auth-input-wrap">
             <i class="bi bi-lock-fill auth-ico"></i>
-            <!-- <input class="auth-input" type="password" name="password" [(ngModel)]="user.password" #pw="ngModel" required
-              pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-              placeholder="Create a strong password" /> -->
-
             <input class="auth-input" [type]="showPassword ? 'text' : 'password'" name="password"
               [(ngModel)]="user.password" #pw="ngModel" required
               pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"

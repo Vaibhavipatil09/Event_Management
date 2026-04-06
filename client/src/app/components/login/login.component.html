@@ -76,9 +76,6 @@
           <label class="auth-label">Password</label>
           <div class="auth-input-wrap">
             <i class="bi bi-lock-fill auth-ico"></i>
-            <!-- <input type="password" class="auth-input" [(ngModel)]="credentials.password" name="password"
-            placeholder="Enter your password" required #pw="ngModel"
-            (keyup.enter)="loginForm.valid && login()" /> -->
             <input [type]="showPassword ? 'text' : 'password'" class="auth-input" [(ngModel)]="credentials.password"
               name="password" placeholder="Enter your password" required #pw="ngModel"
               (keyup.enter)="loginForm.valid && login()" />
