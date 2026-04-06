@@ -23,76 +23,79 @@ export class RegisterComponent {
     role: 'PLANNER'
   };
 
-  showToast = false;
+  // ── OTP step state ──
+  otpStep    = false;   // false = show registration form, true = show OTP input
+  otpValue   = '';      // what the user types in the OTP box
+  sendingOtp = false;   // spinner on "Send OTP" button
+
+  // ── Toast ──
+  showToast    = false;
   toastMessage = '';
-  isError = false;
+  isError      = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  // ── Password toggle ──
+  showPassword = false;
 
-  // register(): void {
+  constructor(private authService: AuthService, private router: Router) {}
 
-  //   this.authService.register(this.user).subscribe({
-  //     next: () => {
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
 
-  //       this.toastMessage = "🎉 Account created successfully!";
-  //       this.showToast = true;
+  // ── STEP 1: Validate form then send OTP ──
+  sendOtp(): void {
+    this.sendingOtp = true;
+    this.authService.sendOtp(this.user.email, this.user.username).subscribe({
+      next: () => {
+        this.sendingOtp = false;
+        this.otpStep = true;
+        this.showToastMsg(`OTP sent to ${this.user.email}. Check your inbox.`, false);
+      },
+      error: (err) => {
+        this.sendingOtp = false;
+        const msg = err.status === 409
+          ? '❌ Username already taken. Please choose another!'
+          : '❌ Failed to send OTP. Check your email address and try again.';
+        this.showToastMsg(msg, true);
+      }
+    });
+  }
 
-
-  //       setTimeout(() => {
-  //         this.showToast = false;
-  //         this.router.navigate(['/login']);
-  //       }, 2500);
-  //     },
-
-  //     error: (err) => {
-  //       console.error(err);
-
-
-  //       this.toastMessage = "❌ Registration failed. Try again!";
-  //       this.showToast = true;
-
-  //       setTimeout(() => {
-  //         this.showToast = false;
-  //       }, 2500);
-  //     }
-  //   });
-  // }
-
+  // ── STEP 2: Submit OTP + full user data ──
   register(): void {
-    this.authService.register(this.user).subscribe({
+    this.authService.registerWithOtp(this.user, this.otpValue).subscribe({
       next: () => {
         this.isError = false;
-        this.toastMessage = "🎉 Account created successfully!";
+        this.toastMessage = '🎉 Account created successfully!';
         this.showToast = true;
         setTimeout(() => {
           this.showToast = false;
           this.router.navigate(['/login']);
         }, 2500);
       },
-
       error: (err) => {
-        this.isError = true;
-        console.error(err);
-
-        // ADD THIS: show specific message for duplicate username
-        if (err.status === 409) {
-          this.toastMessage = "❌ Username already taken. Please choose another!";
+        if (err.status === 400) {
+          this.showToastMsg('❌ Invalid or expired OTP. Please try again.', true);
+        } else if (err.status === 409) {
+          this.showToastMsg('❌ Username already taken. Please choose another!', true);
         } else {
-          this.toastMessage = "❌ Registration failed. Try again!";
+          this.showToastMsg('❌ Registration failed. Try again.', true);
         }
-
-        this.showToast = true;
-        setTimeout(() => {
-          this.showToast = false;
-        }, 2500);
       }
     });
   }
 
-  // Toggle password
-  showPassword: boolean = false;
+  // ── Go back to form from OTP screen ──
+  backToForm(): void {
+    this.otpStep  = false;
+    this.otpValue = '';
+  }
 
-  togglePassword(): void {
-    this.showPassword = !this.showPassword;
+  // ── Helper ──
+  private showToastMsg(msg: string, error: boolean): void {
+    this.toastMessage = msg;
+    this.isError      = error;
+    this.showToast    = true;
+    setTimeout(() => { this.showToast = false; }, 3000);
   }
 }

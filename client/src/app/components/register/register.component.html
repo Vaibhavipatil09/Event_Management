@@ -63,97 +63,166 @@
         <span class="brand-sm-name">Eventora</span>
       </div>
 
-      <h3 class="auth-title">Create Account</h3>
-      <p class="auth-sub">Join thousands of event professionals</p>
+      <!-- ══════════════════════════════════════
+           STEP 1 — Registration form
+           Shown when otpStep === false
+           ══════════════════════════════════════ -->
+      <ng-container *ngIf="!otpStep">
 
-      <form #registerForm="ngForm" novalidate>
+        <h3 class="auth-title">Create Account</h3>
+        <p class="auth-sub">Join thousands of event professionals</p>
 
-        <div class="auth-field">
-          <label class="auth-label">Username</label>
+        <form #registerForm="ngForm" novalidate>
 
-          <div class="auth-input-wrap">
-            <i class="bi bi-person-fill auth-ico"></i>
-            <input class="auth-input" name="username" [(ngModel)]="user.username" #uname="ngModel" required
-              minlength="3" maxlength="12" pattern="^[A-Za-z][A-Za-z0-9_]{2,11}$" placeholder="Choose a username" />
+          <div class="auth-field">
+            <label class="auth-label">Username</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-person-fill auth-ico"></i>
+              <input class="auth-input" name="username" [(ngModel)]="user.username" #uname="ngModel" required
+                minlength="3" maxlength="12" pattern="^[A-Za-z][A-Za-z0-9_]{2,11}$" placeholder="Choose a username" />
+            </div>
+            <div class="auth-err" *ngIf="uname.touched && uname.invalid">
+              <span *ngIf="uname.errors?.['required']">Username is required</span>
+              <span *ngIf="uname.errors?.['minlength']">Minimum 3 characters</span>
+              <span *ngIf="uname.errors?.['maxlength']">Maximum 12 characters</span>
+              <span *ngIf="uname.errors?.['pattern']">
+                Must start with a letter. Only letters, numbers, and underscore allowed.
+              </span>
+            </div>
           </div>
 
-          <div class="auth-err" *ngIf="uname.touched && uname.invalid">
-            <span *ngIf="uname.errors?.['required']">Username is required</span>
-            <span *ngIf="uname.errors?.['minlength']">Minimum 3 characters</span>
-            <span *ngIf="uname.errors?.['maxlength']">Maximum 12 characters</span>
-            <span *ngIf="uname.errors?.['pattern']">
-              Must start with a letter. Only letters, numbers, and underscore allowed.
+          <div class="auth-field">
+            <label class="auth-label">Email</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-envelope-fill auth-ico"></i>
+              <input class="auth-input" type="email" name="email" [(ngModel)]="user.email" #em="ngModel" required email
+                placeholder="Enter your email" />
+            </div>
+            <div class="auth-err" *ngIf="em.touched && em.invalid">
+              <span *ngIf="em.errors?.['required']">Email is required</span>
+              <span *ngIf="em.errors?.['email']">Enter a valid email</span>
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label">Password</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-lock-fill auth-ico"></i>
+              <input class="auth-input" [type]="showPassword ? 'text' : 'password'" name="password"
+                [(ngModel)]="user.password" #pw="ngModel" required
+                pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                placeholder="Create a strong password" />
+            </div>
+            <div class="mt-2 d-flex align-items-center gap-2">
+              <input type="checkbox" class="form-check-input" id="regShowPw" [checked]="showPassword"
+                (change)="togglePassword()" />
+              <label class="form-check-label text-white-50" for="regShowPw">
+                Show Password
+              </label>
+            </div>
+            <div class="auth-err" *ngIf="pw.touched && pw.invalid">
+              <span *ngIf="pw.errors?.['required']">Password is required</span>
+              <span *ngIf="pw.errors?.['pattern']">8+ chars, 1 uppercase, 1 number, 1 special char</span>
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label">Your Role</label>
+            <div class="role-selector">
+              <button type="button" class="role-btn" [class.role-sel]="user.role==='PLANNER'"
+                (click)="user.role='PLANNER'">
+                <span>🎯</span> Planner
+              </button>
+              <button type="button" class="role-btn" [class.role-sel]="user.role==='CLIENT'" (click)="user.role='CLIENT'">
+                <span>🧑‍💼</span> Client
+              </button>
+              <button type="button" class="role-btn" [class.role-sel]="user.role==='STAFF'" (click)="user.role='STAFF'">
+                <span>👷</span> Staff
+              </button>
+            </div>
+          </div>
+
+          <!-- Send OTP button replaces the old Create Account button -->
+          <button class="auth-submit-btn" type="button"
+            (click)="sendOtp()"
+            [disabled]="registerForm.invalid || sendingOtp">
+            <span *ngIf="sendingOtp">
+              <span class="spinner-border spinner-border-sm me-2"></span>Sending OTP…
             </span>
+            <span *ngIf="!sendingOtp">
+              <i class="bi bi-send-fill me-2"></i>Send Verification Code
+            </span>
+          </button>
+
+        </form>
+
+        <div class="auth-divider"><span>or</span></div>
+        <div class="auth-footer-links">
+          <span>Already have an account?</span>
+          <a routerLink="/login">Sign in →</a>
+        </div>
+        <div class="text-center mt-3">
+          <a routerLink="/home" class="auth-back-link">
+            <i class="bi bi-arrow-left me-1"></i>Back to Home
+          </a>
+        </div>
+
+      </ng-container>
+
+      <!-- ══════════════════════════════════════
+           STEP 2 — OTP verification screen
+           Shown when otpStep === true
+           ══════════════════════════════════════ -->
+      <ng-container *ngIf="otpStep">
+
+        <div class="text-center mb-3">
+          <div class="otp-icon-wrap">
+            <i class="bi bi-shield-lock-fill"></i>
           </div>
         </div>
 
-        <div class="auth-field">
-          <label class="auth-label">Email</label>
+        <h3 class="auth-title text-center">Verify Your Email</h3>
+        <p class="auth-sub text-center">
+          We sent a 6-digit code to<br>
+          <strong class="text-white">{{user.email}}</strong>
+        </p>
+
+        <div class="auth-field mt-3">
+          <label class="auth-label">Enter OTP</label>
           <div class="auth-input-wrap">
-            <i class="bi bi-envelope-fill auth-ico"></i>
-            <input class="auth-input" type="email" name="email" [(ngModel)]="user.email" #em="ngModel" required email
-              placeholder="Enter your email" />
-          </div>
-          <div class="auth-err" *ngIf="em.touched && em.invalid">
-            <span *ngIf="em.errors?.['required']">Email is required</span>
-            <span *ngIf="em.errors?.['email']">Enter a valid email</span>
-          </div>
-        </div>
-
-        <div class="auth-field">
-          <label class="auth-label">Password</label>
-          <div class="auth-input-wrap">
-            <i class="bi bi-lock-fill auth-ico"></i>
-            <input class="auth-input" [type]="showPassword ? 'text' : 'password'" name="password"
-              [(ngModel)]="user.password" #pw="ngModel" required
-              pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-              placeholder="Create a strong password" />
-          </div>
-          <div class="mt-2 d-flex align-items-center gap-2">
-            <input type="checkbox" class="form-check-input" id="regShowPw" [checked]="showPassword"
-              (change)="togglePassword()" />
-            <label class="form-check-label text-white-50" for="regShowPw">
-              Show Password
-            </label>
-          </div>
-          <div class="auth-err" *ngIf="pw.touched && pw.invalid">
-            <span *ngIf="pw.errors?.['required']">Password is required</span>
-            <span *ngIf="pw.errors?.['pattern']">8+ chars, 1 uppercase, 1 number, 1 special char</span>
+            <i class="bi bi-123 auth-ico"></i>
+            <input class="auth-input otp-input" type="text" name="otp"
+              [(ngModel)]="otpValue"
+              placeholder="Enter 6-digit code"
+              maxlength="6"
+              autocomplete="one-time-code" />
           </div>
         </div>
 
-        <div class="auth-field">
-          <label class="auth-label">Your Role</label>
-          <div class="role-selector">
-            <button type="button" class="role-btn" [class.role-sel]="user.role==='PLANNER'"
-              (click)="user.role='PLANNER'">
-              <span>🎯</span> Planner
-            </button>
-            <button type="button" class="role-btn" [class.role-sel]="user.role==='CLIENT'" (click)="user.role='CLIENT'">
-              <span>🧑‍💼</span> Client
-            </button>
-            <button type="button" class="role-btn" [class.role-sel]="user.role==='STAFF'" (click)="user.role='STAFF'">
-              <span>👷</span> Staff
-            </button>
-          </div>
-        </div>
-
-        <button class="auth-submit-btn" type="button" (click)="register()" [disabled]="registerForm.invalid">
-          <i class="bi bi-person-plus-fill me-2"></i>Create Account
+        <button class="auth-submit-btn mt-3" type="button"
+          (click)="register()"
+          [disabled]="otpValue.length !== 6">
+          <i class="bi bi-check-circle-fill me-2"></i>Verify & Create Account
         </button>
 
-      </form>
+        <div class="text-center mt-3">
+          <button class="auth-back-link btn btn-link p-0" (click)="backToForm()">
+            <i class="bi bi-arrow-left me-1"></i>Back &amp; edit details
+          </button>
+        </div>
 
-      <div class="auth-divider"><span>or</span></div>
-      <div class="auth-footer-links">
-        <span>Already have an account?</span>
-        <a routerLink="/login">Sign in →</a>
-      </div>
-      <div class="text-center mt-3">
-        <a routerLink="/home" class="auth-back-link">
-          <i class="bi bi-arrow-left me-1"></i>Back to Home
-        </a>
-      </div>
+        <div class="text-center mt-2">
+          <span style="color:rgba(255,255,255,.4);font-size:.8rem;">
+            Didn't receive it? Check your spam folder or
+          </span>
+          <button class="btn btn-link p-0 ms-1" style="color:#A78BFA;font-size:.8rem;font-weight:600;"
+            (click)="sendOtp()">
+            resend OTP
+          </button>
+        </div>
+
+      </ng-container>
+
     </div>
   </div>
 </div>
@@ -199,15 +268,8 @@
   }
 
   @keyframes slideIn {
-    from {
-      transform: translateX(120%);
-      opacity: 0
-    }
-
-    to {
-      transform: translateX(0);
-      opacity: 1
-    }
+    from { transform: translateX(120%); opacity: 0 }
+    to   { transform: translateX(0);    opacity: 1 }
   }
 
   .auth-page {
@@ -219,11 +281,7 @@
     font-family: var(--fb);
   }
 
-  .auth-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
+  .auth-bg { position: absolute; inset: 0; pointer-events: none; }
 
   .auth-orb {
     position: absolute;
@@ -231,34 +289,10 @@
     filter: blur(100px);
   }
 
-  .o1 {
-    width: 500px;
-    height: 500px;
-    background: #F5A623;
-    opacity: .1;
-    top: -150px;
-    left: -100px;
-  }
+  .o1 { width: 500px; height: 500px; background: #F5A623; opacity: .1;  top: -150px; left: -100px; }
+  .o2 { width: 400px; height: 400px; background: #6C63FF; opacity: .12; bottom: -100px; right: -50px; }
+  .o3 { width: 280px; height: 280px; background: #F472B6; opacity: .08; top: 40%; left: 30%; }
 
-  .o2 {
-    width: 400px;
-    height: 400px;
-    background: #6C63FF;
-    opacity: .12;
-    bottom: -100px;
-    right: -50px;
-  }
-
-  .o3 {
-    width: 280px;
-    height: 280px;
-    background: #F472B6;
-    opacity: .08;
-    top: 40%;
-    left: 30%;
-  }
-
-  /* ── Sidebar ─── */
   .auth-side {
     width: 42%;
     background: rgba(26, 16, 60, .65);
@@ -271,364 +305,201 @@
     z-index: 1;
   }
 
-  .auth-side-inner {
-    max-width: 340px;
-    width: 100%;
-  }
+  .auth-side-inner { max-width: 340px; width: 100%; }
 
-  .side-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 36px;
-  }
+  .side-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
 
   .brand-gem-lg {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
+    width: 48px; height: 48px; flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
     border-radius: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px;
-    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 21px; color: #fff;
   }
 
   .brand-name-lg {
-    font-family: var(--fh);
-    font-size: 1.75rem;
-    font-weight: 800;
+    font-family: var(--fh); font-size: 1.75rem; font-weight: 800;
     background: linear-gradient(90deg, #F5A623, #FF6EB4, #A78BFA);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    white-space: nowrap;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; white-space: nowrap;
   }
 
-  /* ✅ FIX: no overflow, solid px sizing, good line-height */
   .side-heading {
-    font-family: var(--fh);
-    font-size: 2.1rem;
-    font-weight: 800;
-    color: #fff;
-    line-height: 1.25;
-    margin-bottom: 14px;
+    font-family: var(--fh); font-size: 2.1rem; font-weight: 800;
+    color: #fff; line-height: 1.25; margin-bottom: 14px;
   }
 
   .gold-grad {
     background: linear-gradient(90deg, #F5A623, #FF6EB4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
 
-  .side-sub {
-    color: rgba(255, 255, 255, .55);
-    font-size: .9rem;
-    line-height: 1.65;
-    margin-bottom: 24px;
-  }
+  .side-sub { color: rgba(255,255,255,.55); font-size: .9rem; line-height: 1.65; margin-bottom: 24px; }
 
-  /* Role preview cards in sidebar */
-  .role-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-  }
+  .role-cards { display: flex; flex-direction: column; gap: 9px; }
 
   .role-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    border-radius: 11px;
-    border: 1px solid rgba(255, 255, 255, .08);
-    background: rgba(255, 255, 255, .04);
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px; border-radius: 11px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.04);
     transition: all .2s;
   }
 
-  .role-card.role-active {
-    border-color: #6C63FF;
-    background: rgba(108, 99, 255, .18);
-  }
+  .role-card.role-active { border-color: #6C63FF; background: rgba(108,99,255,.18); }
 
-  .rc-emoji {
-    font-size: 1.35rem;
-    flex-shrink: 0;
-  }
+  .rc-emoji { font-size: 1.35rem; flex-shrink: 0; }
+  .rc-text { display: flex; flex-direction: column; gap: 1px; }
+  .rc-text strong { color: #fff; font-size: .85rem; font-weight: 700; }
+  .rc-text span { color: rgba(255,255,255,.45); font-size: .76rem; }
 
-  .rc-text {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-
-  .rc-text strong {
-    color: #fff;
-    font-size: .85rem;
-    font-weight: 700;
-  }
-
-  .rc-text span {
-    color: rgba(255, 255, 255, .45);
-    font-size: .76rem;
-  }
-
-  /* ── Form panel ─── */
   .auth-form-panel {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 36px 24px;
-    position: relative;
-    z-index: 1;
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 36px 24px; position: relative; z-index: 1;
   }
 
   .auth-card {
-    background: rgba(255, 255, 255, .04);
-    border: 1px solid rgba(108, 99, 255, .2);
-    border-radius: 24px;
-    padding: 36px;
-    width: 100%;
-    max-width: 440px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(108,99,255,.2);
+    border-radius: 24px; padding: 36px;
+    width: 100%; max-width: 440px;
     backdrop-filter: blur(20px);
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
   }
 
   .auth-card-stripe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, #F5A623, #FF6EB4, #6C63FF);
   }
 
-  .auth-logo-sm {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .auth-logo-sm { display: flex; align-items: center; gap: 8px; }
 
   .brand-gem-sm {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
+    width: 30px; height: 30px; flex-shrink: 0;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #fff;
   }
 
   .brand-sm-name {
-    font-family: var(--fh);
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-family: var(--fh); font-size: 1.1rem; font-weight: 700;
     background: linear-gradient(90deg, #F5A623, #A78BFA);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
 
-  .auth-title {
-    font-family: var(--fh);
-    font-size: 1.65rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 5px;
-  }
+  .auth-title { font-family: var(--fh); font-size: 1.65rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
+  .auth-sub { color: rgba(255,255,255,.5); font-size: .87rem; margin-bottom: 22px; }
 
-  .auth-sub {
-    color: rgba(255, 255, 255, .5);
-    font-size: .87rem;
-    margin-bottom: 22px;
-  }
-
-  .auth-field {
-    margin-bottom: 15px;
-  }
+  .auth-field { margin-bottom: 15px; }
 
   .auth-label {
-    font-size: .75rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, .5);
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    display: block;
-    margin-bottom: 6px;
+    font-size: .75rem; font-weight: 600; color: rgba(255,255,255,.5);
+    text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px;
   }
 
-  .auth-input-wrap {
-    position: relative;
-  }
+  .auth-input-wrap { position: relative; }
 
   .auth-ico {
-    position: absolute;
-    left: 13px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, .3);
-    font-size: .88rem;
-    pointer-events: none;
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    color: rgba(255,255,255,.3); font-size: .88rem; pointer-events: none;
   }
 
   .auth-input {
     width: 100%;
-    background: rgba(255, 255, 255, .06);
-    border: 1.5px solid rgba(255, 255, 255, .1);
-    border-radius: 10px;
-    color: #fff;
+    background: rgba(255,255,255,.06);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 10px; color: #fff;
     padding: 11px 14px 11px 38px;
-    font-family: var(--fb);
-    font-size: .88rem;
-    outline: none;
-    transition: all .2s;
+    font-family: var(--fb); font-size: .88rem;
+    outline: none; transition: all .2s;
   }
 
   .auth-input:focus {
     border-color: #6C63FF;
-    background: rgba(108, 99, 255, .1);
-    box-shadow: 0 0 0 3px rgba(108, 99, 255, .15);
+    background: rgba(108,99,255,.1);
+    box-shadow: 0 0 0 3px rgba(108,99,255,.15);
   }
 
-  .auth-input::placeholder {
-    color: rgba(255, 255, 255, .25);
+  .auth-input::placeholder { color: rgba(255,255,255,.25); }
+
+  /* OTP input — larger, centred text */
+  .otp-input {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: .5rem;
+    text-align: center;
+    padding-left: 14px;
   }
 
-  .auth-err {
-    margin-top: 5px;
-    font-size: .76rem;
-    color: #EF4444;
-    font-weight: 600;
-  }
+  .auth-err { margin-top: 5px; font-size: .76rem; color: #EF4444; font-weight: 600; }
 
-  .role-selector {
-    display: flex;
-    gap: 8px;
-  }
+  .role-selector { display: flex; gap: 8px; }
 
   .role-btn {
     flex: 1;
-    background: rgba(255, 255, 255, .05);
-    border: 1.5px solid rgba(255, 255, 255, .1);
-    color: rgba(255, 255, 255, .6);
-    padding: 10px 6px;
-    border-radius: 10px;
-    font-size: .8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .2s;
-    font-family: var(--fb);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    background: rgba(255,255,255,.05);
+    border: 1.5px solid rgba(255,255,255,.1);
+    color: rgba(255,255,255,.6);
+    padding: 10px 6px; border-radius: 10px;
+    font-size: .8rem; font-weight: 600; cursor: pointer;
+    transition: all .2s; font-family: var(--fb);
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
   }
 
-  .role-btn:hover {
-    border-color: #6C63FF;
-    color: #A78BFA;
-  }
-
-  .role-sel {
-    border-color: #6C63FF;
-    background: rgba(108, 99, 255, .2);
-    color: #A78BFA;
-  }
+  .role-btn:hover { border-color: #6C63FF; color: #A78BFA; }
+  .role-sel { border-color: #6C63FF; background: rgba(108,99,255,.2); color: #A78BFA; }
 
   .auth-submit-btn {
     width: 100%;
     background: linear-gradient(135deg, #F5A623, #FF6EB4);
-    border: none;
-    color: #1A103C;
-    padding: 13px;
-    border-radius: 11px;
-    font-size: .93rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all .25s;
-    font-family: var(--fb);
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: none; color: #1A103C;
+    padding: 13px; border-radius: 11px;
+    font-size: .93rem; font-weight: 700; cursor: pointer;
+    transition: all .25s; font-family: var(--fb); margin-top: 4px;
+    display: flex; align-items: center; justify-content: center;
   }
 
   .auth-submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(245, 158, 11, .38);
+    box-shadow: 0 8px 28px rgba(245,158,11,.38);
   }
 
-  .auth-submit-btn:disabled {
-    opacity: .5;
-    cursor: not-allowed;
+  .auth-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* OTP shield icon */
+  .otp-icon-wrap {
+    width: 72px; height: 72px; margin: 0 auto 16px;
+    background: rgba(108,99,255,.15);
+    border: 2px solid rgba(108,99,255,.4);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: #A78BFA;
   }
 
   .auth-divider {
-    text-align: center;
-    margin: 16px 0;
-    position: relative;
+    text-align: center; margin: 16px 0; position: relative;
   }
 
   .auth-divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(255, 255, 255, .1);
+    content: ''; position: absolute; top: 50%; left: 0; right: 0;
+    height: 1px; background: rgba(255,255,255,.1);
   }
 
   .auth-divider span {
-    background: #160F30;
-    color: rgba(255, 255, 255, .3);
-    font-size: .78rem;
-    padding: 0 12px;
-    position: relative;
+    background: #160F30; color: rgba(255,255,255,.3);
+    font-size: .78rem; padding: 0 12px; position: relative;
   }
 
-  .auth-footer-links {
-    text-align: center;
-    font-size: .87rem;
-    color: rgba(255, 255, 255, .5);
-  }
+  .auth-footer-links { text-align: center; font-size: .87rem; color: rgba(255,255,255,.5); }
+  .auth-footer-links a { color: #A78BFA; font-weight: 600; text-decoration: none; margin-left: 5px; }
+  .auth-footer-links a:hover { color: #F5A623; }
 
-  .auth-footer-links a {
-    color: #A78BFA;
-    font-weight: 600;
-    text-decoration: none;
-    margin-left: 5px;
-  }
-
-  .auth-footer-links a:hover {
-    color: #F5A623;
-  }
-
-  .auth-back-link {
-    color: rgba(255, 255, 255, .3);
-    font-size: .8rem;
-    text-decoration: none;
-  }
-
-  .auth-back-link:hover {
-    color: #6C63FF;
-  }
+  .auth-back-link { color: rgba(255,255,255,.3); font-size: .8rem; text-decoration: none; }
+  .auth-back-link:hover { color: #6C63FF; }
 
   @media(max-width:992px) {
-    .auth-side {
-      display: none !important;
-    }
-
-    .auth-form-panel {
-      padding: 28px 16px;
-    }
+    .auth-side { display: none !important; }
+    .auth-form-panel { padding: 28px 16px; }
   }
 </style>
