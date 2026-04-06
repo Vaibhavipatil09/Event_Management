@@ -110,4 +110,13 @@ export class LoginComponent {
       }
     });
   }
+
+  //Show Password Toggle
+
+  showPassword:boolean = false;
+
+  togglePassword(): void {
+    this.showPassword= !this.showPassword;
+  }
+
 }

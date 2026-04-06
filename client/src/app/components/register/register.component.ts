@@ -71,7 +71,7 @@ export class RegisterComponent {
       },
 
       error: (err) => {
-        this.isError = true; 
+        this.isError = true;
         console.error(err);
 
         // ADD THIS: show specific message for duplicate username
@@ -87,5 +87,12 @@ export class RegisterComponent {
         }, 2500);
       }
     });
+  }
+
+  // Toggle password
+  showPassword: boolean = false;
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 }
