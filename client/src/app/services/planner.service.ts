@@ -72,4 +72,8 @@ deleteTask(taskId: number) {
     `${this.baseUrl}/tasks/${taskId}`
   );
 }
+
+  getTasksByEvent(eventId: any): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.baseUrl}/events/${eventId}/tasks`);
+  }
 }

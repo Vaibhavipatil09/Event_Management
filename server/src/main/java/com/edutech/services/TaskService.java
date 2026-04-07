@@ -84,4 +84,15 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
+    public Task submitFeedback(Long taskId, String feedback) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        task.setFeedback(feedback);
+        return taskRepository.save(task);
+    }
+
+    public List<Task> getTasksByEvent(Long eventId) {
+        return taskRepository.findByEventId(eventId);
+    }
+
 }

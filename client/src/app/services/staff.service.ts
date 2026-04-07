@@ -23,5 +23,12 @@ export class StaffService {
       {}
     );
   }
+
+  submitFeedback(taskId: any, feedback: string): Observable<Task> {
+    return this.http.put<Task>(
+      `${this.baseUrl}/tasks/${taskId}/feedback?feedback=${encodeURIComponent(feedback)}`,
+      {}
+    );
+  }
 }
 

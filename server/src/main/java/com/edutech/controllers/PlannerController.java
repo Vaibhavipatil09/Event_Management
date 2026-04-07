@@ -109,9 +109,14 @@ public class PlannerController {
     // ✅ DELETE TASK
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
-
         taskService.deleteTaskById(taskId);
         return ResponseEntity.noContent().build();
+    }
+
+    // ✅ GET TASKS BY EVENT (for staff feedback display)
+    @GetMapping("/events/{eventId}/tasks")
+    public ResponseEntity<List<Task>> getTasksByEvent(@PathVariable Long eventId) {
+        return ResponseEntity.ok(taskService.getTasksByEvent(eventId));
     }
 
 }

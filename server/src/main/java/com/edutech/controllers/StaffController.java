@@ -29,4 +29,10 @@ public class StaffController {
             @RequestParam String status) {
         return ResponseEntity.ok(taskService.updateTaskStatus(taskId, status));
     }
+
+    @PutMapping("/tasks/{taskId}/feedback")
+    public ResponseEntity<Task> submitFeedback(@PathVariable Long taskId,
+            @RequestParam String feedback) {
+        return ResponseEntity.ok(taskService.submitFeedback(taskId, feedback));
+    }
 }

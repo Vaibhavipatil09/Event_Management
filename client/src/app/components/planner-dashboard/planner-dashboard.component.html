@@ -197,75 +197,94 @@
         </div>
 
         <div class="ev-event-grid" *ngIf="events.length > 0; else noEventsBlock">
-          <div class="ev-event-card" *ngFor="let event of paginatedEvents">
-            <!-- <div class="eec-top">
-              <span class="ev-status-badge" [class.badge-done]="event.status==='Completed'"
-                [class.badge-pending]="event.status!=='Completed'">
-                {{ event.status }}
-              </span>
-              <button class="ev-edit-btn" (click)="editEvent(event)">
-                <i class="bi bi-pencil-fill"></i>
-              </button>
-            </div> -->
+          <div class="ev-flip-wrapper" *ngFor="let event of paginatedEvents" [class.flipped]="isFlipped(event.id)">
 
-            <div class="eec-top">
-              <span class="ev-status-badge" [class.badge-done]="event.status==='Completed'"
-                [class.badge-pending]="event.status!=='Completed'">
-                {{ event.status }}
-              </span>
+            <!-- FRONT FACE -->
+            <div class="ev-event-card ev-card-front">
+              <div class="eec-top">
+                <span class="ev-status-badge" [class.badge-done]="event.status==='Completed'"
+                  [class.badge-pending]="event.status!=='Completed'">
+                  {{ event.status }}
+                </span>
 
-              <span class="eec-paid-badge" *ngIf="event.paymentStatus === 'SUCCESS'">
-                <i class="bi bi-patch-check-fill"></i> Paid
-              </span>
+                <span class="eec-paid-badge" *ngIf="event.paymentStatus === 'SUCCESS'">
+                  <i class="bi bi-patch-check-fill"></i> Paid
+                </span>
 
+                <!-- FIXED action group -->
+                <div class="ev-action-btns">
+                  <button *ngIf="(event.status || '').toLowerCase().trim() === 'pending'" class="ev-complete-btn"
+                    title="Mark Completed" (click)="markCompleted(event)" [disabled]="statusUpdating[event.id!]">
+                    <i class="bi bi-check2-circle"></i>
+                  </button>
 
+                  <button title="Edit" *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'"
+                    class="ev-edit-btn" (click)="editEvent(event)">
+                    <i class="bi bi-pencil-fill"></i>
+                  </button>
 
-
-
-
-              <!-- FIXED action group -->
-
-              <div class="ev-action-btns">
-                <!-- ✅ Mark Completed (ONLY when status is pending) -->
-                <button *ngIf="(event.status || '').toLowerCase().trim() === 'pending'" class="ev-complete-btn"
-                  title="Mark Completed" (click)="markCompleted(event)" [disabled]="statusUpdating[event.id!]">
-                  <i class="bi bi-check2-circle"></i>
-                </button>
-
-                <!-- ✅ Edit hidden when completed -->
-                <button title="Edit" *ngIf="(event.status || '').toLowerCase().trim() !== 'completed'"
-                  class="ev-edit-btn" (click)="editEvent(event)">
-                  <i class="bi bi-pencil-fill"></i>
-                </button>
-
-                <button title="Delete" class="ev-delete-btn" (click)="deleteEvent(event)">
-                  <i class="bi bi-trash-fill"></i>
-                </button>
-
-
+                  <button title="Delete" class="ev-delete-btn" (click)="deleteEvent(event)">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
               </div>
+
+              <h4 class="eec-title">{{ event.title }}</h4>
+              <div class="eec-meta">
+                <span><i class="bi bi-calendar3"></i> {{ event.date | date:'mediumDate' }}</span>
+                <span><i class="bi bi-geo-alt-fill"></i> {{ event.location }}</span>
+              </div>
+
+              <p class="eec-desc" *ngIf="event.description">{{ event.description }}</p>
+
+              <div class="eec-footer" *ngIf="event.client">
+                <i class="bi bi-person-fill"></i>
+                <span>{{ event.client.username }}</span>
+              </div>
+
+              <div class="eec-client-feedback" *ngIf="event.feedback">
+                <i class="bi bi-chat-quote-fill"></i>
+                <span>{{ event.feedback }}</span>
+              </div>
+
+              <!-- Staff Feedback Flip Button -->
+              <button class="eec-flip-btn" (click)="toggleFeedbackFlip(event, $event)">
+                <i class="bi bi-people-fill me-1"></i> View Staff Feedback
+              </button>
             </div>
 
-            <h4 class="eec-title">{{ event.title }}</h4>
-            <div class="eec-meta">
-              <span><i class="bi bi-calendar3"></i> {{ event.date | date:'mediumDate' }}</span>
-              <span><i class="bi bi-geo-alt-fill"></i> {{ event.location }}</span>
+            <!-- BACK FACE -->
+            <div class="ev-event-card ev-card-back">
+              <div class="eec-back-header">
+                <span class="eec-back-title"><i class="bi bi-people-fill me-2"></i>Staff Feedback</span>
+                <button class="eec-back-close" (click)="toggleFeedbackFlip(event, $event)">
+                  <i class="bi bi-arrow-left-circle-fill me-1"></i>Back
+                </button>
+              </div>
+
+              <div *ngIf="feedbackLoading[event.id!]" class="eec-feedback-loading">
+                <i class="bi bi-hourglass-split"></i> Loading…
+              </div>
+
+              <ng-container *ngIf="!feedbackLoading[event.id!]">
+                <div *ngIf="$any(eventFeedbackTasks)[event.id!]?.length > 0; else noFeedback">
+                  <div class="eec-feedback-item" *ngFor="let task of eventFeedbackTasks[event.id!]">
+                    <div class="eec-fb-task"><i class="bi bi-check2-square me-1"></i>{{ task.description }}</div>
+                    <div class="eec-fb-staff"><i class="bi bi-person-circle me-1"></i>{{ task.assignedStaff?.username || 'Staff' }}</div>
+                    <div class="eec-fb-text"><i class="bi bi-chat-left-quote me-1"></i>{{ task.feedback }}</div>
+                  </div>
+                </div>
+                <ng-template #noFeedback>
+                  <div class="eec-no-feedback">
+                    <i class="bi bi-inbox"></i>
+                    <p>No staff feedback submitted yet for this event.</p>
+                  </div>
+                </ng-template>
+              </ng-container>
             </div>
 
-            <p class="eec-desc" *ngIf="event.description">{{ event.description }}</p>
-
-            <div class="eec-footer" *ngIf="event.client">
-              <i class="bi bi-person-fill"></i>
-              <span>{{ event.client.username }}</span>
-            </div>
-            <!-- Client feedback — shown at the bottom once the client submits it -->
-            <div class="eec-client-feedback" *ngIf="event.feedback">
-              <i class="bi bi-chat-quote-fill"></i>
-              <span>{{ event.feedback }}</span>
-            </div>
           </div>
         </div>
-
         <!-- ✅ EVENTS PAGINATION -->
         <div class="ev-pagination" *ngIf="totalEventPages > 1">
           <button class="pg-btn" (click)="prevEventPage()" [disabled]="eventPage === 1">
@@ -1308,6 +1327,152 @@
     flex-shrink: 0;
     margin-top: 2px;
     font-style: normal;
+  }
+
+  /* ── FLIP CARD ── */
+  .ev-flip-wrapper {
+    position: relative;
+    perspective: 1200px;
+  }
+
+  .ev-card-front,
+  .ev-card-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+  }
+
+  .ev-card-back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ev-flip-wrapper.flipped .ev-card-front {
+    transform: rotateY(-180deg);
+  }
+
+  .ev-flip-wrapper.flipped .ev-card-back {
+    transform: rotateY(0deg);
+  }
+
+  /* flip button */
+  .eec-flip-btn {
+    margin-top: auto;
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(108,99,255,0.35);
+    color: #A78BFA;
+    padding: 9px;
+    border-radius: 10px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+  }
+
+  .eec-flip-btn:hover {
+    background: rgba(108,99,255,0.1);
+    border-color: #A78BFA;
+  }
+
+  /* back face header */
+  .eec-back-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+
+  .eec-back-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .eec-back-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: #A78BFA;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+  }
+
+  .eec-back-close:hover {
+    background: rgba(108,99,255,0.1);
+  }
+
+  /* feedback items on back */
+  .eec-feedback-item {
+    background: rgba(108,99,255,0.06);
+    border: 1px solid rgba(108,99,255,0.15);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .eec-fb-task {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .eec-fb-staff {
+    font-size: 0.78rem;
+    color: #A78BFA;
+    font-weight: 600;
+  }
+
+  .eec-fb-text {
+    font-size: 0.82rem;
+    color: var(--text-2);
+    line-height: 1.45;
+    margin-top: 2px;
+  }
+
+  .eec-feedback-loading {
+    text-align: center;
+    color: var(--text-2);
+    font-size: 0.88rem;
+    padding: 20px 0;
+  }
+
+  .eec-no-feedback {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--text-2);
+  }
+
+  .eec-no-feedback i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(108,99,255,0.3);
+  }
+
+  .eec-no-feedback p {
+    font-size: 0.85rem;
+    margin: 0;
   }
 
   /* 🔽 FIX SELECT DROPDOWN VISIBILITY (DARK MODE) */

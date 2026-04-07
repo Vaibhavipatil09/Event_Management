@@ -12,6 +12,7 @@ public class Task {
 
     private String description;
     private String status;
+    private String feedback;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
@@ -44,6 +45,14 @@ public class Task {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
     }
 
     public Staff getAssignedStaff() {

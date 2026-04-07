@@ -17,6 +17,13 @@ export class StaffDashboardComponent implements OnInit {
   tasks: Task[] = [];
   staffId: any = this.authService.getUserId();
 
+  /** tracks which task card has the feedback panel open */
+  feedbackOpenTaskId: any = null;
+  /** holds the feedback text being typed */
+  feedbackText: { [taskId: number]: string } = {};
+  /** tracks submitted feedback per task to show success */
+  feedbackSubmitted: { [taskId: number]: boolean } = {};
+
   get completedTasks(): number {
     return this.tasks.filter(t => t.status === 'Completed' || t.status === 'COMPLETED').length;
   }
@@ -48,6 +55,25 @@ export class StaffDashboardComponent implements OnInit {
         const index = this.tasks.findIndex(t => t.id === updated.id);
         if (index !== -1) this.tasks[index] = updated;
         this.getTasks();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  toggleFeedback(taskId: any): void {
+    this.feedbackOpenTaskId = this.feedbackOpenTaskId === taskId ? null : taskId;
+  }
+
+  submitFeedback(taskId: any): void {
+    const text = (this.feedbackText[taskId] || '').trim();
+    if (!text) return;
+    this.staffService.submitFeedback(taskId, text).subscribe({
+      next: (updated) => {
+        const index = this.tasks.findIndex(t => t.id === updated.id);
+        if (index !== -1) this.tasks[index] = updated;
+        this.feedbackSubmitted[taskId] = true;
+        this.feedbackOpenTaskId = null;
+        this.feedbackText[taskId] = '';
       },
       error: (err) => console.error(err)
     });

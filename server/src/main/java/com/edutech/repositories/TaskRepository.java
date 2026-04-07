@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByAssignedStaff(Staff staff);
-    // write the code here
+    List<Task> findByEventId(Long eventId);
 }

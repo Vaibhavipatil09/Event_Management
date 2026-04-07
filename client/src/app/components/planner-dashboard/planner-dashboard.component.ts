@@ -398,4 +398,39 @@ export class PlannerDashboardComponent implements OnInit {
   get taskPageNumbers(): number[] {
     return Array.from({ length: this.totalTaskPages }, (_, i) => i + 1);
   }
+
+  // ── Staff Feedback Flip Card ────────────────────────────────────────────────
+
+  /** Set of event IDs currently showing the feedback (flipped) side */
+  flippedEvents: Set<number> = new Set();
+
+  /** Cache: eventId → tasks with feedback */
+  eventFeedbackTasks: { [eventId: number]: Task[] } = {};
+
+  /** Loading state per event */
+  feedbackLoading: { [eventId: number]: boolean } = {};
+
+  toggleFeedbackFlip(event: Event, e: MouseEvent): void {
+    e.stopPropagation();
+    const id = event.id as number;
+    if (this.flippedEvents.has(id)) {
+      this.flippedEvents.delete(id);
+    } else {
+      this.flippedEvents.add(id);
+      if (!this.eventFeedbackTasks[id]) {
+        this.feedbackLoading[id] = true;
+        this.plannerService.getTasksByEvent(id).subscribe({
+          next: (tasks) => {
+            this.eventFeedbackTasks[id] = tasks.filter(t => t.feedback);
+            this.feedbackLoading[id] = false;
+          },
+          error: () => { this.feedbackLoading[id] = false; }
+        });
+      }
+    }
+  }
+
+  isFlipped(eventId: any): boolean {
+    return this.flippedEvents.has(eventId as number);
+  }
 }
