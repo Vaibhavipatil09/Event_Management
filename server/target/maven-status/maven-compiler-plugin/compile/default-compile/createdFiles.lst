@@ -12,6 +12,7 @@ com/edutech/entities/Task.class
 com/edutech/repositories/ClientRepository.class
 com/edutech/repositories/EventPlannerRepository.class
 com/edutech/repositories/TaskRepository.class
+com/edutech/config/Configurations$1.class
 com/edutech/controllers/StaffController.class
 com/edutech/repositories/EventRepository.class
 com/edutech/jwt/JwtRequestFilter.class
