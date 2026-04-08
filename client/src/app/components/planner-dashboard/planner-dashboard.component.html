@@ -82,7 +82,7 @@
 
 
 
-      <!-- ✅ UNIFIED CREATE / EDIT EVENT FORM -->
+      <!--   UNIFIED CREATE / EDIT EVENT FORM -->
       <div class="ev-card mb-4">
         <div class="ev-card-head">
           <div class="ev-card-dot" style="--d:#6C63FF"></div>
@@ -132,7 +132,7 @@
               required #status="ngModel">
               <option value="">Select status</option>
               <option value="Pending">⏳ Pending</option>
-              <option value="Completed">✅ Completed</option>
+              <option value="Completed">  Completed</option>
             </select>
             <div class="ev-err" *ngIf="status.invalid && (status.dirty || status.touched)">
               Status is required
@@ -285,7 +285,7 @@
 
           </div>
         </div>
-        <!-- ✅ EVENTS PAGINATION -->
+        <!--   EVENTS PAGINATION -->
         <div class="ev-pagination" *ngIf="totalEventPages > 1">
           <button class="pg-btn" (click)="prevEventPage()" [disabled]="eventPage === 1">
             ◀ Prev
@@ -312,7 +312,7 @@
 
 
 
-    </div><!-- /events section -->
+    </div>
 
     <!-- ══ TASKS SECTION ══════════════════════════ -->
     <div *ngIf="showTasks">
@@ -341,14 +341,14 @@
             <select class="ev-input" [(ngModel)]="newTask.status" name="taskStatus" required #taskStatus="ngModel">
               <option value="">Select status</option>
               <option value="Pending">⏳ Pending</option>
-              <option value="Completed">✅ Completed</option>
+              <option value="Completed">  Completed</option>
             </select>
             <div class="ev-err" *ngIf="taskStatus.invalid && (taskStatus.dirty || taskStatus.touched)">
               Status is required
             </div>
           </div>
 
-          <!-- Keeping these optional as per your current UI -->
+     
           <div class="ev-field">
             <label>Link to Event *</label>
             <select class="ev-input" [(ngModel)]="newTaskEventId" name="taskEventId">
@@ -386,15 +386,6 @@
         <div class="ev-task-grid" *ngIf="tasks.length > 0; else noTasksBlock">
           <div class="ev-task-card" *ngFor="let task of paginatedTasks"
             [class.task-completed]="task.status==='Completed'">
-            <!-- <div class="etc-top">
-              <span class="ev-status-badge" [class.badge-done]="task.status==='Completed'"
-                [class.badge-pending]="task.status!=='Completed'">
-                {{ task.status }}
-              </span>
-              <span class="ev-event-chip" *ngIf="task.event?.title">
-                <i class="bi bi-calendar3"></i> {{ task.event!.title }}
-              </span>
-            </div> -->
 
             <div class="etc-top">
               <span class="ev-status-badge" [class.badge-done]="task.status==='Completed'"
@@ -433,7 +424,7 @@
           </div>
         </div>
 
-        <!-- ✅ TASKS PAGINATION -->
+        <!--   TASKS PAGINATION -->
         <div class="ev-pagination" *ngIf="totalTaskPages > 1">
           <button class="pg-btn" (click)="prevTaskPage()" [disabled]="taskPage === 1">
             ◀ Prev
@@ -463,7 +454,7 @@
 </div>
 
 <style>
-  /*  Required validation message */
+  
   .ev-err {
     margin-top: 6px;
     font-size: 0.78rem;
@@ -471,7 +462,6 @@
     font-weight: 600;
   }
 
-  /* ✅ your original styles continue below unchanged (kept exactly same) */
   :root {
     --pri: #6C63FF;
     --pri-l: #A78BFA;
@@ -1129,7 +1119,7 @@
 
 
   /* ═════════════════════════════════════
-   ✅ TOAST (FIXED & WORKING)
+     TOAST (FIXED & WORKING)
 ═════════════════════════════════════ */
 
   .ev-toast-stack {
@@ -1244,7 +1234,7 @@
     transform: scale(1.07);
   }
 
-  /* ✅ Mark Completed button */
+  /*   Mark Completed button */
   .ev-complete-btn {
     width: 32px;
     height: 32px;
@@ -1475,55 +1465,48 @@
     margin: 0;
   }
 
-  /* 🔽 FIX SELECT DROPDOWN VISIBILITY (DARK MODE) */
-
-
   /* Dropdown box */
   select.ev-input {
     background-color: var(--bg-inp);
     color: var(--text);
   }
 
-  /* 🔥 Dropdown options (MAIN FIX) */
+  /* Dropdown options */
   select.ev-input option {
     background: #EDE9FE;
-    /* light purple */
+
     color: #422899;
-    /* dark text */
+
   }
 
-  /* Hover / selected option */
+
   select.ev-input option:checked {
     background: #C4B5FD;
-    /* stronger purple */
+
     color: #e1dcf1;
   }
 
-  /* Optional: when dropdown opens (some browsers) */
   select.ev-input:focus {
     background-color: #8977d6;
   }
 
-  /* Force dark UI for date input */
   body.dark-mode input[type="datetime-local"] {
     background-color: var(--bg-inp) !important;
     color: var(--text) !important;
     color-scheme: dark !important;
   }
 
-  /* 🔥 Fix calendar icon visibility */
   body.dark-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     filter: invert(1) brightness(100%) contrast(100%) !important;
     cursor: pointer;
   }
 
-  /* 🔥 EXTRA FIX (important for Chrome) */
   body.dark-mode input[type="datetime-local"]::-webkit-datetime-edit {
     color: var(--text);
   }
 
 
-  /* ✅ PAGINATION UI */
+  /*   PAGINATION UI */
   .ev-pagination {
     margin-top: 18px;
     display: flex;

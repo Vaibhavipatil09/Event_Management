@@ -37,9 +37,7 @@ export class PlannerService {
     return this.http.get<Event[]>(`${this.baseUrl}/events?plannerId=${plannerId}`);
   }
 
-  /**
-   * Create a task. If eventId is provided, the task is linked to that event.
-   */
+ 
   createTask(task: Task, eventId?: number): Observable<Task> {
     let url = `${this.baseUrl}/task`;
     if (eventId != null) {
@@ -59,14 +57,14 @@ export class PlannerService {
     );
   }
 
-  // ✅ Delete Event (planner-scoped)
+  //   Delete Event (planner-scoped)
 deleteEvent(plannerId: number, eventId: number) {
   return this.http.delete(
     `${this.baseUrl}/${plannerId}/events/${eventId}`
   );
 }
 
-// ✅ Delete Task
+//   Delete Task
 deleteTask(taskId: number) {
   return this.http.delete(
     `${this.baseUrl}/tasks/${taskId}`

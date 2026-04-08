@@ -8,7 +8,6 @@ import java.io.Serializable;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements Serializable {
 
-   // write the code here
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;

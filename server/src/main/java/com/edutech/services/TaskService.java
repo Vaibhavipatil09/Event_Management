@@ -26,9 +26,7 @@ public class TaskService {
     @Autowired
     private EventRepository eventRepository;
 
-    /**
-     * Create a task. If eventId is provided the task is linked to that event.
-     */
+
     public Task createTask(Task task) {
         return taskRepository.save(task);
     }
@@ -44,10 +42,7 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    /**
-     * Assign a staff member to a task.
-     * BUSINESS RULE: If the task is already "Completed", assignment is blocked.
-     */
+    //Assign a staff member to a task.
     public Task assignTask(Long taskId, Long staffId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));

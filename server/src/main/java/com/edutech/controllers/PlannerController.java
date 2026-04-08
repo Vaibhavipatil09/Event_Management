@@ -65,10 +65,7 @@ public class PlannerController {
         return ResponseEntity.ok(eventService.getEventsByPlanner(plannerId));
     }
 
-    /**
-     * Create a task, optionally linked to an event.
-     * NEW: accepts optional ?eventId= query parameter to associate the task with an event.
-     */
+  
     @PostMapping("/task")
     public ResponseEntity<Task> createTask(
             @RequestBody Task task,
@@ -84,10 +81,9 @@ public class PlannerController {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
-    /**
-     * Assign staff to a task.
-     * The service layer blocks this if the task is already Completed.
-     */
+    
+    // Assign staff to a task.
+    //The service layer blocks this if the task is already Completed.
     @PostMapping("/tasks/{taskId}/assign/{staffId}")
     public ResponseEntity<Task> assignTask(@PathVariable Long taskId,
             @PathVariable Long staffId) {
@@ -96,7 +92,6 @@ public class PlannerController {
 
 
     
-    // ✅ DELETE EVENT
     @DeleteMapping("/{plannerId}/events/{eventId}")
     public ResponseEntity<Void> deleteEvent(
             @PathVariable Long plannerId,
@@ -106,14 +101,13 @@ public class PlannerController {
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ DELETE TASK
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
         taskService.deleteTaskById(taskId);
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ GET TASKS BY EVENT (for staff feedback display)
+    // for staff feedback display
     @GetMapping("/events/{eventId}/tasks")
     public ResponseEntity<List<Task>> getTasksByEvent(@PathVariable Long eventId) {
         return ResponseEntity.ok(taskService.getTasksByEvent(eventId));

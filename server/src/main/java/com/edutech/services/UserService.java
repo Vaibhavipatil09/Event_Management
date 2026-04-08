@@ -34,7 +34,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
 
-    // In-memory OTP store: email -> OTP string
+    // In-memory OTP store: email - OTP string
     // ConcurrentHashMap is thread-safe for concurrent requests
     private final Map<String, String> otpStore = new ConcurrentHashMap<>();
 
@@ -52,13 +52,9 @@ public class UserService implements UserDetailsService {
         this.mailSender = mailSender;
     }
 
-    /*
-     * =================================================
-     * STEP 1 — Generate OTP and send to email
-     * Called by /api/user/send-otp before registration.
-     * Throws RuntimeException if username is already taken.
-     * =================================================
-     */
+    
+    //Generate OTP and send to email
+    // Called by /api/user/send-otp before registration.
     public void sendOtp(String email, String username) {
         if (userRepository.existsByUsername(username)) {
             throw new RuntimeException("Username already taken. Please choose a different username.");
@@ -85,12 +81,10 @@ public class UserService implements UserDetailsService {
         mailSender.send(message);
     }
 
-    /*
-     * =================================================
-     * STEP 2 — Verify OTP then save the user
-     * Called by /api/user/register after OTP is entered.
-     * =================================================
-     */
+
+    //   STEP 2 — Verify OTP then save the user
+    //   Called by /api/user/register after OTP is entered.
+
     public User verifyOtpAndRegister(User user, String otp) {
         String stored = otpStore.get(user.getEmail());
 
@@ -108,11 +102,7 @@ public class UserService implements UserDetailsService {
         return registerUser(user);
     }
 
-    /*
-     * =================================================
-     * REGISTRATION LOGIC (unchanged)
-     * =================================================
-     */
+    
     public User registerUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already taken. Please choose a different username.");
@@ -149,11 +139,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    /*
-     * =================================================
-     * SPRING SECURITY (MANDATORY — unchanged)
-     * =================================================
-     */
+    //Spring Security
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
@@ -167,11 +153,7 @@ public class UserService implements UserDetailsService {
                         new SimpleGrantedAuthority("ROLE_" + user.getRole())));
     }
 
-    /*
-     * =================================================
-     * HELPER METHODS (unchanged)
-     * =================================================
-     */
+    //Helper Method
     private User findUserFromAnyRepo(String username) {
 
         Optional<? extends User> planner = eventPlannerRepository.findByUsername(username);

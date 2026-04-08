@@ -18,7 +18,7 @@ public class Task {
     @JoinColumn(name = "staff_id")
     private Staff assignedStaff;
 
-    /** NEW — links a task to the event it belongs to */
+    //links a task to the event it belongs to
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;

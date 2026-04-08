@@ -16,7 +16,7 @@ public class Event {
   private String description;
   private String status;
   private String feedback;
-  private String paymentStatus; // PENDING / SUCCESS / FAILED
+  private String paymentStatus; 
   private String orderId;
   private String paymentId;
 

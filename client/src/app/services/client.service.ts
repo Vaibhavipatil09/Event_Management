@@ -27,9 +27,7 @@ export class ClientService {
     );
   }
 
-  /**
-   * NEW — Process payment for a completed event.
-   */
+  // Process payment for a completed event.
   payForEvent(eventId: any, amount: number): Observable<any> {
     return this.http.post<any>(
       `${this.baseUrl}/event/${eventId}/pay?amount=${amount}`,
@@ -37,10 +35,7 @@ export class ClientService {
     );
   }
 
-  /**
-   * Persist payment success to the backend so the planner can see the PAID status.
-   * Called after Razorpay's payment handler fires successfully.
-   */
+  //payment success to the backend so the planner can see the PAID status.
   markEventPaid(eventId: any): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/event/${eventId}/mark-paid`, {});
   }

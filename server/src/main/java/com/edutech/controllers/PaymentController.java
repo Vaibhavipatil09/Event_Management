@@ -22,7 +22,7 @@ public class PaymentController {
     @PostMapping("/create-order")
     public String createOrder(@RequestBody Map<String, Object> body) throws Exception {
 
-        // Amount from frontend (in INR), converted to paise for Razorpay
+        // Amount from frontend, converted to paise for Razorpay
         int amountInPaise = ((Number) body.getOrDefault("amount", 0)).intValue() * 100;
 
         URL url = new URL("https://api.razorpay.com/v1/orders");

@@ -5,6 +5,5 @@ export interface Task {
   assignedStaff?: any;
   success?: any;
   feedback?: string;
-  /** NEW — the event this task belongs to */
   event?: { id?: any; title?: string };
 }

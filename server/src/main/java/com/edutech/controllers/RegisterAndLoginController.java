@@ -27,11 +27,7 @@ public class RegisterAndLoginController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    /*
-     * STEP 1 — Send OTP to the email provided at registration.
-     * Request body: { "email": "user@example.com", "username": "john" }
-     * Returns 200 with message, or 409 if username already taken.
-     */
+    // Send OTP to the email provided at registration.
     @PostMapping("/api/user/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> body) {
         String email    = body.get("email");
@@ -44,11 +40,7 @@ public class RegisterAndLoginController {
         }
     }
 
-    /*
-     * STEP 2 — Verify OTP and complete registration.
-     * Request body: full User JSON + "otp" field.
-     * e.g. { "username":"john", "email":"...", "password":"...", "role":"CLIENT", "otp":"123456" }
-     */
+    //Verify OTP and complete registration.
     @PostMapping("/api/user/register")
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> body) {
         String otp = body.get("otp");
@@ -69,9 +61,7 @@ public class RegisterAndLoginController {
         }
     }
 
-    /*
-     * LOGIN — completely unchanged
-     */
+
     @PostMapping("/api/user/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         try {

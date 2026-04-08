@@ -15,14 +15,14 @@ import { HttpClientModule } from '@angular/common/http';
 export class LoginComponent {
   credentials = { username: '', password: '' };
 
-  // ✅ existing success toast
+  //  existing success toast
   showToast = false;
 
-  // ✅ NEW: captcha popup (toast) state (popup should show only on Sign In click)
+  //  captcha popup (toast) state (popup should show only on Sign In click)
   showCaptchaToast = false;
   captchaToastMsg = '';
 
-  // ✅ NEW: Simple Math Captcha state
+  //  Simple Math Captcha state
   captchaA = 0;
   captchaB = 0;
   captchaOp: '+' | '-' = '+';
@@ -33,11 +33,11 @@ export class LoginComponent {
   captchaValid = false;
 
   constructor(private authService: AuthService, private router: Router) {
-    // ✅ captcha generated on component load
+    //  captcha generated on component load
     this.generateCaptcha();
   }
 
-  // ✅ NEW: generate captcha like "7 + 4 = ?"
+  //  generate captcha like "7 + 4 = ?"
   generateCaptcha(): void {
     this.captchaA = Math.floor(Math.random() * 9) + 1; // 1..9
     this.captchaB = Math.floor(Math.random() * 9) + 1; // 1..9
@@ -60,12 +60,12 @@ export class LoginComponent {
     this.captchaValid = false;
   }
 
-  // ✅ NEW: validate captcha while typing (NO popup here)
+  // validate captcha while typing (NO popup here)
   validateCaptcha(): void {
     this.captchaValid = Number(this.captchaInput) === this.captchaAnswer;
   }
 
-  // ✅ NEW: show popup only on submit
+  // show popup only on submit
   private openCaptchaToast(msg: string): void {
     this.captchaToastMsg = msg;
     this.showCaptchaToast = true;
@@ -77,7 +77,7 @@ export class LoginComponent {
   }
 
   login(): void {
-    // ✅ Captcha check happens ONLY when clicking Sign In
+    // Captcha check happens ONLY when clicking Sign In
     if (!this.captchaValid) {
       this.openCaptchaToast('Captcha answer is wrong, Please try again.');
       this.generateCaptcha(); // refresh captcha after wrong attempt
@@ -90,7 +90,7 @@ export class LoginComponent {
         this.authService.saveRole(response.role);
         this.authService.saveUserId(response.userId);
 
-        // ✅ Save username so home page can display it
+        // Save username so home page can display it
         localStorage.setItem('username', response.username);
 
         this.showToast = true;

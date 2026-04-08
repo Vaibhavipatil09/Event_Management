@@ -13,12 +13,12 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  // ── STEP 1: Send OTP to email before registration ──
+  //  Send OTP to email before registration ──
   sendOtp(email: string, username: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/send-otp`, { email, username });
   }
 
-  // ── STEP 2: Submit full registration + OTP together ──
+  //  Submit full registration + OTP together ──
   registerWithOtp(user: User, otp: string): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}/register`, { ...user, otp });
   }

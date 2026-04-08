@@ -10,24 +10,13 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  // ✅ Pull real username from localStorage (saved on login)
+  // Pull real username from localStorage (saved on login)
   username = localStorage.getItem('username') || '';
   role = localStorage.getItem('role');
   showOffer = true;
 
   currentSlide = 0;
   private slideTimer: any;
-
-  // clientLogos = [
-  //   { name: 'Amazon', color: '#FF9900', bg: '#FFF3E0', icon: '📦' },
-  //   { name: 'Google', color: '#4285F4', bg: '#E8F0FE', icon: '🔍' },
-  //   { name: 'Microsoft', color: '#00A4EF', bg: '#E3F2FD', icon: '🪟' },
-  //   { name: 'Infosys', color: '#007CC3', bg: '#E1F5FE', icon: '💼' },
-  //   { name: 'TCS', color: '#0072C6', bg: '#E3F2FD', icon: '🏢' },
-  //   { name: 'Wipro', color: '#341C66', bg: '#F3E5F5', icon: '⚡' },
-  //   { name: 'Meta', color: '#1877F2', bg: '#E8F4FD', icon: '🌐' },
-  //   { name: 'Apple', color: '#555', bg: '#F5F5F5', icon: '🍎' },
-  // ];
 
   clientLogos = [
   { img: 'https://1000logos.net/wp-content/uploads/2016/10/Amazon-logo-meaning.jpg' },

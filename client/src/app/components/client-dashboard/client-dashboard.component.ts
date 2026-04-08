@@ -1,4 +1,3 @@
-// client-dashboard.component.ts
 import { Component, NgZone, OnInit } from '@angular/core';
 import { ClientService } from '../../services/client.service';
 import { Event } from '../../models/event.model';
@@ -50,7 +49,6 @@ export class ClientDashboardComponent implements OnInit {
     this.getEvents();
   }
 
-  // ── localStorage helpers ──────────────────────────────────
 
   private storageKey(): string {
     return `paidEvents_${this.authService.getUserId()}`;
@@ -63,7 +61,7 @@ export class ClientDashboardComponent implements OnInit {
         const ids: any[] = JSON.parse(stored);
         ids.forEach(id => this.paidEvents.add(id));
       }
-    } catch { /* ignore parse errors */ }
+    } catch {  }
   }
 
   private persistPaidEvent(eventId: any): void {

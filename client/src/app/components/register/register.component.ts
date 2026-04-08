@@ -26,7 +26,7 @@ export class RegisterComponent {
   // ── OTP step state ──
   otpStep    = false;   // false = show registration form, true = show OTP input
   otpValue   = '';      // what the user types in the OTP box
-  sendingOtp = false;   // spinner on "Send OTP" button
+  sendingOtp = false;   // Send OTP button
 
   // ── Toast ──
   showToast    = false;
@@ -42,7 +42,7 @@ export class RegisterComponent {
     this.showPassword = !this.showPassword;
   }
 
-  // ── STEP 1: Validate form then send OTP ──
+  // Validate form then send OTP ──
   sendOtp(): void {
     this.sendingOtp = true;
     this.authService.sendOtp(this.user.email, this.user.username).subscribe({
@@ -61,7 +61,7 @@ export class RegisterComponent {
     });
   }
 
-  // ── STEP 2: Submit OTP + full user data ──
+  // Submit OTP + full user data ──
   register(): void {
     this.authService.registerWithOtp(this.user, this.otpValue).subscribe({
       next: () => {

@@ -6,7 +6,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routes';
 
-// Standalone Components
+
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { PlannerDashboardComponent } from './components/planner-dashboard/planner-dashboard.component';
@@ -20,7 +20,7 @@ import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
-    AppComponent   // ✅ ONLY non-standalone components here
+    AppComponent   //   ONLY non-standalone components here
   ],
   imports: [
     BrowserModule,
@@ -29,7 +29,7 @@ import { HomeComponent } from './components/home/home.component';
     ReactiveFormsModule,
     HttpClientModule,
 
-    // ✅ Standalone components go here
+    //   Standalone components go here
     NavbarComponent,
     HomeComponent,
     RegisterComponent,

@@ -24,7 +24,6 @@ public class EventService {
     @Autowired
     private ClientRepository clientRepository;
 
-    /** Original — used by existing tests (no clientId) */
     public Event createEvent(Long plannerId, Event event) {
         EventPlanner planner = eventPlannerRepository.findById(plannerId)
                 .orElseThrow(() -> new RuntimeException("Planner not found"));
@@ -32,7 +31,6 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    /** New overload — assigns both planner and client */
     public Event createEvent(Long plannerId, Long clientId, Event event) {
         EventPlanner planner = eventPlannerRepository.findById(plannerId)
                 .orElseThrow(() -> new RuntimeException("Planner not found"));
@@ -47,7 +45,6 @@ public class EventService {
         return eventRepository.findAll();
     }
 
-    /** NEW — fetch a single event by ID (used by payment endpoint) */
     public Event getEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));

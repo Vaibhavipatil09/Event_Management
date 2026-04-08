@@ -11,7 +11,7 @@
   </div>
 </div>
 
-<!-- ✅ CAPTCHA POPUP TOAST (shows only when user clicks Sign In and captcha is wrong) -->
+<!--CAPTCHA POPUP TOAST (shows only when user clicks Sign In and captcha is wrong) -->
 <div class="ev-toast-wrap" *ngIf="showCaptchaToast">
   <!-- using existing toast style because you said DON'T change CSS -->
   <div class="ev-toast ev-toast-success" style="background: linear-gradient(135deg, #EF4444, #F87171); color:#fff;">
@@ -59,7 +59,7 @@
       <h3 class="auth-title">Welcome Back</h3>
       <p class="auth-sub">Sign in to your account to continue</p>
 
-      <!-- ✅ Updated: captcha is NOT checked here; it is checked inside login() in TS -->
+      <!--captcha is NOT checked here; it is checked inside login() in TS -->
       <form #loginForm="ngForm" (ngSubmit)="loginForm.valid && login()" novalidate>
 
         <div class="auth-field">
@@ -89,7 +89,7 @@
           <div class="auth-err" *ngIf="pw.invalid && (pw.dirty || pw.touched)">Password is required</div>
         </div>
 
-        <!-- ✅ Simple Math Captcha -->
+        <!--   Simple Math Captcha -->
         <div class="auth-field">
           <label class="auth-label">Captcha</label>
 
@@ -106,10 +106,10 @@
               placeholder="Enter captcha answer" required #cap="ngModel" (input)="validateCaptcha()" />
           </div>
 
-          <!-- ✅ IMPORTANT: NO inline error while typing (as you wanted) -->
+          <!-- NO inline error while typing -->
         </div>
 
-        <!-- ✅ Updated: button disabled only if form invalid (captcha wrong should show popup on click) -->
+        <!-- button disabled only if form invalid (captcha wrong should show popup on click) -->
         <button class="auth-submit-btn" type="submit" [disabled]="loginForm.invalid">
           <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
         </button>
@@ -132,8 +132,7 @@
 </div>
 
 <style>
-  /* --- YOUR ORIGINAL CSS: NOT TOUCHED AT ALL --- */
-  /* ── Tokens ───────────────────────────────── */
+
   :root {
     --pri: #6C63FF;
     --acc: #F5A623;
@@ -548,7 +547,7 @@
     }
   }
 
-  /* ✅ Minimal captcha styling (matches your UI, doesn’t redesign) */
+  
   .captcha-box {
     display: flex;
     align-items: center;

@@ -37,11 +37,10 @@ export class PlannerDashboardComponent implements OnInit {
   newTaskEventId: number | null = null;
 
   reassignMap: { [taskId: number]: number | null } = {};
-  // ✅ NEW: prevent double click while updating status
+  //prevent double click while updating status
   statusUpdating: { [eventId: number]: boolean } = {};
 
 
-  /** Name of the currently open custom dropdown — null means all closed */
   openDropdown: string | null = null;
 
   get plannerId(): number {
@@ -61,7 +60,6 @@ export class PlannerDashboardComponent implements OnInit {
     this.getClients();
   }
 
-  // ── Custom dropdown helpers ─────────────────────────────────────────────────
 
   /** Close all dropdowns when clicking anywhere outside */
   @HostListener('document:click')
@@ -140,7 +138,7 @@ export class PlannerDashboardComponent implements OnInit {
 
     this.statusUpdating[event.id] = true;
 
-    // ✅ UI instantly changes -> edit button will disappear immediately
+    //   UI instantly changes -> edit button will disappear immediately
     const oldStatus = event.status;
     event.status = 'Completed';
 
@@ -151,11 +149,11 @@ export class PlannerDashboardComponent implements OnInit {
         const idx = this.events.findIndex(e => e.id === updated.id);
         if (idx !== -1) this.events[idx] = updated;
 
-        this.toast(`✅ "${updated.title}" marked as Completed`);
+        this.toast(`  "${updated.title}" marked as Completed`);
         this.getEvents();
       },
       error: () => {
-        // ✅ revert if API fails
+        //   revert if API fails
         event.status = oldStatus;
 
         this.toast('❌ Failed to update status');
@@ -186,11 +184,11 @@ export class PlannerDashboardComponent implements OnInit {
         },
 
         error: (err) => {
-          // 🔴 UNAUTHORIZED / TOKEN REMOVED
+
           if (err.status === 401 || err.status === 403) {
             this.toast('❌ Session expired. Please login again.');
           }
-          // 🔴 ANY OTHER FAILURE
+
           else {
             this.toast('❌ Failed to create event. Please try again.');
           }
@@ -200,13 +198,13 @@ export class PlannerDashboardComponent implements OnInit {
 
 
   editEvent(event: Event): void {
-    // 1️⃣ Switch form to Edit mode
+    // Switch form to Edit mode
     this.selectedEvent = { ...event };
 
-    // 2️⃣ Wait for Angular to update the DOM
+    //Wait for Angular to update the DOM
     setTimeout(() => {
 
-      // ✅ Smooth scroll to the form
+      //   Smooth scroll to the form
       const anchor = document.getElementById('eventFormAnchor');
       if (anchor) {
         const yOffset = -20;
@@ -221,7 +219,7 @@ export class PlannerDashboardComponent implements OnInit {
         });
       }
 
-      // ✅ Add glow + slide animation
+      //   Add glow + slide animation
       const formCard = document.querySelector('.event-form-card');
       if (formCard) {
         formCard.classList.add('edit-focus');
@@ -248,7 +246,7 @@ export class PlannerDashboardComponent implements OnInit {
         if (i !== -1) this.events[i] = updated;
         this.selectedEvent = { title: '', date: '', location: '', description: '', status: '' };
         this.getEvents();
-        this.toast('✅ Event updated successfully!');
+        this.toast('  Event updated successfully!');
         form.resetForm();
       });
   }
@@ -311,7 +309,7 @@ export class PlannerDashboardComponent implements OnInit {
         },
         error: () => {
           this.toast('❌ Failed to delete event');
-          this.getEvents(); // ✅ resync
+          this.getEvents(); //   resync
         }
       });
   }
@@ -335,16 +333,16 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
 
-  // ✅ Pagination - Events
+  //   Pagination - Events
   eventPage: number = 1;
   eventsPerPage: number = 8;
 
-  // ✅ Pagination - Tasks
+  //   Pagination - Tasks
   taskPage: number = 1;
   tasksPerPage: number = 6;
 
 
-  // ✅ EVENTS PAGINATION
+  //   EVENTS PAGINATION
   get totalEventPages(): number {
     return Math.ceil(this.events.length / this.eventsPerPage) || 1;
   }
@@ -372,7 +370,7 @@ export class PlannerDashboardComponent implements OnInit {
   }
 
 
-  // ✅ TASKS PAGINATION
+  //   TASKS PAGINATION
   get totalTaskPages(): number {
     return Math.ceil(this.tasks.length / this.tasksPerPage) || 1;
   }

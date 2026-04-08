@@ -33,7 +33,6 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                // ✅ send-otp added alongside register and login — all three are public
                 .antMatchers("/api/user/register", "/api/user/login", "/api/user/send-otp").permitAll()
                 .antMatchers("/payment/**").permitAll()
                 .antMatchers("/api/planner/**").hasAuthority("ROLE_PLANNER")
@@ -48,10 +47,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // @Bean
-    // public PasswordEncoder passwordEncoder() {
-    //     return new BCryptPasswordEncoder();
-    // }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
